@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { BottomNav } from './bottom-nav';
+import { PageTransition } from './page-transition';
 import { AddTransactionModal } from '../modals/add-transaction-modal';
 import { useBackButton } from '../../hooks/use-back-button';
 
@@ -43,7 +44,9 @@ export function AppLayout() {
             <main className="w-full h-full relative">
                 <div className="absolute inset-0 w-full h-full overflow-y-auto scroll-smooth pb-[calc(60px+env(safe-area-inset-bottom)+20px)] bg-gray-50">
                     <div className="max-w-lg mx-auto min-h-full">
-                        <Outlet />
+                        <PageTransition>
+                            <Outlet />
+                        </PageTransition>
                     </div>
                 </div>
             </main>

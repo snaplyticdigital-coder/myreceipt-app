@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Save, Wallet, DollarSign } from 'lucide-react';
+import { ChevronLeft, Save, Wallet, Banknote } from 'lucide-react';
 import { useStore } from '../lib/store';
 import { type BudgetCategory } from '../types';
 import { formatCurrency } from '../lib/format';
@@ -105,7 +105,7 @@ export function BudgetPage() {
                             </p>
                         </div>
                         <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <DollarSign size={32} className="text-white" />
+                            <Banknote size={32} className="text-white" />
                         </div>
                     </div>
                 </div>

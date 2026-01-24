@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Check, FileText, Calendar, DollarSign, Tag, Save, CreditCard, Plus, Trash2 } from 'lucide-react';
+import { X, Check, FileText, Calendar, Banknote, Tag, Save, CreditCard, Plus, Trash2 } from 'lucide-react';
 import type { SpendingCategory, PaymentMethod, LhdnTag, LineItem } from '../types';
 import { generateId } from '../lib/format';
 
@@ -159,7 +159,7 @@ export function ReceiptConfirmationModal({ isOpen, onClose, onSave, parsedData, 
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 mb-1.5 block">Total (RM)</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                    <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                                     <input
                                         type="number"
                                         step="0.01"

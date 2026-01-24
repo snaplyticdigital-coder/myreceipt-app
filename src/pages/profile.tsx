@@ -5,8 +5,8 @@ import { useStore } from '../lib/store';
 import { useAuth } from '../contexts/auth-context';
 import {
     Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, AlertTriangle,
-    DollarSign, Bell, Lock, BarChart3, HelpCircle, FileText,
-    User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown
+    Wallet, Bell, Lock, BarChart3, HelpCircle, FileText,
+    User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote
 } from 'lucide-react';
 import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
@@ -247,7 +247,7 @@ export function ProfilePage() {
                                 {/* Date of Birth */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-purple-50 rounded-lg text-purple-500">
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                             <Calendar size={18} />
                                         </div>
                                         <div>
@@ -269,7 +269,7 @@ export function ProfilePage() {
                                 {/* Gender */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-pink-50 rounded-lg text-pink-500">
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                             <UserIcon size={18} />
                                         </div>
                                         <div>
@@ -289,7 +289,7 @@ export function ProfilePage() {
                                 {/* Phone Number */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-green-50 rounded-lg text-green-500">
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                             <Phone size={18} />
                                         </div>
                                         <div>
@@ -310,8 +310,8 @@ export function ProfilePage() {
                                 {/* Salary Range */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
-                                            <DollarSign size={18} />
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                            <Banknote size={18} />
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-900">Salary Range</p>
@@ -330,7 +330,7 @@ export function ProfilePage() {
                                 {/* Occupation */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                             <Briefcase size={18} />
                                         </div>
                                         <div>
@@ -350,7 +350,7 @@ export function ProfilePage() {
                                 {/* Postcode */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-orange-50 rounded-lg text-orange-500">
+                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                             <MapPin size={18} />
                                         </div>
                                         <div>
@@ -378,8 +378,8 @@ export function ProfilePage() {
                     {/* Monthly Budget Link - Renamed to Set Your Budget */}
                     <Link to="/budget" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                                <DollarSign size={18} />
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                <Wallet size={18} />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Set Your Budget</p>
@@ -392,7 +392,7 @@ export function ProfilePage() {
                     {/* Budget Alerts - Moved here */}
                     <div className="flex items-center justify-between py-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <Bell size={18} />
                             </div>
                             <div>
@@ -411,7 +411,7 @@ export function ProfilePage() {
                     {/* Theme Toggle */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
                             </div>
                             <div>
@@ -425,7 +425,7 @@ export function ProfilePage() {
                     {/* Push Notifications */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <Smartphone size={18} />
                             </div>
                             <div>
@@ -439,7 +439,7 @@ export function ProfilePage() {
                     {/* Analytics Sharing */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <BarChart3 size={18} />
                             </div>
                             <div>
@@ -453,7 +453,7 @@ export function ProfilePage() {
                     {/* Biometric */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <Lock size={18} />
                             </div>
                             <div>
@@ -467,7 +467,7 @@ export function ProfilePage() {
                     {/* Currency - Moved from Account Info */}
                     <div className="flex items-center justify-between py-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <CreditCard size={18} />
                             </div>
                             <div>
@@ -492,7 +492,7 @@ export function ProfilePage() {
                     <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Support</h3>
                     <Link to="#" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <HelpCircle size={18} />
                             </div>
                             <span className="text-sm font-medium text-gray-900">Help Center</span>
@@ -501,7 +501,7 @@ export function ProfilePage() {
                     </Link>
                     <Link to="#" className="flex items-center justify-between py-3 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 text-gray-600 rounded-lg">
+                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
                                 <FileText size={18} />
                             </div>
                             <span className="text-sm font-medium text-gray-900">Terms & Privacy</span>

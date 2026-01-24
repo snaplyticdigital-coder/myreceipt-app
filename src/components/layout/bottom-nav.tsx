@@ -75,7 +75,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                     <div
                         className={`absolute left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ease-out ${isOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-10 invisible"
                             }`}
-                        style={{ bottom: "calc(22px + 70px + env(safe-area-inset-bottom))" }}
+                        style={{ bottom: "calc(38px + 70px + env(safe-area-inset-bottom))" }}
                     >
                         <div className="flex flex-col items-center gap-3">
                             <button
@@ -114,7 +114,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                     {/* Positioned deeper in the notch for the 'BigPay' docked effect */}
                     <div
                         className="absolute left-1/2 -translate-x-1/2 z-50"
-                        style={{ bottom: "calc(16px + env(safe-area-inset-bottom))" }}
+                        style={{ bottom: "calc(32px + env(safe-area-inset-bottom))" }}
                     >
                         <button
                             onClick={toggleMenu}
@@ -149,8 +149,8 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                             className="w-full h-[64px] block"
                             preserveAspectRatio="none"
                             style={{
-                                backdropFilter: 'blur(20px) saturate(180%)',
-                                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                                backdropFilter: 'blur(25px) saturate(180%)',
+                                WebkitBackdropFilter: 'blur(25px) saturate(180%)',
                                 backgroundColor: 'transparent'
                             }}
                         >
@@ -164,16 +164,16 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                                 L: Line to top right
                             */}
                             <path
-                                d="M 0 0 
-                                   L 142 0 
-                                   C 158 0, 162 10, 165 14
-                                   C 175 28, 200 28, 210 14
-                                   C 213 10, 217 0, 233 0 
-                                   L 375 0 
-                                   V 64 
-                                   H 0 
+                                d="M 0 0
+                                   L 142 0
+                                   C 158 0, 162 -2, 165 6
+                                   C 175 24, 200 24, 210 6
+                                   C 213 -2, 217 0, 233 0
+                                   L 375 0
+                                   V 64
+                                   H 0
                                    Z"
-                                fill="rgba(255, 255, 255, 0.92)"
+                                fill="rgba(255, 255, 255, 0.9)"
                             />
                         </svg>
 
