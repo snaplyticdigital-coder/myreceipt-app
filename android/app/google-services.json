@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "85489326202",
+    "project_id": "myreceipt-v1",
+    "storage_bucket": "myreceipt-v1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85489326202:android:c423535fdbced18f9803c3",
+        "android_client_info": {
+          "package_name": "com.myreceipt.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85489326202-35791pc4pvrkjg2tavm5cp3fp8m7iofn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myreceipt.app",
+            "certificate_hash": "9465433d0987b4ce863b5c6ef5f23e33c403e508"
+          }
+        },
+        {
+          "client_id": "85489326202-4mpe49njcl286o6c75h1vmqigv5eud5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5F8Y0PdDiVMikCz-dqgGI4IZ6cOwwnlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85489326202-4mpe49njcl286o6c75h1vmqigv5eud5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

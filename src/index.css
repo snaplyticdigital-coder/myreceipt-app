@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .animate-scan-y {
+        animation: scan-y 2.5s linear infinite;
+    }
+
+    @keyframes scan-y {
+        0% {
+            top: 5%;
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            top: 95%;
+            opacity: 0;
+        }
+    }
+
+    /* Giggle animation for FAB */
+    @keyframes giggle {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        20% {
+            transform: rotate(10deg);
+        }
+
+        40% {
+            transform: rotate(-10deg);
+        }
+
+        60% {
+            transform: rotate(5deg);
+        }
+
+        80% {
+            transform: rotate(-5deg);
+        }
+
+        100% {
+            transform: rotate(0deg);
+        }
+    }
+
+    .animate-giggle {
+        animation: giggle 400ms ease-in-out;
+    }
+
+    /* Slide in from right animation for drill-down pages */
+    @keyframes slide-in-from-right {
+        from {
+            transform: translateX(30%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .animate-slide-in-right {
+        animation: slide-in-from-right 300ms ease-out;
+    }
+
+    /* Scale in animation for modals */
+    @keyframes scale-in {
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .animate-scale-in {
+        animation: scale-in 200ms ease-out;
+    }
+
+
+
+    /* === LIQUID-FLOW ICON ANIMATION === */
+    @keyframes liquidFillUp {
+        0% {
+            clip-path: inset(100% 0 0 0);
+        }
+
+        80% {
+            clip-path: inset(-2% 0 0 0); /* Slight overshoot for fluid feel */
+        }
+
+        100% {
+            clip-path: inset(0 0 0 0);
+        }
+    }
+
+    .nav-icon-liquid-fill {
+        animation: liquidFillUp 350ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+    }
+
+    /* Custom duration utility */
+    .duration-350 {
+        transition-duration: 350ms;
+    }
+
+    /* === PREMIUM SHADOW PHYSICS (BigPay Style) === */
+    .nav-ambient-shadow {
+        /* Soft Ambient Occlusion shadow with broad blur and low opacity */
+        filter: drop-shadow(0 -8px 12px rgba(0, 0, 0, 0.04)) 
+                drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.02));
+    }
+
+    /* === GLASSMORPHISM UTILITIES === */
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+}
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* REFINED TYPOGRAPHY (OpenType Features) */
+    /* tnum: Tabular Figures (alignment) */
+    /* cv05: Lowercase 'l' with tail (legibility) */
+    /* cv11: Single-story 'a' (modern geometric look) */
+    /* calt: Contextual Alternates (standard) */
+    font-feature-settings: "tnum" 1, "cv05" 1, "cv11" 1, "calt" 1;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+}
