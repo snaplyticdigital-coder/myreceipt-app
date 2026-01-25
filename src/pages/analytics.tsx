@@ -430,51 +430,8 @@ export function AnalyticsPage() {
                 )}
             </div>
 
-            <div className="px-5 py-5 grid grid-cols-2 gap-4">
-                <div
-                    onClick={handleDetailedView}
-                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm border border-blue-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
-                >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
-                    <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
-                                <span className="text-blue-600 text-lg font-bold">RM</span>
-                            </div>
-                            <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${periodChange >= 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                                <span>{periodChange >= 0 ? '↑' : '↓'}</span>
-                                <span>{Math.abs(periodChange).toFixed(1)}%</span>
-                            </div>
-                        </div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Spent</p>
-                        <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(totalSpending).replace('RM', '')}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
-                    </div>
-                </div>
-
-                <div
-                    onClick={handleDetailedView}
-                    className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl p-4 shadow-sm border border-purple-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
-                >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-100 to-fuchsia-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
-                    <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
-                                <TrendingUp size={20} className="text-purple-600" />
-                            </div>
-                            <div className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
-                                <span>Avg</span>
-                                <span>{formatCurrency(avgTransaction).replace('RM', '')}</span>
-                            </div>
-                        </div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transactions</p>
-                        <p className="text-2xl font-bold text-gray-900 mt-1">{filteredReceipts.length}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="px-4 space-y-5">
+            <div className="px-4 py-5 space-y-5">
+                {/* Dynamic Spending Chart (Free) */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -516,7 +473,55 @@ export function AnalyticsPage() {
 
                 <div ref={paywallRef}>
                     <ProLockOverlay blurAmount="xl">
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        {/* Stats Cards (Now Paywalled) */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Total Spent Card */}
+                            <div
+                                onClick={handleDetailedView}
+                                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm border border-blue-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                            <span className="text-blue-600 text-lg font-bold">RM</span>
+                                        </div>
+                                        <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${periodChange >= 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                                            <span>{periodChange >= 0 ? '↑' : '↓'}</span>
+                                            <span>{Math.abs(periodChange).toFixed(1)}%</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Spent</p>
+                                    <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(totalSpending).replace('RM', '')}</p>
+                                    <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                                </div>
+                            </div>
+
+                            {/* Transactions Card */}
+                            <div
+                                onClick={handleDetailedView}
+                                className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl p-4 shadow-sm border border-purple-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-100 to-fuchsia-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                                            <TrendingUp size={20} className="text-purple-600" />
+                                        </div>
+                                        <div className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                                            <span>Avg</span>
+                                            <span>{formatCurrency(avgTransaction).replace('RM', '')}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transactions</p>
+                                    <p className="text-2xl font-bold text-gray-900 mt-1">{filteredReceipts.length}</p>
+                                    <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Spending Distribution - Visual Donut */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-5">
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="p-2 bg-pink-50 rounded-lg">
                                     <PieChart size={18} className="text-pink-500" />
@@ -606,6 +611,7 @@ export function AnalyticsPage() {
                             </div>
                         </div>
 
+                        {/* Spending by Category - Progress Bars */}
                         <div className="bg-white rounded-2xl p-5 shadow-sm mt-5">
                             <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
                             <div className="space-y-4">
@@ -636,6 +642,7 @@ export function AnalyticsPage() {
                             </div>
                         </div>
 
+                        {/* Top Store Types - Cards Grid */}
                         <div className="bg-white rounded-2xl p-5 shadow-sm mt-5">
                             <h2 className="text-lg font-bold text-gray-900 mb-4">Top Store Types</h2>
                             <div className="grid grid-cols-2 gap-3">
@@ -658,6 +665,7 @@ export function AnalyticsPage() {
                             </div>
                         </div>
 
+                        {/* AI-Powered Spending Insights */}
                         <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-blue-100 mt-5">
                             <h2 className="text-lg font-bold text-gray-900 mb-4">🤖 AI Spending Insights</h2>
                             <div className="mb-5">
