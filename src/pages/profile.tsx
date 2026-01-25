@@ -123,7 +123,7 @@ export function ProfilePage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Sticky Gradient Header */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600 to-blue-600 px-5 pt-[calc(1rem+env(safe-area-inset-top))] pb-8 rounded-b-[2rem] shadow-md relative overflow-hidden transition-all duration-200">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600 to-blue-600 px-5 pt-[calc(1rem+env(safe-area-inset-top))] pb-8 rounded-b-[2rem] shadow-md relative overflow-hidden transition-all duration-200">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                 <div className="relative z-10">
                     <div className="flex items-center justify-between mb-4">
@@ -154,6 +154,11 @@ export function ProfilePage() {
                                 <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${user.tier === 'PRO' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm' : 'bg-white/20 text-white'}`}>
                                     {user.tier === 'PRO' ? 'Pro Member' : 'Free Tier'}
                                 </span>
+                                {user.tier === 'PRO' && user.proExpiryDate && (
+                                    <span className="text-[10px] font-bold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 uppercase">
+                                        PRO UNTIL {new Date(user.proExpiryDate).toLocaleDateString('en-GB')}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -176,6 +181,35 @@ export function ProfilePage() {
                         <ChevronRight size={20} className="text-gray-400" />
                     </div>
                 </Link>
+
+                {/* The 'Duitrack Growth' Banner */}
+                <div
+                    onClick={() => navigate('/referral')}
+                    className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-5 shadow-lg relative overflow-hidden group mb-6 transition-all hover:shadow-xl active:scale-98"
+                >
+                    {/* Background Pattern */}
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-colors" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl -ml-8 -mb-8" />
+
+                    <div className="relative z-10 flex items-center justify-between">
+                        <div className="max-w-[70%]">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider">
+                                    Limited Offer
+                                </span>
+                            </div>
+                            <h3 className="text-lg font-bold text-white leading-tight mb-1">
+                                Get 7 Days of Pro!
+                            </h3>
+                            <p className="text-xs text-blue-100 font-medium">
+                                Share the savings with your besties.
+                            </p>
+                        </div>
+                        <div className="bg-white rounded-full p-2.5 shadow-sm group-hover:scale-110 transition-transform">
+                            <ChevronRight className="text-purple-600" size={24} />
+                        </div>
+                    </div>
+                </div>
 
                 {/* Upgrade Banner - Only for Free Tier */}
                 {user.tier === 'FREE' && (
@@ -771,7 +805,6 @@ function TacVerificationModal({
                         )}
                     </div>
 
-                    {/* Actions */}
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}

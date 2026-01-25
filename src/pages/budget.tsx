@@ -74,7 +74,7 @@ export function BudgetPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header - Gradient style matching other pages */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-4">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-4 sticky top-0 z-50">
                 <div className="flex items-center gap-3 mb-4">
                     <button
                         onClick={() => navigate(-1)}

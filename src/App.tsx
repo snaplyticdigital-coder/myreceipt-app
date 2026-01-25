@@ -20,6 +20,7 @@ import { SearchPage } from './pages/search';
 import { NotificationsPage } from './pages/notifications';
 import { TaxReliefPage } from './pages/tax-relief';
 import { AchievementsPage } from './pages/achievements';
+import { ReferralPage } from './pages/referral';
 import { DetailedExpensesPage } from './pages/detailed-expenses';
 import { TaxVaultPage } from './pages/tax-vault';
 
@@ -80,6 +81,7 @@ function AppContent() {
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="tax-relief" element={<TaxReliefPage />} />
                 <Route path="achievements" element={<AchievementsPage />} />
+                <Route path="referral" element={<ReferralPage />} />
                 <Route path="detailed-expenses" element={<DetailedExpensesPage />} />
                 <Route path="tax-vault" element={<TaxVaultPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

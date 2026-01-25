@@ -6,11 +6,11 @@ import type { AchievementTier } from '../lib/achievements';
 import { Search, Bell, Trophy, Target, Lock, Flame } from 'lucide-react';
 
 export function AchievementsPage() {
-    const { points, streak, receipts, budget } = useStore();
+    const { points, streak, receipts, budget, user } = useStore();
     const [activeTab, setActiveTab] = useState<'achievements' | 'challenges'>('achievements');
 
     // Calculate progress for all achievements
-    const progressData = calculateAchievements(receipts, streak, budget);
+    const progressData = calculateAchievements(receipts, streak, budget, user.referralsCount || 0);
 
     // Calculate stats
     const totalAchievements = ACHIEVEMENTS.length;
@@ -38,7 +38,7 @@ export function AchievementsPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-white px-4 py-3 flex items-center justify-between border-b border-gray-100">
+            <div className="sticky top-0 z-50 bg-white px-4 py-3 flex items-center justify-between border-b border-gray-100">
                 <h1 className="text-xl font-bold text-gray-900">Achievements</h1>
                 <div className="flex items-center gap-3">
                     <button className="text-gray-600"><Search size={24} /></button>

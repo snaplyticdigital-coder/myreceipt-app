@@ -87,6 +87,10 @@ interface AppStore {
     currentInsights: Insight[];
     setInsights: (insights: Insight[]) => void;
 
+    // Referral System
+    redeemReferral: (code: string) => Promise<{ success: boolean; message: string }>;
+    simulateReferralSuccess: () => void;
+
     // Phase 3: XP System
     weeklyRecapCompleted: string | null; // ISO week string
     awardUploadPoints: (receiptId: string) => void;
@@ -304,6 +308,9 @@ export const useStore = create<AppStore>((set, get) => ({
                 name,
                 amount: 0,
                 isPreset: false,
+                referralCode: `DUIT${Math.floor(1000 + Math.random() * 9000)}`, // Simple generation
+                referralsCount: 0,
+                redeemedReferral: false,
                 icon: icon || '📁',
             };
             const newBudget = {
@@ -700,6 +707,82 @@ export const useStore = create<AppStore>((set, get) => ({
             celebrationTier: newTierIndex
         };
     }),
+
+    simulateReferralSuccess: () => {
+        set((state) => {
+            const currentCount = state.user.referralsCount || 0;
+            const newCount = currentCount + 1;
+
+            // Tier Logic
+            // Tier 1 (1-3): 7 Days
+            // Tier 2 (4+): 2 Days
+            const daysToAdd = newCount <= 3 ? 7 : 2;
+
+            const now = new Date();
+            const currentExpiry = state.user.proExpiryDate ? new Date(state.user.proExpiryDate) : now;
+            const baseDate = currentExpiry > now ? currentExpiry : now;
+
+            const newExpiry = new Date(baseDate);
+            newExpiry.setDate(newExpiry.getDate() + daysToAdd); // Add Days
+
+            return {
+                user: {
+                    ...state.user,
+                    tier: 'PRO',  // Upgrade to PRO
+                    referralsCount: newCount,
+                    proExpiryDate: newExpiry.toISOString(),
+                },
+                celebrationTier: 99 // Trigger confetti
+            };
+        });
+        get().showToast(`Referral #${(get().user.referralsCount || 0)} Confirmed! Days added.`, 'success');
+    },
+
+    redeemReferral: async (code: string) => {
+        const state = get();
+        const user = state.user;
+
+        // Validation
+        if (!code || code.trim().length === 0) {
+            return { success: false, message: 'Please enter a valid code.' };
+        }
+
+        if (user.redeemedReferral) {
+            return { success: false, message: 'You have already redeemed a referral code.' };
+        }
+
+        if (code === user.referralCode) {
+            return { success: false, message: 'You cannot redeem your own code.' };
+        }
+
+        // Mock check
+        const isValid = code.toUpperCase().startsWith('DUIT') || code.length >= 5;
+
+        if (!isValid) {
+            return { success: false, message: 'Invalid referral code.' };
+        }
+
+        // Logic: Grant 7 Days Pro
+        const now = new Date();
+        const currentExpiry = user.proExpiryDate ? new Date(user.proExpiryDate) : now;
+        const baseDate = currentExpiry > now ? currentExpiry : now;
+
+        const newExpiry = new Date(baseDate);
+        newExpiry.setDate(newExpiry.getDate() + 7);
+
+        set((state) => ({
+            user: {
+                ...state.user,
+                tier: 'PRO',
+                redeemedReferral: true,
+                proExpiryDate: newExpiry.toISOString()
+            },
+            celebrationTier: 99
+        }));
+
+        state.showToast('Referral success! 7 Days Pro added.', 'success');
+        return { success: true, message: 'Success! 7 Days Pro added.' };
+    },
 }));
 
 // Helper to persist insights state

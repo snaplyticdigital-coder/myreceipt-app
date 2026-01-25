@@ -28,7 +28,7 @@ export function AppBar({ title, showMonthSelector, children }: AppBarProps) {
     };
 
     return (
-        <header className="sticky top-0 bg-surface border-b border-color z-40">
+        <header className="sticky top-0 bg-surface border-b border-color z-50">
             <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
                 <div className="flex-1">
                     {title && (

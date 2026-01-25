@@ -204,7 +204,7 @@ export function DetailedExpensesPage() {
     return (
         <div className="min-h-screen bg-gray-50 animate-slide-in-right">
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
+            <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
                 <div className="flex items-center justify-between px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]">
                     <div className="flex items-center gap-3">
                         <button

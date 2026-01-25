@@ -164,6 +164,10 @@ export interface User {
     nextResetDate: string; // ISO timestamp for next reset (Anniversary Billing)
     lastAdWatch?: string; // ISO timestamp
     proExpiryDate?: string; // ISO timestamp
+    // Referral System
+    referralCode?: string;
+    referralsCount?: number;
+    redeemedReferral?: boolean;
 }
 
 export interface CategorySummary {

@@ -199,6 +199,35 @@ export const ACHIEVEMENTS: Achievement[] = [
         icon: '🦉',
         target: 1,
         unit: 'receipt'
+    },
+
+    // REFERRAL (3) - New Growth Badges
+    {
+        id: 'jom-viral',
+        title: 'Jom Viral',
+        tier: 'Common',
+        description: 'Refer 1 friend',
+        icon: '🗣️',
+        target: 1,
+        unit: 'friend'
+    },
+    {
+        id: 'kaki-viral',
+        title: 'Kaki Viral',
+        tier: 'Rare',
+        description: 'Refer 3 friends (Tier 1)',
+        icon: '📢',
+        target: 3,
+        unit: 'friends'
+    },
+    {
+        id: 'geng-fyp',
+        title: 'Geng FYP',
+        tier: 'Epic',
+        description: 'Refer 10 friends',
+        icon: '🚀',
+        target: 10,
+        unit: 'friends'
     }
 ];
 
@@ -207,7 +236,8 @@ export const ACHIEVEMENTS: Achievement[] = [
 export function calculateAchievements(
     receipts: Receipt[],
     streak: StreakData,
-    budget: Budget
+    budget: Budget,
+    referralsCount: number = 0
 ): AchievementProgress[] {
 
     // Helper to clamp progress
@@ -301,6 +331,13 @@ export function calculateAchievements(
             case 'challenger':
             case 'challenge-champion':
                 current = challengesCompleted;
+                break;
+
+            // Referrals
+            case 'jom-viral':
+            case 'kaki-viral':
+            case 'geng-fyp':
+                current = referralsCount;
                 break;
 
             default:

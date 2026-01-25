@@ -45,7 +45,7 @@ export function AppLayout() {
 
             {/* Main Content Area */}
             <main className="w-full h-full relative">
-                <div className="absolute inset-0 w-full h-full overflow-y-auto scroll-smooth pb-[calc(60px+env(safe-area-inset-bottom)+20px)] bg-gray-50">
+                <div className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden scroll-smooth pb-[calc(60px+env(safe-area-inset-bottom)+20px)] bg-gray-50">
                     <div className="max-w-lg mx-auto min-h-full">
                         <PageTransition>
                             <Outlet />
