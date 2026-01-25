@@ -515,7 +515,7 @@ export function AnalyticsPage() {
                 </div>
 
                 <div ref={paywallRef}>
-                    <ProLockOverlay blurAmount="xl">
+                    <ProLockOverlay blurAmount="xl" align="top">
                         <div className="space-y-5">
                             {/* Spending Distribution - Visual Donut */}
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
