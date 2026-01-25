@@ -364,20 +364,6 @@ export function HomePage() {
 
     const greeting = getGreeting();
 
-    // Profile completion calculation
-    const profileCompletion = useMemo(() => {
-        const fields = [
-            { filled: !!user.name, weight: 15 },
-            { filled: !!user.email, weight: 15 },
-            { filled: !!user.dob, weight: 12 },
-            { filled: !!user.gender, weight: 10 },
-            { filled: !!user.phone, weight: 13 },
-            { filled: !!user.salary, weight: 15 },
-            { filled: !!user.occupation, weight: 10 },
-            { filled: !!user.postcode, weight: 10 },
-        ];
-        return fields.reduce((acc, field) => acc + (field.filled ? field.weight : 0), 0);
-    }, [user]);
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
@@ -485,7 +471,7 @@ export function HomePage() {
                 <ProfileCompletionCTA />
 
                 {/* 3. Merged Monthly Status (Budget & Transactions) */}
-                <MonthlyStatusSection onLimitReachedClick={() => setIsPaywallOpen(true)} />
+                <MonthlyStatusSection />
 
                 {/* 4. Financial Co-Pilot (Insights) - Replaced with new 3-Card System */}
                 <CoPilotSection />
@@ -627,7 +613,7 @@ export function HomePage() {
                         ))}
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

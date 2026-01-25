@@ -212,8 +212,8 @@ export function ProfilePage() {
                         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div
                                 className={`h-full rounded-full transition-all duration-500 ${profileCompletion.percentage >= 100
-                                        ? 'bg-green-500'
-                                        : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                                    ? 'bg-green-500'
+                                    : 'bg-gradient-to-r from-blue-500 to-purple-500'
                                     }`}
                                 style={{ width: `${profileCompletion.percentage}%` }}
                             />
@@ -288,7 +288,7 @@ export function ProfilePage() {
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Date of Birth</p>
                                     <p className="text-xs text-gray-500">
-                                        {user.dob ? new Date(user.dob).toLocaleDateString('en-GB') : 'Not set'}
+                                        {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-GB') : 'Not set'}
                                     </p>
                                 </div>
                             </div>
@@ -356,7 +356,7 @@ export function ProfilePage() {
                                 <Banknote size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Salary Range</p>
-                                    <p className="text-xs text-gray-500">{user.salary || 'Not set'}</p>
+                                    <p className="text-xs text-gray-500">{user.salaryRange || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -636,8 +636,8 @@ export function ProfilePage() {
                     { value: 'RM 10,000 - 15,000', label: 'RM 10,000 - 15,000' },
                     { value: 'Above RM 15,000', label: 'Above RM 15,000' }
                 ]}
-                value={user.salary || ''}
-                onSelect={(val) => updateUser({ salary: val })}
+                value={user.salaryRange || ''}
+                onSelect={(val) => updateUser({ salaryRange: val })}
             />
             <PopoverSelect
                 isOpen={openPopover === 'occupation'}
@@ -674,8 +674,8 @@ export function ProfilePage() {
                 isOpen={showCalendar}
                 onClose={() => setShowCalendar(false)}
                 anchorRef={dobRef}
-                value={user.dob || ''}
-                onChange={(date) => updateUser({ dob: date })}
+                value={user.dateOfBirth || ''}
+                onChange={(date) => updateUser({ dateOfBirth: date })}
             />
         </div>
     );

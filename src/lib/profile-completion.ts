@@ -9,10 +9,10 @@ import type { User } from '../types';
 const FIELD_WEIGHTS = {
     name: 10,
     email: 10,
-    dob: 15,
+    dateOfBirth: 15,
     gender: 10,
     phone: 15,
-    salary: 15,
+    salaryRange: 15,
     occupation: 15,
     postcode: 10,
 } as const;
@@ -35,14 +35,14 @@ function isFieldComplete(user: User, field: ProfileField): boolean {
             return !!user.name && user.name.trim().length > 0;
         case 'email':
             return !!user.email && user.email.includes('@');
-        case 'dob':
-            return !!user.dob && user.dob.length > 0;
+        case 'dateOfBirth':
+            return !!user.dateOfBirth && user.dateOfBirth.length > 0;
         case 'gender':
             return !!user.gender;
         case 'phone':
             return !!user.phone && user.phone.length >= 10;
-        case 'salary':
-            return !!user.salary && user.salary.length > 0;
+        case 'salaryRange':
+            return !!user.salaryRange && user.salaryRange.length > 0;
         case 'occupation':
             return !!user.occupation && user.occupation.length > 0;
         case 'postcode':
@@ -59,10 +59,10 @@ export function getFieldDisplayName(field: ProfileField): string {
     const displayNames: Record<ProfileField, string> = {
         name: 'Name',
         email: 'Email',
-        dob: 'Date of Birth',
+        dateOfBirth: 'Date of Birth',
         gender: 'Gender',
         phone: 'Phone Number',
-        salary: 'Salary Range',
+        salaryRange: 'Salary Range',
         occupation: 'Occupation',
         postcode: 'Postcode',
     };

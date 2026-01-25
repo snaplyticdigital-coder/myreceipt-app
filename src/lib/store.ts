@@ -614,14 +614,15 @@ export const useStore = create<AppStore>((set, get) => ({
     },
 
     watchAd: () => {
-        const { user } = get();
+        const { user, showToast } = get();
         // Enforce 48h cooldown
         if (user.lastAdWatch) {
             const lastWatch = new Date(user.lastAdWatch);
             const now = new Date();
             const hoursSince = (now.getTime() - lastWatch.getTime()) / (1000 * 60 * 60);
             if (hoursSince < 48) {
-                console.warn("Ad cooldown active");
+                const remainingHours = Math.ceil(48 - hoursSince);
+                showToast(`Ad reward available in ${remainingHours}h`, 'error');
                 return;
             }
         }
@@ -634,6 +635,7 @@ export const useStore = create<AppStore>((set, get) => ({
                 lastAdWatch: new Date().toISOString()
             }
         }));
+        showToast("Reward earned! +3 scans added.", "success");
     },
 
     upgradeToPro: () => {

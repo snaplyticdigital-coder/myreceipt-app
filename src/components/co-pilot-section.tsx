@@ -1,38 +1,39 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { TrendingUp, Wallet, Star, ChevronRight } from 'lucide-react';
+import { TrendingUp, Wallet, Star, ChevronRight, Zap } from 'lucide-react';
 import { useMemo } from 'react';
 
-// Specialized Co-Pilot Card Component
+// Specialized Co-Pilot Card Component with Unified Glassmorphism
 interface CoPilotCardProps {
     type: 'progress' | 'habit' | 'budget';
     title: string;
     message: string;
     icon: React.ReactNode;
-    color: string;
+    glowClass: string;
+    iconBgClass: string;
     href: string;
 }
 
-function CoPilotCard({ title, message, icon, color, href }: CoPilotCardProps) {
+function CoPilotCard({ title, message, icon, glowClass, iconBgClass, href }: CoPilotCardProps) {
     return (
-        <Link to={href} className={`block p-4 rounded-2xl border transition-all active:scale-[0.98] ${color} relative overflow-hidden group`}>
-            {/* Soft decorative background orb */}
-            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-white/20 blur-xl group-hover:bg-white/30 transition-colors" />
+        <Link to={href} className={`block p-4 rounded-3xl glass-surface ${glowClass} transition-all active:scale-[0.97] group relative overflow-hidden premium-card-shadow`}>
+            {/* Subtle Gradient Glow */}
+            <div className={`absolute -inset-1 opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-br ${iconBgClass.replace('bg-', 'from-').replace('/90', '')} to-transparent blur-2xl`} />
 
-            <div className="flex items-start gap-3 relative z-10">
-                <div className="shrink-0 mt-0.5 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm">
+            <div className="flex items-start gap-3.5 relative z-10">
+                <div className={`shrink-0 p-2.5 ${iconBgClass} backdrop-blur-md rounded-2xl shadow-sm border border-white/50 group-hover:scale-110 transition-transform duration-300`}>
                     {icon}
                 </div>
-                <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wide opacity-80 mb-0.5">{title}</h3>
-                    <p className="text-sm font-medium leading-relaxed">
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 leading-none">{title}</h3>
+                    <p className="text-[13px] font-semibold text-gray-800 leading-snug">
                         {message}
                     </p>
                 </div>
-            </div>
-            <div className="absolute bottom-3 right-3 text-current opacity-60">
-                <ChevronRight size={16} />
+                <div className="shrink-0 self-center opacity-40 group-hover:opacity-80 group-hover:translate-x-0.5 transition-all">
+                    <ChevronRight size={18} className="text-gray-400" />
+                </div>
             </div>
         </Link>
     );
@@ -41,13 +42,10 @@ function CoPilotCard({ title, message, icon, color, href }: CoPilotCardProps) {
 export function CoPilotSection() {
     const { budget, getMonthTotal } = useStore();
     const budgetUsed = getMonthTotal();
-    // In future, connect to user.goals or achievements state
 
     // 2. Calculate Habit Shift (Comparison)
     const savedAmount = useMemo(() => {
-        // Compare current week to "same week last month" approx
-        // Mocking a positive result "Syoknya! You jimat RM..."
-        return 45.50;
+        return 45.50; // Mocked
     }, []);
     const topCategory = "Dining";
 
@@ -58,46 +56,55 @@ export function CoPilotSection() {
         return lastDay.getDate() - now.getDate();
     }, []);
 
-    // Remaining daily budget calculation
     const remainingBudget = Math.max(0, budget.total - budgetUsed);
     const dailyAllowable = daysLeftInMonth > 0 ? remainingBudget / daysLeftInMonth : 0;
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-2 px-1">
-                <span className="text-lg">🤖</span>
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Financial Co-Pilot</h2>
+        <div className="space-y-4 px-1">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-200">
+                        <Zap size={16} className="text-white" fill="currentColor" />
+                    </div>
+                    <h2 className="text-[15px] font-bold text-gray-800 tracking-tight">Financial Co-Pilot</h2>
+                </div>
+                <div className="px-2 py-0.5 bg-purple-100 rounded-md">
+                    <span className="text-[10px] font-bold text-purple-700 uppercase tracking-tighter">AI Analysis</span>
+                </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3.5">
                 {/* Card 1: Progress Nudge */}
                 <CoPilotCard
                     type="progress"
-                    title="Achievement Unlock"
-                    message="Sikit lagi boss! 🏅 You're 94% to 'Super Saver'. Upload 2 more receipts to unlock!"
-                    icon={<Star size={16} className="text-amber-500" fill="currentColor" />}
-                    color="bg-amber-50 border-amber-100 text-amber-900"
+                    title="Unlock Perk"
+                    message="Sikit lagi boss! 🏅 2 more receipts to reach 'Super Saver' status."
+                    icon={<Star size={18} className="text-amber-500" fill="currentColor" />}
+                    glowClass="glass-glow-amber"
+                    iconBgClass="bg-amber-50/90"
                     href="/achievements"
                 />
 
                 {/* Card 2: Habit Shift */}
                 <CoPilotCard
                     type="habit"
-                    title="Habit Shift"
-                    message={`Syoknya! 🌟 You jimat ${formatCurrency(savedAmount)} on ${topCategory} compared to last month!`}
-                    icon={<TrendingUp size={16} className="text-emerald-500" />}
-                    color="bg-emerald-50 border-emerald-100 text-emerald-900"
+                    title="Spending Shift"
+                    message={`Jimat ${formatCurrency(savedAmount)} on ${topCategory} vs last month. Mantap! 🌟`}
+                    icon={<TrendingUp size={18} className="text-emerald-500" />}
+                    glowClass="glass-glow-emerald"
+                    iconBgClass="bg-emerald-50/90"
                     href="/analytics"
                 />
 
                 {/* Card 3: Budget Guide */}
                 <CoPilotCard
                     type="budget"
-                    title="Budget Guide"
-                    message={`Boleh Tahan! 👍 Your Dining budget can last another ${daysLeftInMonth} days. Keep it below ${formatCurrency(dailyAllowable)}/day k?`}
-                    icon={<Wallet size={16} className="text-blue-500" />}
-                    color="bg-blue-50 border-blue-100 text-blue-900"
-                    href="/budget" // Assuming budget route exists or similar
+                    title="Daily Runway"
+                    message={`Dining limit: ${formatCurrency(dailyAllowable)}/day for the next ${daysLeftInMonth} days. Boleh? 👍`}
+                    icon={<Wallet size={18} className="text-blue-500" />}
+                    glowClass="glass-glow-blue"
+                    iconBgClass="bg-blue-50/90"
+                    href="/budget"
                 />
             </div>
         </div>

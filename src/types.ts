@@ -147,12 +147,12 @@ export interface User {
     lifestyleCap: number;
     lifestyleYtd: number;
     enableSpouseOverflow?: boolean;
-    // Profile Enhancement Fields
-    dob?: string;                      // ISO date (YYYY-MM-DD)
+    // Profile Fields (Consolidated)
+    dateOfBirth?: string;              // ISO date string (YYYY-MM-DD)
     gender?: 'Male' | 'Female' | 'Other';
     phone?: string;                    // Malaysian format
     phoneVerified?: boolean;
-    salary?: string;                   // Salary range
+    salaryRange?: string;              // Salary range
     occupation?: string;
     postcode?: string;                 // 5-digit Malaysian
     postcodeState?: string;            // Auto-populated from validation
