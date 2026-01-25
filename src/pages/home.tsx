@@ -368,7 +368,7 @@ export function HomePage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-40 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
+            <div className="sticky top-0 z-50 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
                 <div className="flex items-center gap-3">
                     {/* Profile Avatar with Gear Overlay */}
                     <Link to="/profile" className="flex-shrink-0 relative">

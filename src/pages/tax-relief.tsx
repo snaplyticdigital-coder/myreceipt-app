@@ -75,7 +75,7 @@ export function TaxReliefPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
                 <div className="flex justify-between items-start mb-1">
                     <div>
                         <h1 className="text-lg font-bold text-white">Tax Relief</h1>

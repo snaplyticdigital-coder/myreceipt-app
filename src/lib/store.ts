@@ -105,6 +105,7 @@ interface AppStore {
     watchAd: () => void;
     upgradeToPro: () => void;
     checkMonthlyReset: () => void;
+    getAdCooldown: () => number;
     incrementScanCount: () => void;
     // Toast State
     toast: { message: string; type: 'success' | 'error' | 'info' } | null;
@@ -611,6 +612,16 @@ export const useStore = create<AppStore>((set, get) => ({
                 }
             }));
         }
+    },
+
+    getAdCooldown: () => {
+        const { user } = get();
+        if (!user.lastAdWatch) return 0;
+        const lastWatch = new Date(user.lastAdWatch);
+        const now = new Date();
+        const diff = now.getTime() - lastWatch.getTime();
+        const cooldownMs = 48 * 60 * 60 * 1000;
+        return diff < cooldownMs ? cooldownMs - diff : 0;
     },
 
     watchAd: () => {

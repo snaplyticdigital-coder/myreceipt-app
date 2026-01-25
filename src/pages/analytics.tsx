@@ -79,11 +79,10 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                     <div className="mb-5 p-4 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl text-white">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">Monthly Burn Rate</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                burnRate.percentOfBudget > 100 ? 'bg-red-500/30 text-red-200' :
-                                burnRate.percentOfBudget > 85 ? 'bg-amber-500/30 text-amber-200' :
-                                'bg-emerald-500/30 text-emerald-200'
-                            }`}>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${burnRate.percentOfBudget > 100 ? 'bg-red-500/30 text-red-200' :
+                                    burnRate.percentOfBudget > 85 ? 'bg-amber-500/30 text-amber-200' :
+                                        'bg-emerald-500/30 text-emerald-200'
+                                }`}>
                                 {burnRate.percentOfBudget.toFixed(0)}% projected
                             </span>
                         </div>
@@ -104,11 +103,10 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                         {/* Progress bar */}
                         <div className="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
                             <div
-                                className={`h-full rounded-full transition-all ${
-                                    burnRate.percentOfBudget > 100 ? 'bg-gradient-to-r from-red-500 to-rose-400' :
-                                    burnRate.percentOfBudget > 85 ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
-                                    'bg-gradient-to-r from-emerald-500 to-green-400'
-                                }`}
+                                className={`h-full rounded-full transition-all ${burnRate.percentOfBudget > 100 ? 'bg-gradient-to-r from-red-500 to-rose-400' :
+                                        burnRate.percentOfBudget > 85 ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
+                                            'bg-gradient-to-r from-emerald-500 to-green-400'
+                                    }`}
                                 style={{ width: `${Math.min(burnRate.percentOfBudget, 100)}%` }}
                             />
                         </div>
@@ -127,9 +125,8 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                         <div className="flex items-center justify-between">
                             <p className="text-[10px] text-gray-500 uppercase font-medium">Weekly Trend</p>
                             {velocity.trend !== 'stable' && (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                                    velocity.trend === 'down' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                                }`}>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${velocity.trend === 'down' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                    }`}>
                                     {velocity.trend === 'down' ? '↓' : '↑'} {Math.abs(velocity.trendPercent).toFixed(0)}%
                                 </span>
                             )}
@@ -172,7 +169,7 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                                                 <h4 className="text-sm font-semibold text-gray-900">{advisory.title}</h4>
                                                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${styles.badge}`}>
                                                     {advisory.type === 'anomaly' ? 'Trend' :
-                                                     advisory.type === 'subscription' ? 'Recurring' : 'Projection'}
+                                                        advisory.type === 'subscription' ? 'Recurring' : 'Projection'}
                                                 </span>
                                             </div>
                                             <p className="text-sm text-gray-600 leading-relaxed">{advisory.description}</p>
@@ -534,7 +531,7 @@ export function AnalyticsPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             <StickyAdBanner />
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
                 <div className="flex items-center justify-between mb-1">
                     <div>
                         <h1 className="text-lg font-bold text-white">Analytics</h1>

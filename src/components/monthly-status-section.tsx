@@ -1,8 +1,8 @@
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { AlertTriangle, Scan, Zap, PlayCircle } from 'lucide-react';
+import { AlertTriangle, PlayCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { ProBudgetCard } from './pro-budget-card';
 
 
 export function MonthlyStatusSection() {
@@ -10,6 +10,12 @@ export function MonthlyStatusSection() {
     const currentSpend = getMonthTotal();
     const budgetTotal = budget.total || 1; // Avoid div/0
 
+    // PRO MEMBER: Show Full Width Budget Card
+    if (user.tier === 'PRO') {
+        return <ProBudgetCard />;
+    }
+
+    // FREE MEMBER: Original Grid Layout
     // Budget Progress
     const budgetPercentage = Math.min((currentSpend / budgetTotal) * 100, 100);
     const isBudgetExceeded = currentSpend > budgetTotal;
@@ -34,11 +40,6 @@ export function MonthlyStatusSection() {
     const remainingDays = Math.floor(remainingHours / 24);
     const displayHours = remainingHours % 24;
 
-    // Smart CTA Logic
-    const showScanNow = usage < 5;
-    const showGoPro = usage >= 5 && !isLimitReached;
-    const showWatchAd = isLimitReached;
-
     return (
         <div className="grid grid-cols-2 gap-4">
             {/* Widget 1: Monthly Budget */}
@@ -62,7 +63,7 @@ export function MonthlyStatusSection() {
                 </div>
             </div>
 
-            {/* Widget 2: Free Transactions (10-Dot System) */}
+            {/* Widget 2: Free Transactions & Ad Rewards */}
             <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-16 h-16 bg-purple-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
                 <div className="relative z-10">
@@ -95,40 +96,26 @@ export function MonthlyStatusSection() {
                     })}
                 </div>
 
-                {/* Smart CTA */}
+                {/* Ad Reward Button */}
                 <div className="mt-auto pt-2 relative z-10">
-                    {showScanNow && (
-                        <Link to="/scan" className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg text-white text-[10px] font-black uppercase tracking-wider shadow-md active:scale-95 transition-all">
-                            <Scan size={12} strokeWidth={3} /> Scan Now
-                        </Link>
-                    )}
-
-                    {showGoPro && (
-                        <button onClick={() => { }} className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg text-white text-[10px] font-black uppercase tracking-wider shadow-md active:scale-95 transition-all">
-                            <Zap size={12} fill="currentColor" strokeWidth={3} /> Go Pro
-                        </button>
-                    )}
-
-                    {showWatchAd && (
-                        <button
-                            onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
-                            disabled={isAdCooldownActive}
-                            className={`flex flex-col items-center justify-center w-full py-1 rounded-lg text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-900'
-                                }`}
-                        >
-                            <div className="flex items-center gap-1.5">
-                                <PlayCircle size={12} strokeWidth={3} />
-                                <span className="text-[10px] font-black uppercase tracking-wider">
-                                    {isAdCooldownActive ? 'Cooldown' : 'Watch Ad for +3 Scans'}
-                                </span>
-                            </div>
-                            {isAdCooldownActive && (
-                                <span className="text-[8px] font-extrabold opacity-90 leading-none">
-                                    Refills in {remainingDays}d {displayHours}h
-                                </span>
-                            )}
-                        </button>
-                    )}
+                    <button
+                        onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
+                        disabled={isAdCooldownActive}
+                        className={`flex flex-col items-center justify-center w-full py-1.5 rounded-lg text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-900 hover:bg-gray-800'
+                            }`}
+                    >
+                        <div className="flex items-center gap-1.5">
+                            <PlayCircle size={12} strokeWidth={3} />
+                            <span className="text-[9px] font-black uppercase tracking-wider">
+                                {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
+                            </span>
+                        </div>
+                        {isAdCooldownActive && (
+                            <span className="text-[8px] font-extrabold opacity-90 leading-none mt-0.5">
+                                Refills {remainingDays}d {displayHours}h
+                            </span>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
