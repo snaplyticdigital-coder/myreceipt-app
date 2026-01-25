@@ -1,11 +1,12 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles } from 'lucide-react';
+import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles, BarChart3, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
 import { CalendarPicker } from '../components/ui/calendar-picker';
+import { SectionHeader } from '../components/ui/section-header';
 import { generateAdvisories, getSpendingVelocity, calculateBurnRate } from '../lib/financial-intelligence';
 
 type TimePeriod = 'week' | 'month' | 'year' | 'custom';
@@ -663,12 +664,12 @@ export function AnalyticsPage() {
 
             <div className="px-4 space-y-5">
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 className="text-lg font-bold text-gray-900">{chartData.title}</h2>
-                            <p className="text-xs text-gray-500 mt-0.5">{chartData.subtitle}</p>
-                        </div>
-                    </div>
+                    <SectionHeader
+                        title={chartData.title}
+                        subtitle={chartData.subtitle}
+                        icon={<BarChart3 size={20} />}
+                        className="mb-6"
+                    />
 
                     <div className="flex items-end justify-between gap-2 h-40">
                         {chartData.data.map((item, index) => {
@@ -706,12 +707,12 @@ export function AnalyticsPage() {
                         <div className="space-y-5">
                             {/* Spending Distribution - Visual Donut */}
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <div className="p-2 bg-pink-50 rounded-lg">
-                                        <PieChart size={18} className="text-pink-500" />
-                                    </div>
-                                    <h2 className="text-lg font-bold text-gray-900">Spending Distribution</h2>
-                                </div>
+                                <SectionHeader
+                                    title="Spending Distribution"
+                                    subtitle="BY CATEGORY"
+                                    icon={<PieChart size={20} />}
+                                    className="mb-6"
+                                />
 
                                 <div className="flex items-center gap-8">
                                     <div className="relative w-36 h-36 flex-shrink-0">
@@ -797,7 +798,12 @@ export function AnalyticsPage() {
 
                             {/* Spending by Category - Progress Bars */}
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
-                                <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
+                                <SectionHeader
+                                    title="Category Breakdown"
+                                    subtitle="DETAILED VIEW"
+                                    icon={<Tag size={20} />}
+                                    className="mb-4"
+                                />
                                 <div className="space-y-4">
                                     {topSpendingCategories.map(([category, amount]) => {
                                         const percent = (amount / totalSpending) * 100;
