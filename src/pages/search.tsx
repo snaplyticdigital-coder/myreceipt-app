@@ -4,7 +4,6 @@ import { formatCurrency } from '../lib/format';
 import { Link } from 'react-router-dom';
 import { Search as SearchIcon, X, Clock, Tag, ArrowUpDown, Check, ChevronDown } from 'lucide-react';
 import { PopoverSelect } from '../components/ui/in-app-select';
-import { SectionHeader } from '../components/ui/section-header';
 import type { MerchantCategory } from '../types';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
 
@@ -487,12 +486,17 @@ export function SearchPage() {
                 </div>
 
                 {/* Results Header */}
-                <SectionHeader
-                    title={isSearchActive || selectedCategory ? "Search Results" : "Recent Transactions"}
-                    subtitle={`${filteredReceipts.length} RESULT${filteredReceipts.length !== 1 ? 'S' : ''}`}
-                    icon={<Clock size={20} />}
-                    className="mb-2"
-                />
+                <div className="flex items-center gap-2">
+                    {!isSearchActive && !selectedCategory && (
+                        <Clock size={16} className="text-gray-400" />
+                    )}
+                    <p className="text-xs text-gray-500">
+                        {isSearchActive || selectedCategory
+                            ? `${filteredReceipts.length} result${filteredReceipts.length !== 1 ? 's' : ''}`
+                            : 'Recent Transactions'
+                        }
+                    </p>
+                </div>
 
                 {/* Results */}
                 <div>

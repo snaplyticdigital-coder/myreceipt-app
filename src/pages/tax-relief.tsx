@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
 import type { LhdnTag } from '../types';
-import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, Tag } from 'lucide-react';
+import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield } from 'lucide-react';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
-import { SectionHeader } from '../components/ui/section-header';
 
 export function TaxReliefPage() {
     const navigate = useNavigate();
@@ -131,15 +130,18 @@ export function TaxReliefPage() {
                 <ProLockOverlay title="Unlock Tax Relief Tracker" description="Track your LHDN tax reliefs, monitor limits, and optimize your filing with Pro.">
                     {/* Total Claimable Card */}
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden">
-                        <SectionHeader
-                            title="Total Tax-Claimable"
-                            subtitle={`YEAR-TO-DATE ${selectedYear}`}
-                            icon={<FileText size={20} />}
-                            className="relative z-10 mb-2"
-                        />
                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-50 to-blue-50 rounded-bl-[80px] -mr-4 -mt-4" />
-                        <div className="relative z-10 mt-2">
-                            <p className="text-3xl font-bold text-gray-900 ml-[52px]">{formatCurrency(totalClaimable)}</p>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                                    <FileText size={20} className="text-purple-600" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Tax-Claimable</p>
+                                    <p className="text-[10px] text-gray-400">Year-to-Date {selectedYear}</p>
+                                </div>
+                            </div>
+                            <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalClaimable)}</p>
                         </div>
                     </div>
 
@@ -183,12 +185,7 @@ export function TaxReliefPage() {
 
                     {/* LHDN Categories Breakdown */}
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                        <SectionHeader
-                            title="Category Breakdown"
-                            subtitle="LHDN LIMITS"
-                            icon={<Tag size={20} />}
-                            className="mb-5"
-                        />
+                        <h2 className="text-base font-bold text-gray-900 mb-5">Category Breakdown</h2>
                         <div className="space-y-5">
                             {categoryData.map(cat => {
                                 const percent = cat.limit ? (cat.amount / cat.limit) * 100 : 0;

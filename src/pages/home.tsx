@@ -9,8 +9,6 @@ import { MonthlyStatusSection } from '../components/monthly-status-section';
 import { PaywallModal } from '../components/modals/paywall-modal';
 import { CoPilotSection } from '../components/co-pilot-section';
 import { ProfileCompletionCTA } from '../components/profile-completion-cta';
-import { SectionHeader } from '../components/ui/section-header';
-import { Clock } from 'lucide-react';
 import type { MerchantCategory } from '../types';
 
 // Merchant info mapping - returns image, main category, sub-categories, and colors
@@ -480,18 +478,12 @@ export function HomePage() {
 
                 {/* Recent Transactions */}
                 <div>
-                    <SectionHeader
-                        title="Recent Transactions"
-                        subtitle="LATEST ACTIVITY"
-                        icon={<Clock size={20} />}
-                        rightElement={
-                            <Link to="/search" className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1">
-                                View All
-                                <ChevronDown size={12} className="-rotate-90" />
-                            </Link>
-                        }
-                        className="mb-4"
-                    />
+                    <div className="flex items-center justify-between mb-1.5">
+                        <h2 className="text-base font-bold text-gray-900">Recent Transactions</h2>
+                        <Link to="/search" className="text-xs font-medium text-blue-600">
+                            View All
+                        </Link>
+                    </div>
 
                     {/* Phase 3: Clarifying microcopy for transactions vs receipts */}
                     {transactionCount > 0 && (
