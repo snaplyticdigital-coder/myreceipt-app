@@ -197,7 +197,7 @@ export function detectRecurringPatterns(receipts: Receipt[]): RecurringPattern[]
             let isMonthlyPattern = true;
 
             for (let i = 1; i < sortedDates.length; i++) {
-                const daysDiff = (sortedDates[i].getTime() - sortedDates[i-1].getTime()) / (1000 * 60 * 60 * 24);
+                const daysDiff = (sortedDates[i].getTime() - sortedDates[i - 1].getTime()) / (1000 * 60 * 60 * 24);
                 if (daysDiff > 35) {
                     isMonthlyPattern = false;
                     break;
@@ -260,6 +260,112 @@ export function calculateBurnRate(receipts: Receipt[], budget: Budget): BurnRate
 // GENERATE ADVISORIES (Manglish Copy)
 // ============================================
 
+// ============================================
+// MANGLISH COPY ENGINE
+// ============================================
+
+// Define types for templates structure
+type TemplateCategory = {
+    titles: string[];
+    descriptions: string[];
+};
+
+type SeverityMap = {
+    positive?: TemplateCategory;
+    warning?: TemplateCategory;
+    alert?: TemplateCategory;
+};
+
+// Typed templates object
+const MANGLISH_TEMPLATES: Record<'anomaly' | 'subscription' | 'burnRate', SeverityMap> = {
+    anomaly: {
+        positive: {
+            titles: ["Steady Boss!", "Fuyoh Jimat!", "Power Lah!", "Tabung Gajah", "Jimat Kaw Kaw"],
+            descriptions: [
+                "Wah, your {category} spending steady lah - {percent}% below average!",
+                "See? Can save one. {category} down {percent}% this month. Belanja makan?",
+                "Not bad boss, {category} spending dropped {percent}%. Keep it up!",
+                "Your wallet is smiling. {category} spending is {percent}% lower than usual."
+            ]
+        },
+        warning: {
+            titles: ["Eh Boss...", "Watch Out", "Slow Down Sikit", "Spending Naik", "Ayam Warning"],
+            descriptions: [
+                "Your {category} spending {percent}% higher than usual. Control sikit boss.",
+                "Spending on {category} went up {percent}%. Check balik receipt tu.",
+                "Eh, {category} spending trending up {percent}%. Don't play play.",
+                "Just a heads up, {category} is {percent}% above your average."
+            ]
+        },
+        alert: {
+            titles: ["Alamak!", "Kantoi!", "GG Boss", "Dompet Bocor", "Over Budget Weh"],
+            descriptions: [
+                "Woi! {category} spending up {percent}% from usual! What did you buy?!",
+                "Eh boss, {category} spending spike {percent}%! Check sikit, takut fraud.",
+                "Dompet crying already. {category} is {percent}% higher than average.",
+                "Serious lah? {category} limit pecah {percent}%. Slow down or pokai later."
+            ]
+        }
+    },
+    subscription: {
+        warning: {
+            titles: ["Subscription Bocor?", "Ghost Charge?", "Recurring Alert", "Check Please"],
+            descriptions: [
+                "Eh, you spent RM{amount} at {merchant} {count}x recently. Subscription bocor ke?",
+                "Detected {count}x payments to {merchant}. If not using, better cancel boss.",
+                "Is this intentional? {merchant} charged you RM{amount} for {count} times already.",
+                "Check your {merchant} bill. {count} transactions spotted. Jangan bagi free money."
+            ]
+        }
+    },
+    burnRate: {
+        positive: {
+            titles: ["Budget On Track", "Ngam Ngam", "Safety Zone", "Steady Flow"],
+            descriptions: [
+                "Steady boss! Projecting {percent}% budget usage. You can survive this month.",
+                "On track to clear the month with money left. {percent}% budget usage projected.",
+                "Safe zone! Only using {percent}% of budget if you keep going like this."
+            ]
+        },
+        warning: {
+            titles: ["Budget Lari Sikit", "Yellow Zone", "Hati-Hati", "Speeding Ticket"],
+            descriptions: [
+                "On track to use {percent}% of your budget. {days} days left, control sikit.",
+                "You are using budget faster than usual. Projected {percent}% usage.",
+                "Careful boss, burning cash quite fast. {percent}% budget usage projected."
+            ]
+        },
+        alert: {
+            titles: ["Budget Pecah!", "Confirm Pokai", "Red Alert", "SOS Boss"],
+            descriptions: [
+                "If keep spending like this, confirm pokai. {percent}% over budget projected!",
+                "Stop! You are projected to hit {percent}% over budget! Makan maggi la next week.",
+                "Gaji belum masuk, budget already crying. {percent}% over budget alerts.",
+                "Emergency! Burn rate too high. Projected to busted budget by {percent}%."
+            ]
+        }
+    }
+};
+
+function getRandomTemplate(type: 'anomaly' | 'subscription' | 'burnRate', severity: 'positive' | 'warning' | 'alert', data: any): { title: string, description: string } {
+    const templates = MANGLISH_TEMPLATES[type]?.[severity];
+    if (!templates) return { title: "Update", description: "New insight available." };
+
+    const title = templates.titles[Math.floor(Math.random() * templates.titles.length)];
+    let description = templates.descriptions[Math.floor(Math.random() * templates.descriptions.length)];
+
+    // Replace placeholders
+    Object.keys(data).forEach(key => {
+        description = description.replace(`{${key}}`, data[key]);
+        // Handle lowercase variant for category if passed specifically, though regex is better usually, simple replace works if matched exactly
+        if (key === 'category') {
+            description = description.replace(`{category}`, data[key].toLowerCase()); // Fallback if casing matters
+        }
+    });
+
+    return { title, description };
+}
+
 export function generateAdvisories(
     receipts: Receipt[],
     budget: Budget
@@ -272,67 +378,48 @@ export function generateAdvisories(
     anomalies.slice(0, 3).forEach((anomaly, index) => {
         const { category, currentAmount, rollingAverage, percentDiff, isAboveAverage } = anomaly;
 
-        if (!isAboveAverage) {
-            // Positive - spending below average
-            advisories.push({
-                id: `anomaly-positive-${index}`,
-                type: 'anomaly',
-                severity: 'positive',
-                title: `${category} Game Strong`,
-                description: `Wah, your ${category.toLowerCase()} spending steady lah - ${Math.abs(percentDiff).toFixed(0)}% below your 3-month average!`,
-                metric: {
-                    current: currentAmount,
-                    comparison: rollingAverage,
-                    percentDiff,
-                },
-                category,
-                icon: '💪',
-            });
-        } else if (percentDiff >= 30) {
-            // Alert - significantly above average
-            advisories.push({
-                id: `anomaly-alert-${index}`,
-                type: 'anomaly',
-                severity: 'alert',
-                title: `${category} Naik`,
-                description: `Eh boss, ${category.toLowerCase()} spending up ${percentDiff.toFixed(0)}% from usual this month. Check sikit?`,
-                metric: {
-                    current: currentAmount,
-                    comparison: rollingAverage,
-                    percentDiff,
-                },
-                category,
-                icon: '📈',
-            });
-        } else {
-            // Warning - moderately above average
-            advisories.push({
-                id: `anomaly-warning-${index}`,
-                type: 'anomaly',
-                severity: 'warning',
-                title: `${category} Trending Up`,
-                description: `Your ${category.toLowerCase()} spending ${percentDiff.toFixed(0)}% higher than your 3-month average.`,
-                metric: {
-                    current: currentAmount,
-                    comparison: rollingAverage,
-                    percentDiff,
-                },
-                category,
-                icon: '👀',
-            });
-        }
+        const severity = !isAboveAverage ? 'positive' : (percentDiff >= 30 ? 'alert' : 'warning');
+        const templateData = {
+            category: category,
+            percent: Math.abs(percentDiff).toFixed(0),
+            amount: currentAmount.toFixed(0)
+        };
+
+        const { title, description } = getRandomTemplate('anomaly', severity, templateData);
+
+        advisories.push({
+            id: `anomaly-${severity}-${index}`,
+            type: 'anomaly',
+            severity: severity,
+            title: title,
+            description: description,
+            metric: {
+                current: currentAmount,
+                comparison: rollingAverage,
+                percentDiff,
+            },
+            category,
+            icon: severity === 'positive' ? '💪' : (severity === 'alert' ? '📈' : '👀'),
+        });
     });
 
     // 2. Subscription Leak Guard Advisories
     const subscriptions = detectRecurringPatterns(receipts);
 
     subscriptions.slice(0, 2).forEach((sub, index) => {
+        const templateData = {
+            merchant: sub.merchant,
+            amount: sub.amount.toFixed(0),
+            count: sub.occurrences
+        };
+        const { title, description } = getRandomTemplate('subscription', 'warning', templateData);
+
         advisories.push({
             id: `subscription-${index}`,
             type: 'subscription',
             severity: 'warning',
-            title: 'Subscription Spotted',
-            description: `Eh, you spent RM${sub.amount} at ${sub.merchant} ${sub.occurrences}x recently - subscription bocor ke?`,
+            title: title,
+            description: description,
             metric: {
                 current: sub.amount * sub.occurrences,
                 comparison: sub.amount,
@@ -347,50 +434,42 @@ export function generateAdvisories(
     const burnRate = calculateBurnRate(receipts, budget);
 
     if (burnRate.budgetTotal > 0 && burnRate.daysElapsed >= 5) {
-        if (burnRate.percentOfBudget > 100) {
-            const overPercent = burnRate.percentOfBudget - 100;
-            advisories.push({
-                id: 'burn-rate-alert',
-                type: 'burn-rate',
-                severity: 'alert',
-                title: 'Budget Alert',
-                description: `If you keep spending like this, you'll hit RM${burnRate.projectedMonthEnd.toLocaleString('en-MY', { maximumFractionDigits: 0 })} by month-end - that's ${overPercent.toFixed(0)}% over budget bro.`,
-                metric: {
-                    current: burnRate.currentSpent,
-                    comparison: burnRate.budgetTotal,
-                    percentDiff: burnRate.percentOfBudget - 100,
-                },
-                icon: '🔥',
-            });
-        } else if (burnRate.percentOfBudget > 85) {
-            advisories.push({
-                id: 'burn-rate-warning',
-                type: 'burn-rate',
-                severity: 'warning',
-                title: 'Budget Heads Up',
-                description: `On track to use ${burnRate.percentOfBudget.toFixed(0)}% of your monthly budget. ${burnRate.daysRemaining} days left to go.`,
-                metric: {
-                    current: burnRate.currentSpent,
-                    comparison: burnRate.budgetTotal,
-                    percentDiff: burnRate.percentOfBudget - 100,
-                },
-                icon: '⚡',
-            });
-        } else if (burnRate.percentOfBudget <= 70) {
-            advisories.push({
-                id: 'burn-rate-positive',
-                type: 'burn-rate',
-                severity: 'positive',
-                title: 'Budget On Track',
-                description: `Steady boss! Projecting ${burnRate.percentOfBudget.toFixed(0)}% budget usage this month. Keep it up!`,
-                metric: {
-                    current: burnRate.currentSpent,
-                    comparison: burnRate.budgetTotal,
-                    percentDiff: burnRate.percentOfBudget - 100,
-                },
-                icon: '✅',
-            });
+        let severity: 'positive' | 'warning' | 'alert' = 'positive';
+
+        if (burnRate.percentOfBudget > 100) severity = 'alert';
+        else if (burnRate.percentOfBudget > 85) severity = 'warning';
+
+        const templateData = {
+            percent: burnRate.percentOfBudget.toFixed(0),
+            days: burnRate.daysRemaining,
+            over: (burnRate.percentOfBudget - 100).toFixed(0)
+        };
+
+        // Special handling for over budget to show "over %" not "usage %" if we want, 
+        // but current templates use "usage" or "over" contextually.
+        // Let's standardise passing the main % and let template decide context.
+        // For alert 'over budget', we might pass the surplus.
+        if (severity === 'alert') {
+            templateData.percent = (burnRate.percentOfBudget - 100).toFixed(0);
+            // Update template logic to expect "over amount" or "total usage"?
+            // The alert templates say "{percent}% over budget". So we pass the SURPLUS.
         }
+
+        const { title, description } = getRandomTemplate('burnRate', severity, templateData);
+
+        advisories.push({
+            id: `burn-rate-${severity}`,
+            type: 'burn-rate',
+            severity: severity,
+            title: title,
+            description: description,
+            metric: {
+                current: burnRate.currentSpent,
+                comparison: burnRate.budgetTotal,
+                percentDiff: burnRate.percentOfBudget - 100,
+            },
+            icon: severity === 'alert' ? '🔥' : (severity === 'warning' ? '⚡' : '✅'),
+        });
     }
 
     // Sort: alerts first, then warnings, then positive

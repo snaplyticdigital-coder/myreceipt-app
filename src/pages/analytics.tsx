@@ -10,7 +10,7 @@ import { generateAdvisories, getSpendingVelocity, calculateBurnRate } from '../l
 
 type TimePeriod = 'week' | 'month' | 'year' | 'custom';
 
-// Pro Member Advisories Component - Glassmorphism Design
+// Pro Member Advisories Component - Cyber-Luxe Unification
 function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget: Budget }) {
     const advisories = useMemo(() => generateAdvisories(receipts, budget), [receipts, budget]);
     const velocity = useMemo(() => getSpendingVelocity(receipts), [receipts]);
@@ -20,92 +20,86 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
         switch (severity) {
             case 'positive':
                 return {
-                    bg: 'bg-gradient-to-br from-emerald-500/10 to-green-500/10',
-                    border: 'border-emerald-200/50',
-                    iconBg: 'bg-emerald-500/20',
+                    glowClass: 'glass-glow-emerald',
+                    iconBgClass: 'bg-emerald-50/90',
                     iconColor: 'text-emerald-600',
-                    badge: 'bg-emerald-100 text-emerald-700',
                 };
             case 'warning':
                 return {
-                    bg: 'bg-gradient-to-br from-amber-500/10 to-orange-500/10',
-                    border: 'border-amber-200/50',
-                    iconBg: 'bg-amber-500/20',
+                    glowClass: 'glass-glow-amber',
+                    iconBgClass: 'bg-amber-50/90',
                     iconColor: 'text-amber-600',
-                    badge: 'bg-amber-100 text-amber-700',
                 };
             case 'alert':
                 return {
-                    bg: 'bg-gradient-to-br from-red-500/10 to-rose-500/10',
-                    border: 'border-red-200/50',
-                    iconBg: 'bg-red-500/20',
+                    glowClass: 'glass-glow-red',
+                    iconBgClass: 'bg-red-50/90',
                     iconColor: 'text-red-600',
-                    badge: 'bg-red-100 text-red-700',
                 };
         }
     };
 
     const getAdvisoryIcon = (type: string, severity: string) => {
-        if (type === 'subscription') return <Repeat size={18} />;
-        if (type === 'burn-rate') return <Flame size={18} />;
-        if (severity === 'positive') return <CheckCircle2 size={18} />;
-        if (severity === 'alert') return <AlertTriangle size={18} />;
-        return <TrendingUp size={18} />;
+        const size = 18;
+        if (type === 'subscription') return <Repeat size={size} />;
+        if (type === 'burn-rate') return <Flame size={size} />;
+        if (severity === 'positive') return <CheckCircle2 size={size} />;
+        if (severity === 'alert') return <AlertTriangle size={size} />;
+        return <TrendingUp size={size} />;
     };
 
     return (
         <div className="relative overflow-hidden rounded-2xl">
-            {/* Glassmorphism Background */}
+            {/* Unified Glassmorphism Background - Blue to Purple Brand Gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-pink-600/5" />
             <div className="absolute inset-0 backdrop-blur-[2px]" />
 
-            {/* Content */}
+            {/* Content Container */}
             <div className="relative p-5 border border-white/20 rounded-2xl bg-white/40 backdrop-blur-xl shadow-lg">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg shadow-purple-200/50">
-                        <Sparkles size={20} className="text-white" />
+
+                {/* Header with improved styling */}
+                <div className="flex items-center gap-2.5 mb-5">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                        <Sparkles size={16} className="text-white" fill="currentColor" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            Financial Intelligence
-                        </h2>
-                        <p className="text-xs text-gray-500">Pro Member Advisories</p>
+                        <h2 className="text-[15px] font-bold text-gray-800 tracking-tight">Financial Intelligence</h2>
+                        <p className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Pro Insights</p>
                     </div>
                 </div>
 
-                {/* Burn Rate Summary Card */}
+                {/* Burn Rate Summary Card - Redesigned to fit new aesthetics */}
                 {burnRate.budgetTotal > 0 && (
-                    <div className="mb-5 p-4 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl text-white">
+                    <div className="mb-5 p-4 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white shadow-xl shadow-slate-200">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">Monthly Burn Rate</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${burnRate.percentOfBudget > 100 ? 'bg-red-500/30 text-red-200' :
-                                    burnRate.percentOfBudget > 85 ? 'bg-amber-500/30 text-amber-200' :
-                                        'bg-emerald-500/30 text-emerald-200'
+                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Burn Rate</span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide ${burnRate.percentOfBudget > 100 ? 'bg-red-500 text-white' :
+                                burnRate.percentOfBudget > 85 ? 'bg-amber-500 text-white' :
+                                    'bg-emerald-500 text-white'
                                 }`}>
-                                {burnRate.percentOfBudget.toFixed(0)}% projected
+                                {burnRate.percentOfBudget.toFixed(0)}% Used
                             </span>
                         </div>
                         <div className="flex items-end justify-between">
                             <div>
-                                <p className="text-2xl font-bold">
+                                <p className="text-2xl font-black tracking-tight">
                                     RM{burnRate.dailyBurnRate.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                                 </p>
-                                <p className="text-xs text-slate-400">per day average</p>
+                                <p className="text-[11px] font-medium text-slate-400">per day avg</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-semibold text-slate-300">
+                                <p className="text-sm font-bold text-slate-300">
                                     → RM{burnRate.projectedMonthEnd.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                                 </p>
-                                <p className="text-xs text-slate-400">{burnRate.daysRemaining} days left</p>
+                                <p className="text-[10px] font-medium text-slate-400">{burnRate.daysRemaining} days left</p>
                             </div>
                         </div>
                         {/* Progress bar */}
-                        <div className="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div className="mt-3 h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
                             <div
-                                className={`h-full rounded-full transition-all ${burnRate.percentOfBudget > 100 ? 'bg-gradient-to-r from-red-500 to-rose-400' :
-                                        burnRate.percentOfBudget > 85 ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
-                                            'bg-gradient-to-r from-emerald-500 to-green-400'
+                                className={`h-full rounded-full transition-all duration-1000 ${burnRate.percentOfBudget > 100 ? 'bg-gradient-to-r from-red-500 to-rose-400' :
+                                    burnRate.percentOfBudget > 85 ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
+                                        'bg-gradient-to-r from-emerald-500 to-green-400'
                                     }`}
                                 style={{ width: `${Math.min(burnRate.percentOfBudget, 100)}%` }}
                             />
@@ -113,71 +107,70 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                     </div>
                 )}
 
-                {/* Spending Velocity */}
+                {/* Spending Velocity - Grid Layout */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className="p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100">
-                        <p className="text-[10px] text-gray-500 uppercase font-medium">Daily Average</p>
-                        <p className="text-lg font-bold text-gray-900">
+                    <div className="p-3 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm">
+                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Daily Avg</p>
+                        <p className="text-lg font-black text-gray-800">
                             RM{velocity.dailyAverage.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                         </p>
                     </div>
-                    <div className="p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100">
-                        <div className="flex items-center justify-between">
-                            <p className="text-[10px] text-gray-500 uppercase font-medium">Weekly Trend</p>
+                    <div className="p-3 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm">
+                        <div className="flex items-center justify-between mb-1">
+                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Trend</p>
                             {velocity.trend !== 'stable' && (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${velocity.trend === 'down' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${velocity.trend === 'down' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'
                                     }`}>
                                     {velocity.trend === 'down' ? '↓' : '↑'} {Math.abs(velocity.trendPercent).toFixed(0)}%
                                 </span>
                             )}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                             {velocity.trend === 'down' ? (
-                                <TrendingDown size={16} className="text-green-500" />
+                                <TrendingDown size={18} className="text-emerald-500" />
                             ) : velocity.trend === 'up' ? (
-                                <TrendingUp size={16} className="text-orange-500" />
+                                <TrendingUp size={18} className="text-orange-500" />
                             ) : null}
-                            <p className="text-lg font-bold text-gray-900">
+                            <p className="text-lg font-black text-gray-800">
                                 {velocity.trend === 'stable' ? 'Stable' : velocity.trend === 'down' ? 'Down' : 'Up'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Advisories */}
+                {/* Advisories Feed */}
                 {advisories.length > 0 ? (
                     <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                            <span>Advisories</span>
-                            <span className="text-[10px] px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full font-medium">
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Alerts</h3>
+                            <span className="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-bold">
                                 {advisories.length}
                             </span>
-                        </h3>
+                        </div>
+
                         {advisories.map((advisory) => {
                             const styles = getAdvisoryStyles(advisory.severity);
                             return (
-                                <div
-                                    key={advisory.id}
-                                    className={`p-4 rounded-xl ${styles.bg} border ${styles.border} backdrop-blur-sm transition-all hover:scale-[1.01]`}
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <div className={`p-2 rounded-lg ${styles.iconBg} ${styles.iconColor}`}>
+                                <div key={advisory.id} className={`block p-4 rounded-3xl glass-surface ${styles.glowClass} transition-all active:scale-[0.98] group relative overflow-hidden premium-card-shadow`}>
+                                    {/* Subtle Gradient Glow */}
+                                    <div className={`absolute -inset-1 opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-br ${styles.iconBgClass.replace('bg-', 'from-').replace('/90', '')} to-transparent blur-2xl`} />
+
+                                    <div className="flex items-start gap-3.5 relative z-10">
+                                        <div className={`shrink-0 p-2.5 ${styles.iconBgClass} ${styles.iconColor} backdrop-blur-md rounded-2xl shadow-sm border border-white/50 group-hover:scale-110 transition-transform duration-300`}>
                                             {getAdvisoryIcon(advisory.type, advisory.severity)}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h4 className="text-sm font-semibold text-gray-900">{advisory.title}</h4>
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${styles.badge}`}>
-                                                    {advisory.type === 'anomaly' ? 'Trend' :
-                                                        advisory.type === 'subscription' ? 'Recurring' : 'Projection'}
-                                                </span>
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-500 leading-none">{advisory.title}</h3>
                                             </div>
-                                            <p className="text-sm text-gray-600 leading-relaxed">{advisory.description}</p>
+                                            <p className="text-[13px] font-bold text-gray-800 leading-snug">
+                                                {advisory.description}
+                                            </p>
                                             {advisory.metric && advisory.metric.comparison > 0 && (
-                                                <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-                                                    <span>Now: <strong className="text-gray-700">RM{advisory.metric.current.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
-                                                    <span>•</span>
-                                                    <span>Avg: <strong className="text-gray-700">RM{advisory.metric.comparison.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
+                                                <div className="mt-2 flex items-center gap-3 text-[10px] font-medium text-gray-500 bg-white/50 rounded-lg p-1.5 w-fit">
+                                                    <span>Now: <strong className="text-gray-800">RM{advisory.metric.current.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
+                                                    <span className="text-gray-300">|</span>
+                                                    <span>Avg: <strong className="text-gray-800">RM{advisory.metric.comparison.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
                                                 </div>
                                             )}
                                         </div>
@@ -188,10 +181,10 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                     </div>
                 ) : (
                     <div className="text-center py-8">
-                        <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                        <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center animate-pulse">
                             <CheckCircle2 size={28} className="text-blue-500" />
                         </div>
-                        <p className="text-sm font-medium text-gray-700">All clear, boss!</p>
+                        <p className="text-sm font-bold text-gray-800">All clear, boss!</p>
                         <p className="text-xs text-gray-500 mt-1">No advisories - your spending patterns look healthy.</p>
                     </div>
                 )}
