@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { AlertTriangle, PlayCircle, X } from 'lucide-react';
+import { AlertTriangle, PlayCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
 import { ProBudgetCard } from './pro-budget-card';
 
 
@@ -41,31 +39,6 @@ export function MonthlyStatusSection() {
     const remainingHours = Math.floor(remainingMs / (1000 * 60 * 60));
     const remainingDays = Math.floor(remainingHours / 24);
     const displayHours = remainingHours % 24;
-
-    // Tooltip Logic
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
-    useEffect(() => {
-        if (isAdCooldownActive && lastAdWatch) {
-            const dismissedKey = `ad_tooltip_dismissed_${lastAdWatch.getTime()}`;
-            const dismissed = localStorage.getItem(dismissedKey);
-            if (!dismissed) {
-                // Show after a small delay for attention
-                const timer = setTimeout(() => setIsTooltipVisible(true), 500);
-                return () => clearTimeout(timer);
-            }
-        } else {
-            setIsTooltipVisible(false);
-        }
-    }, [isAdCooldownActive, lastAdWatch]);
-
-    const dismissTooltip = () => {
-        if (lastAdWatch) {
-            const dismissedKey = `ad_tooltip_dismissed_${lastAdWatch.getTime()}`;
-            localStorage.setItem(dismissedKey, 'true');
-            setIsTooltipVisible(false);
-        }
-    };
 
     return (
         <div className="grid grid-cols-2 gap-4">
@@ -125,44 +98,6 @@ export function MonthlyStatusSection() {
 
                 {/* Ad Reward Button */}
                 <div className="mt-auto pt-2 relative z-10">
-                    {/* Upsell Tooltip */}
-                    {isAdCooldownActive && isTooltipVisible && (
-                        <div className="absolute bottom-full left-0 right-0 mb-3 animate-in fade-in slide-in-from-bottom-2 duration-300 z-20">
-                            <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 shadow-lg border border-transparent bg-clip-padding relative">
-                                {/* Gradient Border Hack */}
-                                <div className="absolute inset-0 rounded-xl p-[1px] bg-gradient-to-r from-blue-500 to-purple-500 -z-10" />
-
-                                {/* Arrow */}
-                                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-r border-b border-purple-200 rotate-45" />
-
-                                {/* Content */}
-                                <div className="relative z-10">
-                                    <div className="flex justify-between items-start mb-1">
-                                        <h4 className="text-xs font-bold text-gray-900">Tak sabar tunggu? 😤</h4>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                dismissTooltip();
-                                            }}
-                                            className="text-gray-400 hover:text-gray-600 -mt-1 -mr-1 p-1"
-                                        >
-                                            <X size={12} />
-                                        </button>
-                                    </div>
-                                    <p className="text-[10px] text-gray-600 leading-tight mb-2">
-                                        Upgrade to Pro for unlimited scans weh. No need to wait-wait already.
-                                    </p>
-                                    <Link
-                                        to="/profile"
-                                        className="block w-full text-center py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-[10px] font-bold text-white shadow-sm hover:opacity-90 transition-opacity"
-                                    >
-                                        See Pro Benefits →
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <button
                         onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
                         disabled={isAdCooldownActive}
