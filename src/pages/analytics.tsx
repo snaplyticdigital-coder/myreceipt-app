@@ -494,9 +494,9 @@ export function AnalyticsPage() {
                 </div>
             </div>
 
-            <div className="px-4 space-y-5">
-                {/* Dynamic Spending Chart */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div className="px-4 space-y-5 snap-y snap-mandatory scroll-smooth">
+                {/* Dynamic Spending Chart - Free Tier Data */}
+                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 snap-start">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-lg font-bold text-gray-900">{chartData.title}</h2>
@@ -537,8 +537,8 @@ export function AnalyticsPage() {
                     </div>
                 </div>
 
-                {/* Spending Distribution - Visual Donut */}
-                <ProLockOverlay title="Unlock Advanced Analytics" description="Upgrade to Pro to see your spending breakdown, top categories, and AI insights.">
+                {/* Spending Distribution - Visual Donut - LOCKED PORTION */}
+                <ProLockOverlay>
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <div className="flex items-center gap-2 mb-6">
                             <div className="p-2 bg-pink-50 rounded-lg">
