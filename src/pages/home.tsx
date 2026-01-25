@@ -472,7 +472,7 @@ export function HomePage() {
                 <ProfileCompletionCTA />
 
                 {/* 3. Merged Monthly Status (Budget & Transactions) */}
-                <MonthlyStatusSection />
+                <MonthlyStatusSection isPrivacyMode={privacyMode} />
 
                 {/* 4. Financial Co-Pilot (Insights) - Replaced with new 3-Card System */}
                 <CoPilotSection />

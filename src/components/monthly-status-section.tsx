@@ -5,14 +5,21 @@ import { format } from 'date-fns';
 import { ProBudgetCard } from './pro-budget-card';
 
 
-export function MonthlyStatusSection() {
+interface MonthlyStatusSectionProps {
+    isPrivacyMode?: boolean;
+}
+
+export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSectionProps) {
     const { user, getMonthTotal, budget } = useStore();
     const currentSpend = getMonthTotal();
     const budgetTotal = budget.total || 1; // Avoid div/0
 
+    // Helper to mask values
+    const mask = (val: string) => isPrivacyMode ? 'RM ****' : val;
+
     // PRO MEMBER: Show Full Width Budget Card
     if (user.tier === 'PRO') {
-        return <ProBudgetCard />;
+        return <ProBudgetCard isPrivacyMode={isPrivacyMode} />;
     }
 
     // FREE MEMBER: Original Grid Layout
@@ -48,10 +55,10 @@ export function MonthlyStatusSection() {
                 <div className="relative z-10">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
                     <p className="text-xl font-extrabold text-gray-900 mt-0.5 tracking-tight">
-                        {formatCurrency(currentSpend)}
+                        {mask(formatCurrency(currentSpend))}
                     </p>
                     <p className="text-[10px] text-gray-400 font-medium">
-                        / {formatCurrency(budgetTotal)}
+                        / {mask(formatCurrency(budgetTotal))}
                     </p>
                 </div>
 

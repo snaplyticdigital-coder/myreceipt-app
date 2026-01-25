@@ -3,7 +3,11 @@ import { formatCurrency } from '../lib/format';
 import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export function ProBudgetCard() {
+interface ProBudgetCardProps {
+    isPrivacyMode?: boolean;
+}
+
+export function ProBudgetCard({ isPrivacyMode = false }: ProBudgetCardProps) {
     const { budget, getMonthTotal } = useStore();
 
     // Ensure accurate real-time data
@@ -31,6 +35,8 @@ export function ProBudgetCard() {
     const radius = 30;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (clampedPercent / 100) * circumference;
+
+    const mask = (val: string) => isPrivacyMode ? 'RM ****' : val;
 
     return (
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-5">
@@ -78,10 +84,10 @@ export function ProBudgetCard() {
 
                 <div className="flex items-baseline gap-1.5 flex-wrap">
                     <span className="text-xl font-bold text-gray-900 leading-none">
-                        {formatCurrency(spent)}
+                        {mask(formatCurrency(spent))}
                     </span>
                     <span className="text-xs text-gray-400 font-medium">
-                        / {formatCurrency(total)}
+                        / {mask(formatCurrency(total))}
                     </span>
                 </div>
 

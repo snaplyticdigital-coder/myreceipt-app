@@ -18,13 +18,13 @@ export function SectionHeader({
 }: SectionHeaderProps) {
     return (
         <div className={`flex items-center justify-between mb-5 ${className}`}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
                 {/* Rounded Square Icon Container */}
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200/50 flex-shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200/50 flex-shrink-0">
                     {/* Render icon clone with specific styles if it's a valid element, or just render it */}
                     {React.isValidElement(icon) ? (
                         React.cloneElement(icon as any, {
-                            size: 20,
+                            size: 16,
                             className: "text-white stroke-[1.5px]" // Thin stroke white line icon
                         })
                     ) : (
@@ -32,7 +32,7 @@ export function SectionHeader({
                     )}
                 </div>
                 <div>
-                    <h2 className="text-[18px] font-bold text-gray-900 leading-tight">
+                    <h2 className="text-[15px] font-bold text-gray-800 tracking-tight leading-tight">
                         {title}
                     </h2>
                     {subtitle && (

@@ -7,7 +7,7 @@ export function Toast() {
     if (!toast) return null;
 
     const Icon = toast.type === 'success' ? CheckCircle : toast.type === 'error' ? AlertCircle : Info;
-    const bgColor = toast.type === 'success' ? 'bg-green-500' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+    const bgColor = toast.type === 'success' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500';
 
     return (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-2 fade-in duration-300">
