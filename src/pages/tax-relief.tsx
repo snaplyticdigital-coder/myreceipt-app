@@ -48,9 +48,7 @@ export function TaxReliefPage() {
     const totalClaimable = Object.values(lhdnBreakdown).reduce((sum, val) => sum + val, 0);
     const lifestyleTotal = lhdnBreakdown.Lifestyle;
     const lifestyleCap = user.lifestyleCap;
-    const lifestyleRemaining = Math.max(0, lifestyleCap - lifestyleTotal);
     const lifestyleExceeded = lifestyleTotal > lifestyleCap;
-    const lifestylePercent = (lifestyleTotal / lifestyleCap) * 100;
 
     // LHDN category limits (2024 reference)
     const categoryLimits: Record<LhdnTag, number | null> = {
@@ -148,43 +146,19 @@ export function TaxReliefPage() {
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
                             <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-sm font-bold text-amber-900">Lifestyle Cap Exceeded</p>
+                                <p className="text-sm font-bold text-amber-900">Annual Lifestyle Cap Exceeded</p>
                                 <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                                    You've exceeded your annual Lifestyle relief cap of {formatCurrency(lifestyleCap)}.
-                                    Consider routing future lifestyle expenses to your spouse.
+                                    You've fully utilized your annual Lifestyle relief of {formatCurrency(lifestyleCap)}.
+                                    Additional lifestyle expenses for this year won't provide further tax deduction.
                                 </p>
                             </div>
                         </div>
                     )}
 
-                    {/* Lifestyle Cap Progress */}
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                        <div className="flex items-center justify-between mb-4">
-                            <SectionHeader title="Lifestyle Cap" icon={<TrendingUp />} className="mb-0" />
-                            <div className={`px-2 py-0.5 rounded-full text-xs font-bold ${lifestyleExceeded ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
-                                {lifestylePercent.toFixed(0)}%
-                            </div>
-                        </div>
-                        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-3">
-                            <div
-                                className={`h-full rounded-full transition-all duration-500 ${lifestyleExceeded ? 'bg-gradient-to-r from-red-500 to-orange-500' : 'bg-gradient-to-r from-purple-500 to-blue-500'}`}
-                                style={{ width: `${Math.min(lifestylePercent, 100)}%` }}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                            <span className="text-gray-500">
-                                <strong className="text-gray-900">{formatCurrency(lifestyleTotal)}</strong> of {formatCurrency(lifestyleCap)}
-                            </span>
-                            <span className={`font-medium ${lifestyleExceeded ? 'text-red-500' : 'text-green-600'}`}>
-                                {lifestyleExceeded ? 'Cap exceeded' : `${formatCurrency(lifestyleRemaining)} remaining`}
-                            </span>
-                        </div>
-                    </div>
-
                     {/* LHDN Categories Breakdown */}
-                    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                        <SectionHeader title="Category Breakdown" icon={<List />} className="mb-5" />
-                        <div className="space-y-5">
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <SectionHeader title="Category Breakdown" icon={<List />} className="mb-6" />
+                        <div className="space-y-6">
                             {categoryData.map(cat => {
                                 const percent = cat.limit ? (cat.amount / cat.limit) * 100 : 0;
                                 const isExceeded = cat.limit && cat.amount > cat.limit;
@@ -241,6 +215,38 @@ export function TaxReliefPage() {
                                     </div>
                                 );
                             })}
+                        </div>
+                    </div>
+
+                    {/* Tax Knowledge Center */}
+                    <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-6 border border-blue-100 shadow-sm">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                                <Shield size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-900">Tax Relief Knowledge</h3>
+                                <p className="text-[10px] text-blue-600 uppercase font-bold tracking-wider">Education</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-blue-200/50">
+                                <p className="text-xs font-bold text-gray-800 mb-1">What is the Lifestyle Cap?</p>
+                                <p className="text-xs text-gray-600 leading-relaxed">
+                                    The "Lifestyle" relief is an annual tax deduction of up to **RM 2,500**.
+                                    It covers your personal spending on reading materials, computers, smartphones,
+                                    tablets, sports equipment, and gym memberships.
+                                </p>
+                            </div>
+
+                            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-blue-200/50">
+                                <p className="text-xs font-bold text-gray-800 mb-1">Pro Tip: Exceeded the Limit?</p>
+                                <p className="text-xs text-gray-600 leading-relaxed">
+                                    If you've spent more than RM 2,500 on lifestyle items, consider asking your spouse
+                                    to buy the next item under their name so they can claim it instead!
+                                </p>
+                            </div>
                         </div>
                     </div>
 
