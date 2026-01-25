@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency, getGreeting } from '../lib/format';
-import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown, Clock } from 'lucide-react';
+import { SectionHeader } from '../components/ui/section-header';
 // InsightCard removed
 import { GamificationCard } from '../components/gamification-card';
 import { MonthlyStatusSection } from '../components/monthly-status-section';
@@ -476,14 +477,19 @@ export function HomePage() {
                 {/* 4. Financial Co-Pilot (Insights) - Replaced with new 3-Card System */}
                 <CoPilotSection />
 
+
+
                 {/* Recent Transactions */}
                 <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                        <h2 className="text-base font-bold text-gray-900">Recent Transactions</h2>
-                        <Link to="/search" className="text-xs font-medium text-blue-600">
-                            View All
-                        </Link>
-                    </div>
+                    <SectionHeader
+                        title="Recent Transactions"
+                        icon={<Clock />}
+                        rightElement={
+                            <Link to="/search" className="text-xs font-medium text-blue-600">
+                                View All
+                            </Link>
+                        }
+                    />
 
                     {/* Phase 3: Clarifying microcopy for transactions vs receipts */}
                     {transactionCount > 0 && (

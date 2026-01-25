@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
 import type { LhdnTag } from '../types';
-import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield } from 'lucide-react';
+import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, List } from 'lucide-react';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
+import { SectionHeader } from '../components/ui/section-header';
 
 export function TaxReliefPage() {
     const navigate = useNavigate();
@@ -132,15 +133,12 @@ export function TaxReliefPage() {
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-50 to-blue-50 rounded-bl-[80px] -mr-4 -mt-4" />
                         <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
-                                    <FileText size={20} className="text-purple-600" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Tax-Claimable</p>
-                                    <p className="text-[10px] text-gray-400">Year-to-Date {selectedYear}</p>
-                                </div>
-                            </div>
+                            <SectionHeader
+                                title="Total Tax-Claimable"
+                                subtitle={`Year-to-Date ${selectedYear}`}
+                                icon={<FileText />}
+                                className="mb-4"
+                            />
                             <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalClaimable)}</p>
                         </div>
                     </div>
@@ -162,7 +160,7 @@ export function TaxReliefPage() {
                     {/* Lifestyle Cap Progress */}
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-base font-bold text-gray-900">Lifestyle Cap</h2>
+                            <SectionHeader title="Lifestyle Cap" icon={<TrendingUp />} className="mb-0" />
                             <div className={`px-2 py-0.5 rounded-full text-xs font-bold ${lifestyleExceeded ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
                                 {lifestylePercent.toFixed(0)}%
                             </div>
@@ -185,7 +183,7 @@ export function TaxReliefPage() {
 
                     {/* LHDN Categories Breakdown */}
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                        <h2 className="text-base font-bold text-gray-900 mb-5">Category Breakdown</h2>
+                        <SectionHeader title="Category Breakdown" icon={<List />} className="mb-5" />
                         <div className="space-y-5">
                             {categoryData.map(cat => {
                                 const percent = cat.limit ? (cat.amount / cat.limit) * 100 : 0;
@@ -248,10 +246,11 @@ export function TaxReliefPage() {
 
                     {/* Tax Filing Tips */}
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
-                        <h2 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-                            <TrendingUp size={16} className="text-blue-600" />
-                            Tax Filing Tips
-                        </h2>
+                        <SectionHeader
+                            title="Tax Filing Tips"
+                            icon={<TrendingUp />}
+                            className="mb-3 text-blue-900"
+                        />
                         <ul className="space-y-2.5">
                             <li className="flex items-start gap-2.5 text-xs text-blue-800 leading-relaxed">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0" />
@@ -271,10 +270,11 @@ export function TaxReliefPage() {
                     {/* Spouse Overflow Info */}
                     {user.spouse && (
                         <div className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl p-5 border border-purple-100">
-                            <h2 className="text-sm font-bold text-purple-900 mb-2 flex items-center gap-2">
-                                <Users size={16} className="text-purple-600" />
-                                Spouse Relief Sharing
-                            </h2>
+                            <SectionHeader
+                                title="Spouse Relief Sharing"
+                                icon={<Users />}
+                                className="mb-2 text-purple-900"
+                            />
                             <p className="text-xs text-purple-800 mb-3">
                                 Linked to: <span className="font-bold">{user.spouse.name}</span>
                             </p>
