@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
 import type { LhdnTag } from '../types';
-import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, List } from 'lucide-react';
+import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, List, Sparkles } from 'lucide-react';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { SectionHeader } from '../components/ui/section-header';
 
@@ -50,10 +50,10 @@ export function TaxReliefPage() {
     const lifestyleCap = user.lifestyleCap;
     const lifestyleExceeded = lifestyleTotal > lifestyleCap;
 
-    // LHDN category limits (2024 reference)
+    // LHDN category limits (2026 assessment year)
     const categoryLimits: Record<LhdnTag, number | null> = {
         Medical: 10000,
-        Lifestyle: lifestyleCap,
+        Lifestyle: 2500,
         Education: null, // No limit
         Books: 2500,
         Sports: 1000,
@@ -70,6 +70,15 @@ export function TaxReliefPage() {
         { tag: 'Childcare', amount: lhdnBreakdown.Childcare, limit: categoryLimits.Childcare, color: 'bg-pink-500' },
     ];
     const categoryData = allCategories.filter(cat => cat.amount > 0 || cat.limit !== null);
+
+    // Predictive Tax Optimization Logic: Find top underutilized category
+    const underutilized = allCategories
+        .filter(cat => cat.limit !== null && cat.amount < cat.limit)
+        .map(cat => ({
+            ...cat,
+            remaining: (cat.limit || 0) - cat.amount
+        }))
+        .sort((a, b) => b.remaining - a.remaining)[0];
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
@@ -155,24 +164,39 @@ export function TaxReliefPage() {
                         </div>
                     )}
 
-                    {/* LHDN Categories Breakdown */}
+                    {/* Optimization Card: Dynamic Underutilized Insight */}
+                    {underutilized && (
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+                            <div className="relative bg-white rounded-2xl p-5 border border-purple-100 shadow-sm overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full -mr-16 -mt-16" />
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200 shrink-0">
+                                        <Sparkles size={24} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm font-bold text-gray-900 mb-1">Tax Saving Opportunity</h3>
+                                        <p className="text-sm text-gray-700 leading-relaxed italic font-medium">
+                                            "Boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. If you don't use it by 31 Dec, it's gone k?"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Tax Category Breakdown */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                        <SectionHeader title="Category Breakdown" icon={<List />} className="mb-6" />
+                        <SectionHeader title="Tax Category Breakdown" icon={<List />} className="mb-6" />
                         <div className="space-y-6">
                             {categoryData.map(cat => {
                                 const percent = cat.limit ? (cat.amount / cat.limit) * 100 : 0;
                                 const isExceeded = cat.limit && cat.amount > cat.limit;
 
-                                // Simplistic gradient mapping fallback if replacement fails, or just manual override
-                                let bgGradient = 'from-blue-500 to-blue-400';
-                                if (cat.tag === 'Medical') bgGradient = 'from-green-500 to-emerald-400';
-                                else if (cat.tag === 'Lifestyle') bgGradient = 'from-blue-500 to-indigo-400';
-                                else if (cat.tag === 'Education') bgGradient = 'from-purple-500 to-fuchsia-400';
-                                else if (cat.tag === 'Books') bgGradient = 'from-orange-500 to-amber-400';
-                                else if (cat.tag === 'Sports') bgGradient = 'from-teal-500 to-cyan-400';
-                                else if (cat.tag === 'Childcare') bgGradient = 'from-pink-500 to-rose-400';
+                                // Duitrack Blue-to-Purple brand gradient
+                                let bgGradient = 'from-purple-600 to-blue-600';
 
-                                if (isExceeded) bgGradient = 'from-red-500 to-orange-500';
+                                if (isExceeded) bgGradient = 'from-red-600 to-orange-500';
 
                                 return (
                                     <div
