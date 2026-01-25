@@ -8,11 +8,12 @@ import { validateMalaysianPostcode } from '../lib/locations';
 import {
     Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, AlertTriangle,
     Wallet, Bell, Lock, BarChart3, HelpCircle, FileText, CheckCircle2, XCircle,
-    User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote
+    User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote, Settings
 } from 'lucide-react';
 import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
+import { SectionHeader } from '../components/ui/section-header';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -202,10 +203,13 @@ export function ProfilePage() {
 
                 {/* Account Information */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Account Info</h3>
-                        <span className="text-xs font-semibold text-gray-500">{profileCompletion.percentage}% Complete</span>
-                    </div>
+                    <SectionHeader
+                        title="Account Info"
+                        icon={<UserIcon size={20} className="text-white" strokeWidth={2} />}
+                        rightElement={
+                            <span className="text-xs font-semibold text-gray-500">{profileCompletion.percentage}% Complete</span>
+                        }
+                    />
 
                     {/* Profile Completion Progress Bar */}
                     <div className="mb-5">
@@ -419,7 +423,10 @@ export function ProfilePage() {
 
                 {/* Budget Section */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Budget</h3>
+                    <SectionHeader
+                        title="Budget"
+                        icon={<Wallet size={20} className="text-white" strokeWidth={2} />}
+                    />
 
                     <Link to="/budget" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
@@ -446,7 +453,10 @@ export function ProfilePage() {
 
                 {/* Preferences */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Preferences</h3>
+                    <SectionHeader
+                        title="Preferences"
+                        icon={<Settings size={20} className="text-white" strokeWidth={2} />}
+                    />
 
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
@@ -512,7 +522,10 @@ export function ProfilePage() {
 
                 {/* Support & Legal */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Support</h3>
+                    <SectionHeader
+                        title="Support"
+                        icon={<HelpCircle size={20} className="text-white" strokeWidth={2} />}
+                    />
                     <Link to="#" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
                             <HelpCircle size={18} className="text-slate-400" strokeWidth={1.5} />

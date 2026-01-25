@@ -6,6 +6,7 @@ import { Search as SearchIcon, X, Clock, Tag, ArrowUpDown, Check, ChevronDown } 
 import { PopoverSelect } from '../components/ui/in-app-select';
 import type { MerchantCategory } from '../types';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
+import { SectionHeader } from '../components/ui/section-header';
 
 // Merchant info mapping - same as home page
 interface MerchantInfo {
@@ -486,17 +487,14 @@ export function SearchPage() {
                 </div>
 
                 {/* Results Header */}
-                <div className="flex items-center gap-2">
-                    {!isSearchActive && !selectedCategory && (
-                        <Clock size={16} className="text-gray-400" />
-                    )}
-                    <p className="text-xs text-gray-500">
-                        {isSearchActive || selectedCategory
-                            ? `${filteredReceipts.length} result${filteredReceipts.length !== 1 ? 's' : ''}`
-                            : 'Recent Transactions'
-                        }
-                    </p>
-                </div>
+                <SectionHeader
+                    title="Recent Transactions"
+                    icon={<Clock size={20} className="text-white" strokeWidth={2} />}
+                    subtitle={isSearchActive || selectedCategory
+                        ? `${filteredReceipts.length} result${filteredReceipts.length !== 1 ? 's' : ''}`
+                        : undefined
+                    }
+                />
 
                 {/* Results */}
                 <div>
