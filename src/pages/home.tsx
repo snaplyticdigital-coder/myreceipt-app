@@ -2,14 +2,13 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency, getGreeting } from '../lib/format';
-import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown, History } from 'lucide-react';
+import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown } from 'lucide-react';
 // InsightCard removed
 import { GamificationCard } from '../components/gamification-card';
 import { MonthlyStatusSection } from '../components/monthly-status-section';
 import { PaywallModal } from '../components/modals/paywall-modal';
 import { CoPilotSection } from '../components/co-pilot-section';
 import { ProfileCompletionCTA } from '../components/profile-completion-cta';
-import { SectionHeader } from '../components/ui/section-header';
 import type { MerchantCategory } from '../types';
 
 // Merchant info mapping - returns image, main category, sub-categories, and colors
@@ -479,15 +478,12 @@ export function HomePage() {
 
                 {/* Recent Transactions */}
                 <div>
-                    <SectionHeader
-                        title="Recent Transactions"
-                        icon={<History size={20} className="text-white" strokeWidth={2} />}
-                        rightElement={
-                            <Link to="/search" className="text-xs font-medium text-blue-600 hover:text-blue-700">
-                                View All
-                            </Link>
-                        }
-                    />
+                    <div className="flex items-center justify-between mb-1.5">
+                        <h2 className="text-base font-bold text-gray-900">Recent Transactions</h2>
+                        <Link to="/search" className="text-xs font-medium text-blue-600">
+                            View All
+                        </Link>
+                    </div>
 
                     {/* Phase 3: Clarifying microcopy for transactions vs receipts */}
                     {transactionCount > 0 && (

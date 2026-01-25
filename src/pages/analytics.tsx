@@ -1,8 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles, BarChart3, Layers, Store } from 'lucide-react';
-import { SectionHeader } from '../components/ui/section-header';
+import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
@@ -664,11 +663,12 @@ export function AnalyticsPage() {
 
             <div className="px-4 space-y-5">
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <SectionHeader
-                        title={chartData.title}
-                        subtitle={chartData.subtitle}
-                        icon={<BarChart3 size={20} className="text-white" strokeWidth={2} />}
-                    />
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-900">{chartData.title}</h2>
+                            <p className="text-xs text-gray-500 mt-0.5">{chartData.subtitle}</p>
+                        </div>
+                    </div>
 
                     <div className="flex items-end justify-between gap-2 h-40">
                         {chartData.data.map((item, index) => {
@@ -706,10 +706,12 @@ export function AnalyticsPage() {
                         <div className="space-y-5">
                             {/* Spending Distribution - Visual Donut */}
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                <SectionHeader
-                                    title="Spending Distribution"
-                                    icon={<PieChart size={20} className="text-white" strokeWidth={2} />}
-                                />
+                                <div className="flex items-center gap-2 mb-6">
+                                    <div className="p-2 bg-pink-50 rounded-lg">
+                                        <PieChart size={18} className="text-pink-500" />
+                                    </div>
+                                    <h2 className="text-lg font-bold text-gray-900">Spending Distribution</h2>
+                                </div>
 
                                 <div className="flex items-center gap-8">
                                     <div className="relative w-36 h-36 flex-shrink-0">
@@ -795,10 +797,7 @@ export function AnalyticsPage() {
 
                             {/* Spending by Category - Progress Bars */}
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
-                                <SectionHeader
-                                    title="Category Breakdown"
-                                    icon={<Layers size={20} className="text-white" strokeWidth={2} />}
-                                />
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
                                 <div className="space-y-4">
                                     {topSpendingCategories.map(([category, amount]) => {
                                         const percent = (amount / totalSpending) * 100;
@@ -829,10 +828,7 @@ export function AnalyticsPage() {
 
                             {/* Top Store Types - Cards Grid */}
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
-                                <SectionHeader
-                                    title="Top Store Types"
-                                    icon={<Store size={20} className="text-white" strokeWidth={2} />}
-                                />
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">Top Store Types</h2>
                                 <div className="grid grid-cols-2 gap-3">
                                     {topMerchantCategories.map(([category, amount], _index) => {
                                         const gradient = merchantCategoryColors[category] || 'from-gray-400 to-gray-600';
