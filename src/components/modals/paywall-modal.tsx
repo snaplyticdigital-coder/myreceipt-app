@@ -89,7 +89,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                         <div className="w-16 h-16 bg-gradient-to-br from-amber-300 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 mb-4 transform rotate-3">
                             <Crown className="text-white drop-shadow-md" size={32} strokeWidth={2.5} />
                         </div>
-                        <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Unlock Your Financial Power</h2>
+                        <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Stop Losing Money, Start Saving Like a Pro!</h2>
                         <p className="text-blue-100 text-sm max-w-xs mx-auto leading-relaxed">
                             Join the top 10% of Malaysians reaching their financial goals faster.
                         </p>
@@ -98,20 +98,20 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
                 <div className="p-6">
                     {/* 2. Value List (Comparison) */}
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-4 mb-6">
                         {[
-                            { text: "Unlimited Receipt Scans", sub: "No monthly limits" },
-                            { text: "Ad-Free Experience", sub: "Zero interruptions" },
-                            { text: "Pro Analytics & Insight", sub: "Unlock all charts" },
-                            { text: "Tax Relief Automation", sub: "Claim every RM back" }
+                            { title: "Find Your Hidden Leaks", desc: "We catch weird spikes in your bills before they eat your wallet." },
+                            { title: "Predict Your Future", desc: "Our AI forecasts your month-end balance. No more pokai last minute!" },
+                            { title: "The RM 12.90 Hack", desc: "Most Pro users save over RM 100/mo by following custom Savings Opportunities." },
+                            { title: "Tax Relief Automation", desc: "Claim every RM back with zero effort." }
                         ].map((benefit, idx) => (
-                            <div key={idx} className="flex items-center gap-3">
-                                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <div key={idx} className="flex gap-3">
+                                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                                     <Check size={12} className="text-green-600" strokeWidth={3} />
                                 </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-gray-900">{benefit.text}</p>
-                                    <p className="text-[10px] text-gray-500">{benefit.sub}</p>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-bold text-gray-900">{benefit.title}</p>
+                                    <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{benefit.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -168,10 +168,10 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     <div className="space-y-3">
                         <button
                             onClick={handleUpgrade}
-                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 animate-pulse hover:animate-none"
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold font-black shadow-lg shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 animate-pulse hover:animate-none"
                         >
                             <Zap size={18} className="fill-white" />
-                            Go Pro Now
+                            Unlock My Financial Freedom — RM 12.90
                         </button>
 
                         <button
