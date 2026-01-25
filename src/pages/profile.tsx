@@ -5,9 +5,44 @@ import { useStore } from '../lib/store';
 import { useAuth } from '../contexts/auth-context';
 import {
     Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, AlertTriangle,
-    Wallet, Bell, Lock, BarChart3, HelpCircle, FileText,
+    Wallet, Bell, Lock, BarChart3, HelpCircle, FileText, CheckCircle2, XCircle,
     User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote
 } from 'lucide-react';
+
+// Malaysian postcode validation
+const MALAYSIA_POSTCODE_RANGES: { state: string; ranges: [number, number][] }[] = [
+    { state: 'Johor', ranges: [[79000, 86999]] },
+    { state: 'Kedah', ranges: [[5000, 9810]] },
+    { state: 'Kelantan', ranges: [[15000, 18500]] },
+    { state: 'Melaka', ranges: [[75000, 78309]] },
+    { state: 'Negeri Sembilan', ranges: [[70000, 73509]] },
+    { state: 'Pahang', ranges: [[25000, 28800], [39000, 39200], [49000, 49000]] },
+    { state: 'Perak', ranges: [[30000, 36810]] },
+    { state: 'Perlis', ranges: [[1000, 2800]] },
+    { state: 'Penang', ranges: [[10000, 14400]] },
+    { state: 'Sabah', ranges: [[88000, 91309]] },
+    { state: 'Sarawak', ranges: [[93000, 98859]] },
+    { state: 'Selangor', ranges: [[40000, 48300], [63000, 68100]] },
+    { state: 'Terengganu', ranges: [[20000, 24300]] },
+    { state: 'Kuala Lumpur', ranges: [[50000, 60000]] },
+    { state: 'Labuan', ranges: [[87000, 87033]] },
+    { state: 'Putrajaya', ranges: [[62000, 62988]] },
+];
+
+const validateMalaysianPostcode = (postcode: string): { valid: boolean; state?: string } => {
+    if (!postcode || postcode.length !== 5) return { valid: false };
+    const num = parseInt(postcode, 10);
+    if (isNaN(num)) return { valid: false };
+
+    for (const { state, ranges } of MALAYSIA_POSTCODE_RANGES) {
+        for (const [min, max] of ranges) {
+            if (num >= min && num <= max) {
+                return { valid: true, state };
+            }
+        }
+    }
+    return { valid: false };
+};
 import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
@@ -42,13 +77,31 @@ export function ProfilePage() {
     const [biometricAuth, setBiometricAuth] = useState(false);
     const [analyticsSharing, setAnalyticsSharing] = useState(true);
 
-    // PRO Member fields state
-    const [dob, setDob] = useState('');
-    const [gender, setGender] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [salaryRange, setSalaryRange] = useState('');
-    const [occupation, setOccupation] = useState('');
-    const [postcode, setPostcode] = useState('');
+    // Profile completion fields - initialized from store
+    const [dob, setDob] = useState(user.dateOfBirth || '');
+    const [gender, setGender] = useState(user.gender || '');
+    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || '');
+    const [salaryRange, setSalaryRange] = useState(user.salaryRange || '');
+    const [occupation, setOccupation] = useState(user.occupation || '');
+    const [postcode, setPostcode] = useState(user.postcode || '');
+
+    // Calculate profile completion percentage
+    const profileFields = [
+        { key: 'name', filled: !!user.name, weight: 15 },
+        { key: 'email', filled: !!user.email, weight: 15 },
+        { key: 'dateOfBirth', filled: !!dob, weight: 12 },
+        { key: 'gender', filled: !!gender, weight: 10 },
+        { key: 'phoneNumber', filled: !!phoneNumber, weight: 13 },
+        { key: 'salaryRange', filled: !!salaryRange, weight: 15 },
+        { key: 'occupation', filled: !!occupation, weight: 10 },
+        { key: 'postcode', filled: !!postcode, weight: 10 },
+    ];
+    const profileCompletion = profileFields.reduce((acc, field) => acc + (field.filled ? field.weight : 0), 0);
+
+    // Persist profile field changes to store
+    const updateProfileField = (field: string, value: string) => {
+        useStore.getState().updateUser({ [field]: value });
+    };
 
     // Edit Name state
     const [isEditingName, setIsEditingName] = useState(false);
@@ -179,7 +232,26 @@ export function ProfilePage() {
 
                 {/* Account Information */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Account Info</h3>
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Account Info</h3>
+                        <span className="text-xs font-semibold text-gray-500">{profileCompletion}%</span>
+                    </div>
+
+                    {/* Profile Completion Progress Bar */}
+                    <div className="mb-5">
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
+                                style={{ width: `${profileCompletion}%` }}
+                            />
+                        </div>
+                        {profileCompletion < 100 && (
+                            <p className="text-xs text-gray-500 mt-2">
+                                Complete your profile to unlock personalized insights
+                            </p>
+                        )}
+                    </div>
+
                     <div className="space-y-4">
                         {/* Name - Editable */}
                         <div className="flex items-center justify-between">
@@ -236,138 +308,164 @@ export function ProfilePage() {
                                     <p className="text-xs text-gray-500">{user.email}</p>
                                 </div>
                             </div>
-                            {firebaseUser?.emailVerified && (
-                                <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">VERIFIED</span>
-                            )}
+                            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <CheckCircle2 size={10} /> Verified
+                            </span>
                         </div>
 
-                        {/* PRO Member Fields - Only visible for PRO users */}
-                        {user.tier === 'PRO' && (
-                            <>
-                                {/* Date of Birth */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <Calendar size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Date of Birth</p>
-                                            <p className="text-xs text-gray-500">
-                                                {dob ? new Date(dob).toLocaleDateString('en-GB') : 'Not set'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        ref={dobRef}
-                                        onClick={() => setShowCalendar(true)}
-                                        className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
-                                    >
-                                        Select <ChevronDown size={12} />
-                                    </button>
+                        {/* Profile Completion Fields - Available to all users */}
+                        {/* Date of Birth */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <Calendar size={18} />
                                 </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Date of Birth</p>
+                                    <p className="text-xs text-gray-500">
+                                        {dob ? new Date(dob).toLocaleDateString('en-GB') : 'Not set'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                ref={dobRef}
+                                onClick={() => setShowCalendar(true)}
+                                className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
+                            >
+                                Select <ChevronDown size={12} />
+                            </button>
+                        </div>
 
-                                {/* Gender */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <UserIcon size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Gender</p>
-                                            <p className="text-xs text-gray-500">{gender || 'Not set'}</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        ref={genderRef}
-                                        onClick={() => setOpenPopover('gender')}
-                                        className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
-                                    >
-                                        Select <ChevronDown size={12} />
-                                    </button>
+                        {/* Gender */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <UserIcon size={18} />
                                 </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Gender</p>
+                                    <p className="text-xs text-gray-500">{gender || 'Not set'}</p>
+                                </div>
+                            </div>
+                            <button
+                                ref={genderRef}
+                                onClick={() => setOpenPopover('gender')}
+                                className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
+                            >
+                                Select <ChevronDown size={12} />
+                            </button>
+                        </div>
 
-                                {/* Phone Number */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <Phone size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Phone Number</p>
-                                            <input
-                                                type="tel"
-                                                value={phoneNumber}
-                                                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                                                placeholder="01X-XXX XXXX"
-                                                className="text-xs text-gray-500 bg-transparent border-none outline-none w-32"
-                                            />
-                                        </div>
-                                    </div>
-                                    {/* VERIFIED badge for PRO users */}
-                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">VERIFIED</span>
+                        {/* Phone Number */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <Phone size={18} />
                                 </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Phone Number</p>
+                                    <input
+                                        type="tel"
+                                        value={phoneNumber}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/\D/g, '');
+                                            setPhoneNumber(val);
+                                            updateProfileField('phoneNumber', val);
+                                        }}
+                                        placeholder="01X-XXX XXXX"
+                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-32"
+                                    />
+                                </div>
+                            </div>
+                            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <XCircle size={10} /> Unverified
+                            </span>
+                        </div>
 
-                                {/* Salary Range */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <Banknote size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Salary Range</p>
-                                            <p className="text-xs text-gray-500">{salaryRange || 'Not set'}</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        ref={salaryRef}
-                                        onClick={() => setOpenPopover('salary')}
-                                        className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
-                                    >
-                                        Select <ChevronDown size={12} />
-                                    </button>
+                        {/* Salary Range */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <Banknote size={18} />
                                 </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Salary Range</p>
+                                    <p className="text-xs text-gray-500">{salaryRange || 'Not set'}</p>
+                                </div>
+                            </div>
+                            <button
+                                ref={salaryRef}
+                                onClick={() => setOpenPopover('salary')}
+                                className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
+                            >
+                                Select <ChevronDown size={12} />
+                            </button>
+                        </div>
 
-                                {/* Occupation */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <Briefcase size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Occupation</p>
-                                            <p className="text-xs text-gray-500">{occupation || 'Not set'}</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        ref={occupationRef}
-                                        onClick={() => setOpenPopover('occupation')}
-                                        className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
-                                    >
-                                        Select <ChevronDown size={12} />
-                                    </button>
+                        {/* Occupation */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <Briefcase size={18} />
                                 </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Occupation</p>
+                                    <p className="text-xs text-gray-500">{occupation || 'Not set'}</p>
+                                </div>
+                            </div>
+                            <button
+                                ref={occupationRef}
+                                onClick={() => setOpenPopover('occupation')}
+                                className="text-xs font-semibold text-blue-600 px-3 py-1 bg-blue-50 rounded-full hover:bg-blue-100 flex items-center gap-1"
+                            >
+                                Select <ChevronDown size={12} />
+                            </button>
+                        </div>
 
-                                {/* Postcode */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                            <MapPin size={18} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900">Postcode</p>
-                                            <input
-                                                type="text"
-                                                value={postcode}
-                                                onChange={(e) => setPostcode(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                                                placeholder="XXXXX"
-                                                maxLength={5}
-                                                className="text-xs text-gray-500 bg-transparent border-none outline-none w-20"
-                                            />
-                                        </div>
-                                    </div>
+                        {/* Postcode */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
+                                    <MapPin size={18} />
                                 </div>
-                            </>
-                        )}
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">Postcode</p>
+                                    <input
+                                        type="text"
+                                        value={postcode}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/\D/g, '').slice(0, 5);
+                                            setPostcode(val);
+                                            if (val.length === 5) {
+                                                const validation = validateMalaysianPostcode(val);
+                                                if (validation.valid) {
+                                                    updateProfileField('postcode', val);
+                                                }
+                                            } else if (val.length === 0) {
+                                                updateProfileField('postcode', '');
+                                            }
+                                        }}
+                                        placeholder="XXXXX"
+                                        maxLength={5}
+                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-20"
+                                    />
+                                </div>
+                            </div>
+                            {postcode && postcode.length === 5 && (
+                                (() => {
+                                    const validation = validateMalaysianPostcode(postcode);
+                                    return validation.valid ? (
+                                        <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                            <CheckCircle2 size={10} /> {validation.state}
+                                        </span>
+                                    ) : (
+                                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                            <XCircle size={10} /> Invalid
+                                        </span>
+                                    );
+                                })()
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -588,11 +686,13 @@ export function ProfilePage() {
                 showIcons={false}
                 options={[
                     { value: 'Male', label: 'Male' },
-                    { value: 'Female', label: 'Female' },
-                    { value: 'Other', label: 'Other' }
+                    { value: 'Female', label: 'Female' }
                 ]}
                 value={gender}
-                onSelect={(val) => setGender(val)}
+                onSelect={(val) => {
+                    setGender(val);
+                    updateProfileField('gender', val);
+                }}
             />
             <PopoverSelect
                 isOpen={openPopover === 'salary'}
@@ -608,7 +708,10 @@ export function ProfilePage() {
                     { value: 'Above RM 15,000', label: 'Above RM 15,000' }
                 ]}
                 value={salaryRange}
-                onSelect={(val) => setSalaryRange(val)}
+                onSelect={(val) => {
+                    setSalaryRange(val);
+                    updateProfileField('salaryRange', val);
+                }}
             />
             <PopoverSelect
                 isOpen={openPopover === 'occupation'}
@@ -625,7 +728,10 @@ export function ProfilePage() {
                     { value: 'Other', label: 'Other' }
                 ]}
                 value={occupation}
-                onSelect={(val) => setOccupation(val)}
+                onSelect={(val) => {
+                    setOccupation(val);
+                    updateProfileField('occupation', val);
+                }}
             />
             <PopoverSelect
                 isOpen={openPopover === 'currency'}
@@ -646,7 +752,10 @@ export function ProfilePage() {
                 onClose={() => setShowCalendar(false)}
                 anchorRef={dobRef}
                 value={dob}
-                onChange={(date) => setDob(date)}
+                onChange={(date) => {
+                    setDob(date);
+                    updateProfileField('dateOfBirth', date);
+                }}
             />
         </div>
     );

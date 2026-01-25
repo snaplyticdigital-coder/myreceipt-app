@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency, getGreeting } from '../lib/format';
-import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import { Bell, Tag, Check, X, Settings, Eye, EyeOff, ChevronDown, UserCircle, ChevronRight } from 'lucide-react';
 // InsightCard removed
 import { GamificationCard } from '../components/gamification-card';
 import { MonthlyStatusSection } from '../components/monthly-status-section';
@@ -363,6 +363,21 @@ export function HomePage() {
 
     const greeting = getGreeting();
 
+    // Profile completion calculation
+    const profileCompletion = useMemo(() => {
+        const fields = [
+            { filled: !!user.name, weight: 15 },
+            { filled: !!user.email, weight: 15 },
+            { filled: !!user.dateOfBirth, weight: 12 },
+            { filled: !!user.gender, weight: 10 },
+            { filled: !!user.phoneNumber, weight: 13 },
+            { filled: !!user.salaryRange, weight: 15 },
+            { filled: !!user.occupation, weight: 10 },
+            { filled: !!user.postcode, weight: 10 },
+        ];
+        return fields.reduce((acc, field) => acc + (field.filled ? field.weight : 0), 0);
+    }, [user]);
+
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
@@ -464,6 +479,33 @@ export function HomePage() {
 
                 {/* 2. Membership Strip (Moved to 2nd Row) */}
                 <GamificationCard />
+
+                {/* Profile Completion CTA - Only show if < 100% */}
+                {profileCompletion < 100 && (
+                    <Link to="/profile" className="block">
+                        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4 border border-purple-100 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                                        <UserCircle size={20} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-900">Complete Your Profile</h3>
+                                        <p className="text-xs text-gray-500">{profileCompletion}% complete - unlock personalized insights</p>
+                                    </div>
+                                </div>
+                                <ChevronRight size={18} className="text-purple-400" />
+                            </div>
+                            {/* Mini progress bar */}
+                            <div className="mt-3 h-1.5 bg-white/80 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
+                                    style={{ width: `${profileCompletion}%` }}
+                                />
+                            </div>
+                        </div>
+                    </Link>
+                )}
 
                 {/* 3. Merged Monthly Status (Budget & Transactions) */}
                 <MonthlyStatusSection onLimitReachedClick={() => setIsPaywallOpen(true)} />

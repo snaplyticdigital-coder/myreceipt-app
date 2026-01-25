@@ -147,6 +147,14 @@ export interface User {
     lifestyleCap: number;
     lifestyleYtd: number;
     enableSpouseOverflow?: boolean;
+    // Profile Completion Fields (universal - available to all users)
+    dateOfBirth?: string;              // ISO date string
+    gender?: 'Male' | 'Female';
+    phoneNumber?: string;
+    salaryRange?: string;
+    occupation?: string;
+    postcode?: string;
+    isFirstLogin?: boolean;            // For welcome flow trigger
     // Freemium Tier Fields
     tier: 'FREE' | 'PRO';
     scanCount: number; // Monthly usage (for stats)
