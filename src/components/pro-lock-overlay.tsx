@@ -1,4 +1,4 @@
-import { Crown, Check, ChevronRight } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { useStore } from '../lib/store';
 
 
@@ -7,13 +7,12 @@ interface ProLockOverlayProps {
     title?: string;
     description?: string;
     blurAmount?: 'sm' | 'md' | 'lg' | 'xl';
-    benefits?: string[];
 }
 
 export function ProLockOverlay({
     children,
-    title = "Stop Losing Money, Start Saving Like a Pro!",
-    description = "Join the top 10% of Malaysians reaching their financial goals faster.",
+    title,
+    description,
     blurAmount = 'lg'
 }: ProLockOverlayProps) {
     const { user } = useStore();
@@ -22,51 +21,65 @@ export function ProLockOverlay({
         return <>{children}</>;
     }
 
-    const prescriptions = [
-        { title: "Find Your Hidden Leaks", detail: "We catch weird spikes in your bills before they eat your wallet." },
-        { title: "Predict Your Future", detail: "Our AI forecasts your month-end balance. No more pokai last minute!" },
-        { title: "The RM 12.90 Hack", detail: "Most Pro users save over RM 100/mo by following our custom 'Savings Opportunities'." }
-    ];
-
     return (
-        <div className="relative overflow-hidden rounded-3xl group shadow-inner bg-white/50 scroll-mt-24" style={{ scrollSnapAlign: 'center' }}>
+        <div className="relative overflow-hidden rounded-2xl">
             {/* Blurred Content */}
-            <div className={`filter blur-${blurAmount} select-none pointer-events-none opacity-40 scale-[1.02] transition-transform duration-700`}>
+            <div className={`filter blur-${blurAmount} select-none pointer-events-none opacity-50`}>
                 {children}
             </div>
 
-            {/* Lock Overlay - Raised Elevation & Visual Polish */}
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-white/10 via-white/80 to-white backdrop-blur-[2.5px]">
-                <div className="flex flex-col items-center transform -translate-y-24 scale-110">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-400 via-orange-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-2xl shadow-orange-200" style={{ transform: 'rotate(3deg)' }}>
-                        <Crown className="text-white drop-shadow-md" size={32} strokeWidth={2.5} />
-                    </div>
-
-                    <h3 className="text-2xl font-black text-gray-900 mb-3 leading-tight max-w-[300px] tracking-tight">{title}</h3>
-                    <p className="text-sm font-semibold text-indigo-600 mb-8 uppercase tracking-widest">{description}</p>
+            {/* Lock Overlay */}
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-white/30 to-white/90 backdrop-blur-sm">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-purple-200">
+                    <Crown className="text-white" size={24} />
                 </div>
 
-                {/* Prescriptive Benefits - Positioned relative to the raised head */}
-                <div className="w-full max-w-sm space-y-4 mb-8 text-left transform -translate-y-16">
-                    {prescriptions.map((item, idx) => (
-                        <div key={idx} className="flex gap-3 items-start animate-in fade-in slide-in-from-right duration-500" style={{ animationDelay: `${idx * 150}ms` }}>
-                            <div className="mt-1 w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 border border-blue-200 shadow-sm">
-                                <Check size={12} className="text-blue-600" strokeWidth={3} />
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-gray-900 leading-tight">{item.title}</p>
-                                <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5">{item.detail}</p>
-                            </div>
+                <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight px-4">
+                    {title || "Stop Losing Money, Start Saving Like a Pro!"}
+                </h3>
+
+                {description && (
+                    <p className="text-xs text-gray-500 mb-4 px-6 leading-relaxed">
+                        {description}
+                    </p>
+                )}
+
+                {/* Prescriptive Benefits */}
+                <div className="space-y-3 mb-8 text-left max-w-[280px]">
+                    <div className="flex gap-2.5">
+                        <div className="shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                            <span className="text-[10px]">🔍</span>
                         </div>
-                    ))}
+                        <p className="text-[12px] font-medium text-gray-700 leading-snug">
+                            <span className="font-extrabold text-gray-900 block">Find Your Hidden Leaks</span>
+                            We catch weird spikes in your bills before they eat your wallet.
+                        </p>
+                    </div>
+                    <div className="flex gap-2.5">
+                        <div className="shrink-0 w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                            <span className="text-[10px]">🔮</span>
+                        </div>
+                        <p className="text-[12px] font-medium text-gray-700 leading-snug">
+                            <span className="font-extrabold text-gray-900 block">Predict Your Future</span>
+                            Our AI forecasts your month-end balance. No more pokai last minute!
+                        </p>
+                    </div>
+                    <div className="flex gap-2.5">
+                        <div className="shrink-0 w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
+                            <span className="text-[10px]">💡</span>
+                        </div>
+                        <p className="text-[12px] font-medium text-gray-700 leading-snug">
+                            <span className="font-extrabold text-gray-900 block">The RM 12.90 Hack</span>
+                            Most Pro users save over RM 100/mo by following our custom "Savings Opportunities".
+                        </p>
+                    </div>
                 </div>
 
                 <button
                     onClick={() => useStore.getState().upgradeToPro()}
-                    className="w-full bg-gray-900 text-white py-4 rounded-2xl font-black text-sm hover:bg-black transition-all shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 flex items-center justify-center gap-2 group-hover:gap-3"
+                    className="w-full max-w-[260px] bg-gradient-to-r from-gray-900 to-slate-800 text-white py-4 rounded-2xl font-black text-[14px] uppercase tracking-wider hover:opacity-90 transition-all shadow-xl shadow-gray-200 active:scale-95"
                 >
                     Unlock My Financial Freedom — RM 12.90
-                    <ChevronRight size={18} strokeWidth={3} />
                 </button>
             </div>
         </div>
