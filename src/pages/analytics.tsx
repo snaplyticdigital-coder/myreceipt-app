@@ -430,8 +430,51 @@ export function AnalyticsPage() {
                 )}
             </div>
 
-            <div className="px-4 py-5 space-y-5">
-                {/* Dynamic Spending Chart (Free) */}
+            <div className="px-5 py-5 grid grid-cols-2 gap-4">
+                <div
+                    onClick={handleDetailedView}
+                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm border border-blue-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <span className="text-blue-600 text-lg font-bold">RM</span>
+                            </div>
+                            <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${periodChange >= 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                                <span>{periodChange >= 0 ? '↑' : '↓'}</span>
+                                <span>{Math.abs(periodChange).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Spent</p>
+                        <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(totalSpending).replace('RM', '')}</p>
+                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                    </div>
+                </div>
+
+                <div
+                    onClick={handleDetailedView}
+                    className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl p-4 shadow-sm border border-purple-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-100 to-fuchsia-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                                <TrendingUp size={20} className="text-purple-600" />
+                            </div>
+                            <div className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                                <span>Avg</span>
+                                <span>{formatCurrency(avgTransaction).replace('RM', '')}</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transactions</p>
+                        <p className="text-2xl font-bold text-gray-900 mt-1">{filteredReceipts.length}</p>
+                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="px-4 space-y-5">
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -473,232 +516,122 @@ export function AnalyticsPage() {
 
                 <div ref={paywallRef}>
                     <ProLockOverlay blurAmount="xl">
-                        {/* Stats Cards (Now Paywalled) */}
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Total Spent Card */}
-                            <div
-                                onClick={handleDetailedView}
-                                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm border border-blue-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
-                            >
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
-                                            <span className="text-blue-600 text-lg font-bold">RM</span>
-                                        </div>
-                                        <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${periodChange >= 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                                            <span>{periodChange >= 0 ? '↑' : '↓'}</span>
-                                            <span>{Math.abs(periodChange).toFixed(1)}%</span>
+                        <div className="space-y-5">
+                            {/* Spending Distribution - Visual Donut */}
+                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <div className="p-2 bg-pink-50 rounded-lg">
+                                        <PieChart size={18} className="text-pink-500" />
+                                    </div>
+                                    <h2 className="text-lg font-bold text-gray-900">Spending Distribution</h2>
+                                </div>
+
+                                <div className="flex items-center gap-8">
+                                    <div className="relative w-36 h-36 flex-shrink-0">
+                                        <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+                                            <defs>
+                                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#8B5CF6" />
+                                                    <stop offset="100%" stopColor="#3B82F6" />
+                                                </linearGradient>
+                                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#EC4899" />
+                                                    <stop offset="100%" stopColor="#8B5CF6" />
+                                                </linearGradient>
+                                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#F59E0B" />
+                                                    <stop offset="100%" stopColor="#EC4899" />
+                                                </linearGradient>
+                                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#10B981" />
+                                                    <stop offset="100%" stopColor="#3B82F6" />
+                                                </linearGradient>
+                                                <linearGradient id="gradOthers" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#94A3B8" />
+                                                    <stop offset="100%" stopColor="#CBD5E1" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+
+                                        <svg className="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
+                                            {donutSegments.reduce((acc, segment, index) => {
+                                                const prevOffset = acc.offset;
+                                                const strokeDasharray = `${segment.percent * 2.51} ${251 - segment.percent * 2.51}`;
+                                                const gradients = ['url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#gradOthers)'];
+
+                                                acc.elements.push(
+                                                    <circle
+                                                        key={segment.category}
+                                                        cx="50"
+                                                        cy="50"
+                                                        r="40"
+                                                        fill="none"
+                                                        stroke={gradients[index % gradients.length]}
+                                                        strokeWidth="12"
+                                                        strokeLinecap="round"
+                                                        strokeDasharray={strokeDasharray}
+                                                        strokeDashoffset={-prevOffset * 2.51}
+                                                        className="transition-all duration-1000 ease-out hover:stroke-width-14"
+                                                    />
+                                                );
+                                                acc.offset += segment.percent;
+                                                return acc;
+                                            }, { elements: [] as React.ReactNode[], offset: 0 }).elements}
+                                        </svg>
+
+                                        <div className="absolute inset-0 flex items-center justify-center flex-col">
+                                            <span className="text-[10px] text-gray-400 uppercase font-medium">Total</span>
+                                            <span className="text-sm font-extrabold text-gray-900">{formatCurrency(totalSpending).replace('RM ', 'RM')}</span>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Spent</p>
-                                    <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(totalSpending).replace('RM', '')}</p>
-                                    <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
-                                </div>
-                            </div>
 
-                            {/* Transactions Card */}
-                            <div
-                                onClick={handleDetailedView}
-                                className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl p-4 shadow-sm border border-purple-100 cursor-pointer active:scale-95 transition-all hover:shadow-md group relative overflow-hidden"
-                            >
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-100 to-fuchsia-100 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-60" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
-                                            <TrendingUp size={20} className="text-purple-600" />
-                                        </div>
-                                        <div className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
-                                            <span>Avg</span>
-                                            <span>{formatCurrency(avgTransaction).replace('RM', '')}</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transactions</p>
-                                    <p className="text-2xl font-bold text-gray-900 mt-1">{filteredReceipts.length}</p>
-                                    <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Spending Distribution - Visual Donut */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-5">
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="p-2 bg-pink-50 rounded-lg">
-                                    <PieChart size={18} className="text-pink-500" />
-                                </div>
-                                <h2 className="text-lg font-bold text-gray-900">Spending Distribution</h2>
-                            </div>
-
-                            <div className="flex items-center gap-8">
-                                <div className="relative w-36 h-36 flex-shrink-0">
-                                    <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-                                        <defs>
-                                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#8B5CF6" />
-                                                <stop offset="100%" stopColor="#3B82F6" />
-                                            </linearGradient>
-                                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#EC4899" />
-                                                <stop offset="100%" stopColor="#8B5CF6" />
-                                            </linearGradient>
-                                            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#F59E0B" />
-                                                <stop offset="100%" stopColor="#EC4899" />
-                                            </linearGradient>
-                                            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#10B981" />
-                                                <stop offset="100%" stopColor="#3B82F6" />
-                                            </linearGradient>
-                                            <linearGradient id="gradOthers" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#94A3B8" />
-                                                <stop offset="100%" stopColor="#CBD5E1" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-
-                                    <svg className="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
-                                        {donutSegments.reduce((acc, segment, index) => {
-                                            const prevOffset = acc.offset;
-                                            const strokeDasharray = `${segment.percent * 2.51} ${251 - segment.percent * 2.51}`;
-                                            const gradients = ['url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#gradOthers)'];
-
-                                            acc.elements.push(
-                                                <circle
-                                                    key={segment.category}
-                                                    cx="50"
-                                                    cy="50"
-                                                    r="40"
-                                                    fill="none"
-                                                    stroke={gradients[index % gradients.length]}
-                                                    strokeWidth="12"
-                                                    strokeLinecap="round"
-                                                    strokeDasharray={strokeDasharray}
-                                                    strokeDashoffset={-prevOffset * 2.51}
-                                                    className="transition-all duration-1000 ease-out hover:stroke-width-14"
-                                                />
+                                    <div className="flex-1 space-y-3 min-w-0">
+                                        {donutSegments.map((segment, index) => {
+                                            const gradients = [
+                                                'bg-gradient-to-r from-purple-500 to-blue-500',
+                                                'bg-gradient-to-r from-pink-500 to-purple-500',
+                                                'bg-gradient-to-r from-amber-500 to-pink-500',
+                                                'bg-gradient-to-r from-emerald-500 to-blue-500',
+                                                'bg-gradient-to-r from-slate-400 to-slate-300'
+                                            ];
+                                            return (
+                                                <div key={segment.category} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${gradients[index % gradients.length]}`} />
+                                                        <span className="text-xs text-gray-600 font-medium truncate">{segment.category}</span>
+                                                    </div>
+                                                    <span className="text-xs font-bold text-gray-900">{segment.percent.toFixed(0)}%</span>
+                                                </div>
                                             );
-                                            acc.offset += segment.percent;
-                                            return acc;
-                                        }, { elements: [] as React.ReactNode[], offset: 0 }).elements}
-                                    </svg>
-
-                                    <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                        <span className="text-[10px] text-gray-400 uppercase font-medium">Total</span>
-                                        <span className="text-sm font-extrabold text-gray-900">{formatCurrency(totalSpending).replace('RM ', 'RM')}</span>
+                                        })}
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="flex-1 space-y-3 min-w-0">
-                                    {donutSegments.map((segment, index) => {
-                                        const gradients = [
-                                            'bg-gradient-to-r from-purple-500 to-blue-500',
-                                            'bg-gradient-to-r from-pink-500 to-purple-500',
-                                            'bg-gradient-to-r from-amber-500 to-pink-500',
-                                            'bg-gradient-to-r from-emerald-500 to-blue-500',
-                                            'bg-gradient-to-r from-slate-400 to-slate-300'
-                                        ];
+                            {/* Spending by Category - Progress Bars */}
+                            <div className="bg-white rounded-2xl p-5 shadow-sm">
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
+                                <div className="space-y-4">
+                                    {topSpendingCategories.map(([category, amount]) => {
+                                        const percent = (amount / totalSpending) * 100;
+                                        const colorInfo = spendingCategoryColors[category] || { bg: 'bg-gray-500', gradient: 'from-gray-400 to-gray-600' };
                                         return (
-                                            <div key={segment.category} className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2.5 min-w-0">
-                                                    <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${gradients[index % gradients.length]}`} />
-                                                    <span className="text-xs text-gray-600 font-medium truncate">{segment.category}</span>
-                                                </div>
-                                                <span className="text-xs font-bold text-gray-900">{segment.percent.toFixed(0)}%</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Spending by Category - Progress Bars */}
-                        <div className="bg-white rounded-2xl p-5 shadow-sm mt-5">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
-                            <div className="space-y-4">
-                                {topSpendingCategories.map(([category, amount]) => {
-                                    const percent = (amount / totalSpending) * 100;
-                                    const colorInfo = spendingCategoryColors[category] || { bg: 'bg-gray-500', gradient: 'from-gray-400 to-gray-600' };
-                                    return (
-                                        <div key={category} className="group">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`w-3 h-3 rounded-full ${colorInfo.bg}`} />
-                                                    <span className="text-sm font-medium text-gray-700">{category}</span>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-bold text-gray-900">{formatCurrency(amount)}</span>
-                                                    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{percent.toFixed(1)}%</span>
-                                                </div>
-                                            </div>
-                                            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full bg-gradient-to-r ${colorInfo.gradient} transition-all duration-500 group-hover:shadow-lg`}
-                                                    style={{ width: `${percent}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Top Store Types - Cards Grid */}
-                        <div className="bg-white rounded-2xl p-5 shadow-sm mt-5">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Top Store Types</h2>
-                            <div className="grid grid-cols-2 gap-3">
-                                {topMerchantCategories.map(([category, amount], _index) => {
-                                    const gradient = merchantCategoryColors[category] || 'from-gray-400 to-gray-600';
-                                    const percent = (amount / totalSpending) * 100;
-                                    return (
-                                        <div
-                                            key={category}
-                                            className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradient} text-white`}
-                                        >
-                                            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full" />
-                                            <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full" />
-                                            <span className="text-xs font-medium opacity-90 block mb-1">{category}</span>
-                                            <p className="text-xl font-bold">{formatCurrency(amount)}</p>
-                                            <span className="text-xs opacity-75">{percent.toFixed(1)}% of total</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* AI-Powered Spending Insights */}
-                        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-blue-100 mt-5">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">🤖 AI Spending Insights</h2>
-                            <div className="mb-5">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-3">📊 Category Comparison (vs. Avg)</h3>
-                                <div className="space-y-3">
-                                    {topMerchantCategories.slice(0, 4).map(([category, amount]) => {
-                                        const historicalAvg = amount * (0.7 + Math.random() * 0.6);
-                                        const percentDiff = ((amount - historicalAvg) / historicalAvg) * 100;
-                                        const isOver = percentDiff > 0;
-                                        return (
-                                            <div key={category} className="bg-white/70 rounded-xl p-3">
+                                            <div key={category} className="group">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-sm font-medium text-gray-800">{category}</span>
                                                     <div className="flex items-center gap-2">
+                                                        <div className={`w-3 h-3 rounded-full ${colorInfo.bg}`} />
+                                                        <span className="text-sm font-medium text-gray-700">{category}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
                                                         <span className="text-sm font-bold text-gray-900">{formatCurrency(amount)}</span>
-                                                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${isOver ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
-                                                            {isOver ? '↑' : '↓'} {Math.abs(percentDiff).toFixed(0)}%
-                                                        </span>
+                                                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{percent.toFixed(1)}%</span>
                                                     </div>
                                                 </div>
-                                                <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                                                     <div
-                                                        className={`absolute left-0 top-0 h-full rounded-full transition-all ${isOver ? 'bg-orange-400' : 'bg-green-400'}`}
-                                                        style={{ width: `${Math.min((amount / (historicalAvg * 1.5)) * 100, 100)}%` }}
+                                                        className={`h-full rounded-full bg-gradient-to-r ${colorInfo.gradient} transition-all duration-500 group-hover:shadow-lg`}
+                                                        style={{ width: `${percent}%` }}
                                                     />
-                                                    <div
-                                                        className="absolute top-0 h-full w-0.5 bg-gray-400"
-                                                        style={{ left: `${Math.min((historicalAvg / (historicalAvg * 1.5)) * 100, 100)}%` }}
-                                                    />
-                                                </div>
-                                                <div className="flex justify-between mt-1">
-                                                    <span className="text-[10px] text-gray-400">Avg: {formatCurrency(historicalAvg)}</span>
-                                                    <span className="text-[10px] text-gray-400">{isOver ? 'Above avg' : 'Below avg'}</span>
                                                 </div>
                                             </div>
                                         );
@@ -706,48 +639,113 @@ export function AnalyticsPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Key Insights</h3>
-                                <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <TrendingUp size={16} className="text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-700">Top spending: <strong className="text-blue-600">{topSpendingCategories[0]?.[0] || 'N/A'}</strong></p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topSpendingCategories[0]?.[1] || 0)} this period</p>
+                            {/* Top Store Types - Cards Grid */}
+                            <div className="bg-white rounded-2xl p-5 shadow-sm">
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">Top Store Types</h2>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {topMerchantCategories.map(([category, amount], _index) => {
+                                        const gradient = merchantCategoryColors[category] || 'from-gray-400 to-gray-600';
+                                        const percent = (amount / totalSpending) * 100;
+                                        return (
+                                            <div
+                                                key={category}
+                                                className={`relative overflow-hidden rounded-xl p-4 bg-gradient-to-br ${gradient} text-white`}
+                                            >
+                                                <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full" />
+                                                <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full" />
+                                                <span className="text-xs font-medium opacity-90 block mb-1">{category}</span>
+                                                <p className="text-xl font-bold">{formatCurrency(amount)}</p>
+                                                <span className="text-xs opacity-75">{percent.toFixed(1)}% of total</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* AI-Powered Spending Insights */}
+                            <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-blue-100">
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">🤖 AI Spending Insights</h2>
+                                <div className="mb-5">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-3">📊 Category Comparison (vs. Avg)</h3>
+                                    <div className="space-y-3">
+                                        {topMerchantCategories.slice(0, 4).map(([category, amount]) => {
+                                            const historicalAvg = amount * (0.7 + Math.random() * 0.6);
+                                            const percentDiff = ((amount - historicalAvg) / historicalAvg) * 100;
+                                            const isOver = percentDiff > 0;
+                                            return (
+                                                <div key={category} className="bg-white/70 rounded-xl p-3">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-sm font-medium text-gray-800">{category}</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm font-bold text-gray-900">{formatCurrency(amount)}</span>
+                                                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${isOver ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
+                                                                {isOver ? '↑' : '↓'} {Math.abs(percentDiff).toFixed(0)}%
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`absolute left-0 top-0 h-full rounded-full transition-all ${isOver ? 'bg-orange-400' : 'bg-green-400'}`}
+                                                            style={{ width: `${Math.min((amount / (historicalAvg * 1.5)) * 100, 100)}%` }}
+                                                        />
+                                                        <div
+                                                            className="absolute top-0 h-full w-0.5 bg-gray-400"
+                                                            style={{ left: `${Math.min((historicalAvg / (historicalAvg * 1.5)) * 100, 100)}%` }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex justify-between mt-1">
+                                                        <span className="text-[10px] text-gray-400">Avg: {formatCurrency(historicalAvg)}</span>
+                                                        <span className="text-[10px] text-gray-400">{isOver ? 'Above avg' : 'Below avg'}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <BarChart3 size={16} className="text-purple-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-700">Most visited: <strong className="text-purple-600">{topMerchantCategories[0]?.[0] || 'N/A'}</strong></p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topMerchantCategories[0]?.[1] || 0)} spent there</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <PieChart size={16} className="text-green-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-700">Avg transaction: <strong className="text-green-600">{formatCurrency(avgTransaction)}</strong></p>
-                                        <p className="text-xs text-gray-500 mt-0.5">Across {filteredReceipts.length} transactions</p>
-                                    </div>
-                                </div>
-                                {periodChange !== 0 && (
-                                    <div className={`flex items-start gap-3 rounded-xl p-3 ${periodChange < 0 ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${periodChange < 0 ? 'bg-green-100' : 'bg-orange-100'}`}>
-                                            <span className="text-sm">{periodChange < 0 ? '🎉' : '⚠️'}</span>
+
+                                <div className="space-y-3">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Key Insights</h3>
+                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
+                                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <TrendingUp size={16} className="text-blue-600" />
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-700">
-                                                {periodChange < 0 ? `Great job! You spent ${Math.abs(periodChange).toFixed(0)}% less than last period!` : `Heads up: Spending is ${periodChange.toFixed(0)}% higher than last period.`}
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-0.5">{periodChange < 0 ? 'Keep up the great budgeting!' : 'Consider reviewing your expenses.'}</p>
+                                            <p className="text-sm text-gray-700">Top spending: <strong className="text-blue-600">{topSpendingCategories[0]?.[0] || 'N/A'}</strong></p>
+                                            <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topSpendingCategories[0]?.[1] || 0)} this period</p>
                                         </div>
                                     </div>
-                                )}
+                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
+                                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <BarChart3 size={16} className="text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-700">Most visited: <strong className="text-purple-600">{topMerchantCategories[0]?.[0] || 'N/A'}</strong></p>
+                                            <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topMerchantCategories[0]?.[1] || 0)} spent there</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
+                                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <PieChart size={16} className="text-green-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-700">Avg transaction: <strong className="text-green-600">{formatCurrency(avgTransaction)}</strong></p>
+                                            <p className="text-xs text-gray-500 mt-0.5">Across {filteredReceipts.length} transactions</p>
+                                        </div>
+                                    </div>
+                                    {periodChange !== 0 && (
+                                        <div className={`flex items-start gap-3 rounded-xl p-3 ${periodChange < 0 ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${periodChange < 0 ? 'bg-green-100' : 'bg-orange-100'}`}>
+                                                <span className="text-sm">{periodChange < 0 ? '🎉' : '⚠️'}</span>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm text-gray-700">
+                                                    {periodChange < 0 ? `Great job! You spent ${Math.abs(periodChange).toFixed(0)}% less than last period!` : `Heads up: Spending is ${periodChange.toFixed(0)}% higher than last period.`}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-0.5">{periodChange < 0 ? 'Keep up the great budgeting!' : 'Consider reviewing your expenses.'}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </ProLockOverlay>
