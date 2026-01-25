@@ -229,17 +229,17 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Name</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Name</p>
                                     {isEditingName ? (
                                         <input
                                             type="text"
                                             value={editNameValue}
                                             onChange={(e) => setEditNameValue(e.target.value)}
-                                            className="text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-400 w-40"
+                                            className="text-[12px] text-gray-700 bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-400 w-40 mt-0.5"
                                             autoFocus
                                         />
                                     ) : (
-                                        <p className="text-xs text-gray-500">{user.name || 'Not set'}</p>
+                                        <p className="text-[12px] text-gray-500 mt-0.5">{user.name || 'Not set'}</p>
                                     )}
                                 </div>
                             </div>
@@ -271,8 +271,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Mail size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Email</p>
-                                    <p className="text-xs text-gray-500">{user.email}</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Email</p>
+                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.email}</p>
                                 </div>
                             </div>
                             <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -286,8 +286,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Calendar size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Date of Birth</p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Date of Birth</p>
+                                    <p className="text-[12px] text-gray-500 mt-0.5">
                                         {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-GB') : 'Not set'}
                                     </p>
                                 </div>
@@ -306,8 +306,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Gender</p>
-                                    <p className="text-xs text-gray-500">{user.gender || 'Not set'}</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Gender</p>
+                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.gender || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -324,13 +324,13 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Phone size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Phone Number</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Phone Number</p>
                                     <input
                                         type="tel"
                                         value={user.phone || ''}
                                         onChange={(e) => updateUser({ phone: e.target.value.replace(/\D/g, '') })}
                                         placeholder="01X-XXX XXXX"
-                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-32"
+                                        className="text-[12px] text-gray-500 bg-transparent border-none outline-none w-32 mt-0.5"
                                     />
                                 </div>
                             </div>
@@ -355,8 +355,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Banknote size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Salary Range</p>
-                                    <p className="text-xs text-gray-500">{user.salaryRange || 'Not set'}</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Salary Range</p>
+                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.salaryRange || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -373,8 +373,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Briefcase size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Occupation</p>
-                                    <p className="text-xs text-gray-500">{user.occupation || 'Not set'}</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Occupation</p>
+                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.occupation || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -391,14 +391,14 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <MapPin size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Postcode</p>
+                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Postcode</p>
                                     <input
                                         type="text"
                                         value={user.postcode || ''}
                                         onChange={(e) => handlePostcodeChange(e.target.value)}
                                         placeholder="XXXXX"
                                         maxLength={5}
-                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-20"
+                                        className="text-[12px] text-gray-500 bg-transparent border-none outline-none w-20 mt-0.5"
                                     />
                                 </div>
                             </div>

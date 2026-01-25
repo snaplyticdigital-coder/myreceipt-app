@@ -31,7 +31,8 @@ export function MonthlyStatusSection() {
 
     const remainingMs = lastAdWatch ? (lastAdWatch.getTime() + cooldownPeriodArr) - now.getTime() : 0;
     const remainingHours = Math.floor(remainingMs / (1000 * 60 * 60));
-    const remainingMins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+    const remainingDays = Math.floor(remainingHours / 24);
+    const displayHours = remainingHours % 24;
 
     // Smart CTA Logic
     const showScanNow = usage < 5;
@@ -118,12 +119,12 @@ export function MonthlyStatusSection() {
                             <div className="flex items-center gap-1.5">
                                 <PlayCircle size={12} strokeWidth={3} />
                                 <span className="text-[10px] font-black uppercase tracking-wider">
-                                    {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
+                                    {isAdCooldownActive ? 'Cooldown' : 'Watch Ad for +3 Scans'}
                                 </span>
                             </div>
                             {isAdCooldownActive && (
-                                <span className="text-[8px] font-bold opacity-80 leading-none">
-                                    Retry in {remainingHours}h {remainingMins}m
+                                <span className="text-[8px] font-extrabold opacity-90 leading-none">
+                                    Refills in {remainingDays}d {displayHours}h
                                 </span>
                             )}
                         </button>
