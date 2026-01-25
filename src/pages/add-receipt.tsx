@@ -459,8 +459,8 @@ export function AddReceiptPage() {
                                             value={merchant}
                                             onChange={(e) => setMerchant(e.target.value)}
                                             className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none ${fieldConfidence && isLowConfidence(fieldConfidence.merchant)
-                                                    ? 'border-amber-300 bg-amber-50'
-                                                    : 'border-gray-200'
+                                                ? 'border-amber-300 bg-amber-50'
+                                                : 'border-gray-200'
                                                 }`}
                                             placeholder="e.g., Watsons"
                                         />
@@ -481,8 +481,8 @@ export function AddReceiptPage() {
                                         value={date}
                                         onChange={(e) => setDate(e.target.value)}
                                         className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none ${fieldConfidence && isLowConfidence(fieldConfidence.date)
-                                                ? 'border-amber-300 bg-amber-50'
-                                                : 'border-gray-200'
+                                            ? 'border-amber-300 bg-amber-50'
+                                            : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -497,8 +497,8 @@ export function AddReceiptPage() {
                                             value={amount}
                                             onChange={(e) => setAmount(e.target.value)}
                                             className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none ${fieldConfidence && isLowConfidence(fieldConfidence.totalAmount)
-                                                    ? 'border-amber-300 bg-amber-50'
-                                                    : 'border-gray-200'
+                                                ? 'border-amber-300 bg-amber-50'
+                                                : 'border-gray-200'
                                                 }`}
                                             placeholder="0.00"
                                         />

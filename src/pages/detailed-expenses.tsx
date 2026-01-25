@@ -224,8 +224,8 @@ export function DetailedExpensesPage() {
                         <button
                             onClick={handleToggleAuditMode}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${isAuditMode
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ? 'bg-purple-600 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             {isAuditMode ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -264,8 +264,8 @@ export function DetailedExpensesPage() {
                                             <div
                                                 onClick={() => handleTransactionClick(receipt.id)}
                                                 className={`flex items-center justify-between p-3 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-pointer transition-colors ${isAuditMode && expandedReceipts.has(receipt.id)
-                                                        ? 'rounded-b-none border-b-0'
-                                                        : 'active:bg-gray-50'
+                                                    ? 'rounded-b-none border-b-0'
+                                                    : 'active:bg-gray-50'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -328,8 +328,8 @@ export function DetailedExpensesPage() {
                                                                                 handleAttemptOverride(receipt, item);
                                                                             }}
                                                                             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-colors ${isClaimable
-                                                                                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                                                                                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                                                                                ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                                                                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                                                                 }`}
                                                                         >
                                                                             {isClaimable ? (
