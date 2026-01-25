@@ -1,17 +1,214 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { BarChart3, TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar } from 'lucide-react';
+import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
 import { CalendarPicker } from '../components/ui/calendar-picker';
+import { generateAdvisories, getSpendingVelocity, calculateBurnRate } from '../lib/financial-intelligence';
 
 type TimePeriod = 'week' | 'month' | 'year' | 'custom';
 
+// Pro Member Advisories Component - Glassmorphism Design
+function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget: Budget }) {
+    const advisories = useMemo(() => generateAdvisories(receipts, budget), [receipts, budget]);
+    const velocity = useMemo(() => getSpendingVelocity(receipts), [receipts]);
+    const burnRate = useMemo(() => calculateBurnRate(receipts, budget), [receipts, budget]);
+
+    const getAdvisoryStyles = (severity: 'positive' | 'warning' | 'alert') => {
+        switch (severity) {
+            case 'positive':
+                return {
+                    bg: 'bg-gradient-to-br from-emerald-500/10 to-green-500/10',
+                    border: 'border-emerald-200/50',
+                    iconBg: 'bg-emerald-500/20',
+                    iconColor: 'text-emerald-600',
+                    badge: 'bg-emerald-100 text-emerald-700',
+                };
+            case 'warning':
+                return {
+                    bg: 'bg-gradient-to-br from-amber-500/10 to-orange-500/10',
+                    border: 'border-amber-200/50',
+                    iconBg: 'bg-amber-500/20',
+                    iconColor: 'text-amber-600',
+                    badge: 'bg-amber-100 text-amber-700',
+                };
+            case 'alert':
+                return {
+                    bg: 'bg-gradient-to-br from-red-500/10 to-rose-500/10',
+                    border: 'border-red-200/50',
+                    iconBg: 'bg-red-500/20',
+                    iconColor: 'text-red-600',
+                    badge: 'bg-red-100 text-red-700',
+                };
+        }
+    };
+
+    const getAdvisoryIcon = (type: string, severity: string) => {
+        if (type === 'subscription') return <Repeat size={18} />;
+        if (type === 'burn-rate') return <Flame size={18} />;
+        if (severity === 'positive') return <CheckCircle2 size={18} />;
+        if (severity === 'alert') return <AlertTriangle size={18} />;
+        return <TrendingUp size={18} />;
+    };
+
+    return (
+        <div className="relative overflow-hidden rounded-2xl">
+            {/* Glassmorphism Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-pink-600/5" />
+            <div className="absolute inset-0 backdrop-blur-[2px]" />
+
+            {/* Content */}
+            <div className="relative p-5 border border-white/20 rounded-2xl bg-white/40 backdrop-blur-xl shadow-lg">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg shadow-purple-200/50">
+                        <Sparkles size={20} className="text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            Financial Intelligence
+                        </h2>
+                        <p className="text-xs text-gray-500">Pro Member Advisories</p>
+                    </div>
+                </div>
+
+                {/* Burn Rate Summary Card */}
+                {burnRate.budgetTotal > 0 && (
+                    <div className="mb-5 p-4 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl text-white">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">Monthly Burn Rate</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                burnRate.percentOfBudget > 100 ? 'bg-red-500/30 text-red-200' :
+                                burnRate.percentOfBudget > 85 ? 'bg-amber-500/30 text-amber-200' :
+                                'bg-emerald-500/30 text-emerald-200'
+                            }`}>
+                                {burnRate.percentOfBudget.toFixed(0)}% projected
+                            </span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <p className="text-2xl font-bold">
+                                    RM{burnRate.dailyBurnRate.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
+                                </p>
+                                <p className="text-xs text-slate-400">per day average</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm font-semibold text-slate-300">
+                                    → RM{burnRate.projectedMonthEnd.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
+                                </p>
+                                <p className="text-xs text-slate-400">{burnRate.daysRemaining} days left</p>
+                            </div>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full rounded-full transition-all ${
+                                    burnRate.percentOfBudget > 100 ? 'bg-gradient-to-r from-red-500 to-rose-400' :
+                                    burnRate.percentOfBudget > 85 ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
+                                    'bg-gradient-to-r from-emerald-500 to-green-400'
+                                }`}
+                                style={{ width: `${Math.min(burnRate.percentOfBudget, 100)}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Spending Velocity */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100">
+                        <p className="text-[10px] text-gray-500 uppercase font-medium">Daily Average</p>
+                        <p className="text-lg font-bold text-gray-900">
+                            RM{velocity.dailyAverage.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
+                        </p>
+                    </div>
+                    <div className="p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-100">
+                        <div className="flex items-center justify-between">
+                            <p className="text-[10px] text-gray-500 uppercase font-medium">Weekly Trend</p>
+                            {velocity.trend !== 'stable' && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                                    velocity.trend === 'down' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                }`}>
+                                    {velocity.trend === 'down' ? '↓' : '↑'} {Math.abs(velocity.trendPercent).toFixed(0)}%
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                            {velocity.trend === 'down' ? (
+                                <TrendingDown size={16} className="text-green-500" />
+                            ) : velocity.trend === 'up' ? (
+                                <TrendingUp size={16} className="text-orange-500" />
+                            ) : null}
+                            <p className="text-lg font-bold text-gray-900">
+                                {velocity.trend === 'stable' ? 'Stable' : velocity.trend === 'down' ? 'Down' : 'Up'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Advisories */}
+                {advisories.length > 0 ? (
+                    <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>Advisories</span>
+                            <span className="text-[10px] px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full font-medium">
+                                {advisories.length}
+                            </span>
+                        </h3>
+                        {advisories.map((advisory) => {
+                            const styles = getAdvisoryStyles(advisory.severity);
+                            return (
+                                <div
+                                    key={advisory.id}
+                                    className={`p-4 rounded-xl ${styles.bg} border ${styles.border} backdrop-blur-sm transition-all hover:scale-[1.01]`}
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <div className={`p-2 rounded-lg ${styles.iconBg} ${styles.iconColor}`}>
+                                            {getAdvisoryIcon(advisory.type, advisory.severity)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h4 className="text-sm font-semibold text-gray-900">{advisory.title}</h4>
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${styles.badge}`}>
+                                                    {advisory.type === 'anomaly' ? 'Trend' :
+                                                     advisory.type === 'subscription' ? 'Recurring' : 'Projection'}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 leading-relaxed">{advisory.description}</p>
+                                            {advisory.metric && advisory.metric.comparison > 0 && (
+                                                <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+                                                    <span>Now: <strong className="text-gray-700">RM{advisory.metric.current.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
+                                                    <span>•</span>
+                                                    <span>Avg: <strong className="text-gray-700">RM{advisory.metric.comparison.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="text-center py-8">
+                        <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                            <CheckCircle2 size={28} className="text-blue-500" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-700">All clear, boss!</p>
+                        <p className="text-xs text-gray-500 mt-1">No advisories - your spending patterns look healthy.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// Import Receipt and Budget types for component props
+import type { Receipt, Budget } from '../types';
+
 export function AnalyticsPage() {
     const navigate = useNavigate();
-    const { receipts, user } = useStore();
+    const { receipts, user, budget } = useStore();
     const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('month');
     const [periodOffset, setPeriodOffset] = useState(0);
 
@@ -662,91 +859,8 @@ export function AnalyticsPage() {
                                 </div>
                             </div>
 
-                            {/* AI-Powered Spending Insights */}
-                            <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-blue-100">
-                                <h2 className="text-lg font-bold text-gray-900 mb-4">🤖 AI Spending Insights</h2>
-                                <div className="mb-5">
-                                    <h3 className="text-sm font-semibold text-gray-700 mb-3">📊 Category Comparison (vs. Avg)</h3>
-                                    <div className="space-y-3">
-                                        {topMerchantCategories.slice(0, 4).map(([category, amount]) => {
-                                            const historicalAvg = amount * (0.7 + Math.random() * 0.6);
-                                            const percentDiff = ((amount - historicalAvg) / historicalAvg) * 100;
-                                            const isOver = percentDiff > 0;
-                                            return (
-                                                <div key={category} className="bg-white/70 rounded-xl p-3">
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <span className="text-sm font-medium text-gray-800">{category}</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-bold text-gray-900">{formatCurrency(amount)}</span>
-                                                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${isOver ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}`}>
-                                                                {isOver ? '↑' : '↓'} {Math.abs(percentDiff).toFixed(0)}%
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`absolute left-0 top-0 h-full rounded-full transition-all ${isOver ? 'bg-orange-400' : 'bg-green-400'}`}
-                                                            style={{ width: `${Math.min((amount / (historicalAvg * 1.5)) * 100, 100)}%` }}
-                                                        />
-                                                        <div
-                                                            className="absolute top-0 h-full w-0.5 bg-gray-400"
-                                                            style={{ left: `${Math.min((historicalAvg / (historicalAvg * 1.5)) * 100, 100)}%` }}
-                                                        />
-                                                    </div>
-                                                    <div className="flex justify-between mt-1">
-                                                        <span className="text-[10px] text-gray-400">Avg: {formatCurrency(historicalAvg)}</span>
-                                                        <span className="text-[10px] text-gray-400">{isOver ? 'Above avg' : 'Below avg'}</span>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Key Insights</h3>
-                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <TrendingUp size={16} className="text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-700">Top spending: <strong className="text-blue-600">{topSpendingCategories[0]?.[0] || 'N/A'}</strong></p>
-                                            <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topSpendingCategories[0]?.[1] || 0)} this period</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <BarChart3 size={16} className="text-purple-600" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-700">Most visited: <strong className="text-purple-600">{topMerchantCategories[0]?.[0] || 'N/A'}</strong></p>
-                                            <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(topMerchantCategories[0]?.[1] || 0)} spent there</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-                                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <PieChart size={16} className="text-green-600" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-700">Avg transaction: <strong className="text-green-600">{formatCurrency(avgTransaction)}</strong></p>
-                                            <p className="text-xs text-gray-500 mt-0.5">Across {filteredReceipts.length} transactions</p>
-                                        </div>
-                                    </div>
-                                    {periodChange !== 0 && (
-                                        <div className={`flex items-start gap-3 rounded-xl p-3 ${periodChange < 0 ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${periodChange < 0 ? 'bg-green-100' : 'bg-orange-100'}`}>
-                                                <span className="text-sm">{periodChange < 0 ? '🎉' : '⚠️'}</span>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm text-gray-700">
-                                                    {periodChange < 0 ? `Great job! You spent ${Math.abs(periodChange).toFixed(0)}% less than last period!` : `Heads up: Spending is ${periodChange.toFixed(0)}% higher than last period.`}
-                                                </p>
-                                                <p className="text-xs text-gray-500 mt-0.5">{periodChange < 0 ? 'Keep up the great budgeting!' : 'Consider reviewing your expenses.'}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            {/* Pro Member Advisories - Financial Intelligence */}
+                            <ProMemberAdvisories receipts={receipts} budget={budget} />
                         </div>
                     </ProLockOverlay>
                 </div>

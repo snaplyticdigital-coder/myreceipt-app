@@ -13,6 +13,7 @@ npm install          # Install dependencies
 npm run dev          # Start Vite dev server (http://localhost:5173)
 npm run build        # TypeScript compile + Vite production build
 npm run preview      # Preview production build locally
+npx tsc --noEmit     # Type-check without emitting
 ```
 
 ### Android Development
@@ -39,11 +40,11 @@ npm run deploy-gen2    # Deploy Gen 2 functions
 ### Key Directories
 ```
 src/
-├── lib/           # Core business logic
+├── lib/           # Core business logic & utilities
 ├── components/    # React components (forms/, layout/, modals/, ui/)
-├── pages/         # Route pages (14 total)
+├── pages/         # Route pages
 ├── services/      # Firebase service layer
-├── contexts/      # React Context (auth)
+├── contexts/      # React Context (auth with welcome sheet trigger)
 └── hooks/         # Custom hooks
 
 functions/         # Firebase Cloud Functions
@@ -56,7 +57,10 @@ android/           # Capacitor Android project
 - `src/lib/insights-engine.ts` - AI spending insights generation
 - `src/lib/document-ai.ts` - Google Cloud Document AI receipt OCR
 - `src/lib/calculations.ts` - Financial calculations (week/month/day spending)
-- `src/contexts/auth-context.tsx` - Firebase authentication flow
+- `src/lib/profile-completion.ts` - Profile completion percentage engine (weighted fields)
+- `src/lib/locations.ts` - Malaysian postcode validation (uses postcodes.json)
+- `src/contexts/auth-context.tsx` - Firebase authentication flow + welcome sheet trigger
+- `src/types.ts` - Core TypeScript interfaces (User, Receipt, LineItem, Budget)
 
 ### State Management Pattern
 Zustand store in `store.ts` is the single source of truth. Key patterns:
@@ -64,9 +68,10 @@ Zustand store in `store.ts` is the single source of truth. Key patterns:
 - Computed selectors for derived financial state
 - Freemium tier logic (FREE: 10 scans/month, PRO: unlimited)
 - Gamification state (XP, badges, tier celebrations)
+- Profile fields update via `updateUser()` action
 
 ### Authentication Flow
-Firebase Auth with Google OAuth. Fast login pattern: Firebase user loads first, then Firestore profile data syncs. Guest login supported.
+Firebase Auth with Google OAuth. Fast login pattern: Firebase user loads first, then Firestore profile data syncs. Guest login supported. Welcome bottom sheet triggers for new users with <50% profile completion.
 
 ## Domain-Specific Logic
 
@@ -83,6 +88,12 @@ Three insight types with Manglish copy:
 - FREE: 10 scans/month, +3 per ad watch (48hr cooldown)
 - PRO: Unlimited scans, yearly billing
 - Anniversary-based monthly reset
+
+### Profile Completion (src/lib/profile-completion.ts)
+Weighted field completion: Name/Email 20%, DOB 15%, Gender 10%, Phone 15%, Salary 15%, Occupation 15%, Postcode 10%. Used for progress bars and welcome flow triggers.
+
+### Malaysian Postcode Validation (src/lib/locations.ts)
+Validates 5-digit Malaysian postcodes against `postcodes.json`. Returns state/city info for valid postcodes. Auto-populates `postcodeState` field on User.
 
 ## Environment Variables
 Required in `.env`:
