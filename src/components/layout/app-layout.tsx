@@ -8,7 +8,9 @@ import { useBackButton } from '../../hooks/use-back-button';
 import { PaywallModal } from '../modals/paywall-modal';
 import { RewardSuccessModal } from '../modals/reward-success-modal';
 import { TierCelebrationModal } from '../modals/tier-celebration-modal';
+import { WelcomeBottomSheet } from '../modals/welcome-bottom-sheet';
 import { useStore } from '../../lib/store';
+import { useAuth } from '../../contexts/auth-context';
 import { Toast } from '../ui/toast';
 
 export function AppLayout() {
@@ -17,6 +19,7 @@ export function AppLayout() {
     const [isPaywallOpen, setIsPaywallOpen] = useState(false);
 
     const { user } = useStore();
+    const { showWelcomeSheet, dismissWelcomeSheet, firebaseUser } = useAuth();
 
     useBackButton(isAddModalOpen, () => setIsAddModalOpen(false));
 
@@ -62,6 +65,14 @@ export function AppLayout() {
             <PaywallModal
                 isOpen={isPaywallOpen}
                 onClose={() => setIsPaywallOpen(false)}
+            />
+
+            {/* Welcome Bottom Sheet for New Users */}
+            <WelcomeBottomSheet
+                isOpen={showWelcomeSheet}
+                onClose={dismissWelcomeSheet}
+                userName={firebaseUser?.displayName || user.name}
+                completionPercentage={20}
             />
         </div>
     );

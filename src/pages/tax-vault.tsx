@@ -26,7 +26,7 @@ export function TaxVaultPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-5 pb-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] sticky top-0 z-40 shadow-lg">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-lg border-b border-white/10">
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => navigate(-1)}

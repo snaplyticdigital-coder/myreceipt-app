@@ -396,7 +396,7 @@ export function SearchPage() {
         <div className="min-h-screen bg-gray-50 pb-24">
             <StickyAdBanner />
             {/* Header with Search */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600 to-blue-600 px-4 pb-4 pt-[calc(1rem+env(safe-area-inset-top))]">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-4 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-white/10">
                 <h1 className="text-lg font-bold text-white mb-3">Search</h1>
 
                 {/* Search Bar with Autocomplete */}

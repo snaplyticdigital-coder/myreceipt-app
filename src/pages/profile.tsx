@@ -1,53 +1,20 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { useAuth } from '../contexts/auth-context';
+import { calculateProfileCompletion, getCompletionHint } from '../lib/profile-completion';
+import { validateMalaysianPostcode } from '../lib/locations';
 import {
     Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, AlertTriangle,
     Wallet, Bell, Lock, BarChart3, HelpCircle, FileText, CheckCircle2, XCircle,
     User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote
 } from 'lucide-react';
-
-// Malaysian postcode validation
-const MALAYSIA_POSTCODE_RANGES: { state: string; ranges: [number, number][] }[] = [
-    { state: 'Johor', ranges: [[79000, 86999]] },
-    { state: 'Kedah', ranges: [[5000, 9810]] },
-    { state: 'Kelantan', ranges: [[15000, 18500]] },
-    { state: 'Melaka', ranges: [[75000, 78309]] },
-    { state: 'Negeri Sembilan', ranges: [[70000, 73509]] },
-    { state: 'Pahang', ranges: [[25000, 28800], [39000, 39200], [49000, 49000]] },
-    { state: 'Perak', ranges: [[30000, 36810]] },
-    { state: 'Perlis', ranges: [[1000, 2800]] },
-    { state: 'Penang', ranges: [[10000, 14400]] },
-    { state: 'Sabah', ranges: [[88000, 91309]] },
-    { state: 'Sarawak', ranges: [[93000, 98859]] },
-    { state: 'Selangor', ranges: [[40000, 48300], [63000, 68100]] },
-    { state: 'Terengganu', ranges: [[20000, 24300]] },
-    { state: 'Kuala Lumpur', ranges: [[50000, 60000]] },
-    { state: 'Labuan', ranges: [[87000, 87033]] },
-    { state: 'Putrajaya', ranges: [[62000, 62988]] },
-];
-
-const validateMalaysianPostcode = (postcode: string): { valid: boolean; state?: string } => {
-    if (!postcode || postcode.length !== 5) return { valid: false };
-    const num = parseInt(postcode, 10);
-    if (isNaN(num)) return { valid: false };
-
-    for (const { state, ranges } of MALAYSIA_POSTCODE_RANGES) {
-        for (const [min, max] of ranges) {
-            if (num >= min && num <= max) {
-                return { valid: true, state };
-            }
-        }
-    }
-    return { valid: false };
-};
 import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 
-// Toggle Switch Component - Updated to Blue to match Notifications
+// Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
     return (
         <button
@@ -65,43 +32,18 @@ function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: b
 
 export function ProfilePage() {
     const navigate = useNavigate();
-    const { user, theme, toggleTheme, points, badges, streak, budget } = useStore();
+    const { user, theme, toggleTheme, points, badges, streak, budget, updateUser } = useStore();
     const { logout, firebaseUser } = useAuth();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showTacModal, setShowTacModal] = useState(false);
 
     // Settings toggles
     const [budgetAlerts, setBudgetAlerts] = useState(true);
     const [pushNotifications, setPushNotifications] = useState(true);
     const [biometricAuth, setBiometricAuth] = useState(false);
     const [analyticsSharing, setAnalyticsSharing] = useState(true);
-
-    // Profile completion fields - initialized from store
-    const [dob, setDob] = useState(user.dateOfBirth || '');
-    const [gender, setGender] = useState(user.gender || '');
-    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || '');
-    const [salaryRange, setSalaryRange] = useState(user.salaryRange || '');
-    const [occupation, setOccupation] = useState(user.occupation || '');
-    const [postcode, setPostcode] = useState(user.postcode || '');
-
-    // Calculate profile completion percentage
-    const profileFields = [
-        { key: 'name', filled: !!user.name, weight: 15 },
-        { key: 'email', filled: !!user.email, weight: 15 },
-        { key: 'dateOfBirth', filled: !!dob, weight: 12 },
-        { key: 'gender', filled: !!gender, weight: 10 },
-        { key: 'phoneNumber', filled: !!phoneNumber, weight: 13 },
-        { key: 'salaryRange', filled: !!salaryRange, weight: 15 },
-        { key: 'occupation', filled: !!occupation, weight: 10 },
-        { key: 'postcode', filled: !!postcode, weight: 10 },
-    ];
-    const profileCompletion = profileFields.reduce((acc, field) => acc + (field.filled ? field.weight : 0), 0);
-
-    // Persist profile field changes to store
-    const updateProfileField = (field: string, value: string) => {
-        useStore.getState().updateUser({ [field]: value });
-    };
 
     // Edit Name state
     const [isEditingName, setIsEditingName] = useState(false);
@@ -115,6 +57,21 @@ export function ProfilePage() {
     const salaryRef = useRef<HTMLButtonElement>(null);
     const occupationRef = useRef<HTMLButtonElement>(null);
     const currencyRef = useRef<HTMLButtonElement>(null);
+
+    // Profile completion calculation
+    const profileCompletion = useMemo(() => calculateProfileCompletion(user), [user]);
+    const completionHint = useMemo(() => getCompletionHint(user), [user]);
+
+    // Postcode validation
+    const postcodeValidation = useMemo(() => {
+        if (!user.postcode || user.postcode.length !== 5) return null;
+        return validateMalaysianPostcode(user.postcode);
+    }, [user.postcode]);
+
+    // Check if a field is incomplete for highlighting
+    const isFieldIncomplete = (field: string): boolean => {
+        return profileCompletion.incompleteFields.includes(field as any);
+    };
 
     const handleSignOut = async () => {
         try {
@@ -130,13 +87,11 @@ export function ProfilePage() {
 
         setIsDeleting(true);
         try {
-            // Delete from Firebase Auth
             if (firebaseUser) {
                 await deleteUser(firebaseUser);
             }
             navigate('/login');
         } catch (error: any) {
-            // If requires re-authentication
             if (error.code === 'auth/requires-recent-login') {
                 alert('For security, please sign out and sign back in before deleting your account.');
             } else {
@@ -149,9 +104,24 @@ export function ProfilePage() {
         }
     };
 
+    // Handle postcode change with auto-population of state
+    const handlePostcodeChange = (value: string) => {
+        const cleanValue = value.replace(/\D/g, '').slice(0, 5);
+        updateUser({ postcode: cleanValue });
+
+        if (cleanValue.length === 5) {
+            const validation = validateMalaysianPostcode(cleanValue);
+            if (validation.valid && validation.state) {
+                updateUser({ postcodeState: validation.state });
+            } else {
+                updateUser({ postcodeState: undefined });
+            }
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
-            {/* Sticky Gradient Header - Compacted */}
+            {/* Sticky Gradient Header */}
             <div className="sticky top-0 z-40 bg-gradient-to-r from-purple-600 to-blue-600 px-5 pt-[calc(1rem+env(safe-area-inset-top))] pb-8 rounded-b-[2rem] shadow-md relative overflow-hidden transition-all duration-200">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                 <div className="relative z-10">
@@ -163,7 +133,7 @@ export function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* User Profile Summary - Compacted */}
+                    {/* User Profile Summary */}
                     <div className="flex items-center gap-3">
                         <div className="shrink-0 w-12 h-12 bg-white rounded-full p-0.5 shadow-lg">
                             {firebaseUser?.photoURL ? (
@@ -232,33 +202,32 @@ export function ProfilePage() {
 
                 {/* Account Information */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Account Info</h3>
-                        <span className="text-xs font-semibold text-gray-500">{profileCompletion}%</span>
+                        <span className="text-xs font-semibold text-gray-500">{profileCompletion.percentage}% Complete</span>
                     </div>
 
                     {/* Profile Completion Progress Bar */}
                     <div className="mb-5">
                         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
-                                style={{ width: `${profileCompletion}%` }}
+                                className={`h-full rounded-full transition-all duration-500 ${profileCompletion.percentage >= 100
+                                        ? 'bg-green-500'
+                                        : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                                    }`}
+                                style={{ width: `${profileCompletion.percentage}%` }}
                             />
                         </div>
-                        {profileCompletion < 100 && (
-                            <p className="text-xs text-gray-500 mt-2">
-                                Complete your profile to unlock personalized insights
-                            </p>
+                        {completionHint && (
+                            <p className="text-[10px] text-gray-400 mt-1.5">{completionHint}</p>
                         )}
                     </div>
 
                     <div className="space-y-4">
                         {/* Name - Editable */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('name') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-gray-500">
-                                    <UserIcon size={18} />
-                                </div>
+                                <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Name</p>
                                     {isEditingName ? (
@@ -277,7 +246,7 @@ export function ProfilePage() {
                             {isEditingName ? (
                                 <button
                                     onClick={() => {
-                                        useStore.getState().updateUser({ name: editNameValue });
+                                        updateUser({ name: editNameValue });
                                         setIsEditingName(false);
                                     }}
                                     className="text-xs font-semibold text-white px-3 py-1 bg-blue-600 rounded-full hover:bg-blue-700"
@@ -298,32 +267,28 @@ export function ProfilePage() {
                         </div>
 
                         {/* Email */}
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between py-1 px-2 -mx-2 rounded-lg">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-gray-500">
-                                    <Mail size={18} />
-                                </div>
+                                <Mail size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Email</p>
                                     <p className="text-xs text-gray-500">{user.email}</p>
                                 </div>
                             </div>
                             <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                <CheckCircle2 size={10} /> Verified
+                                <CheckCircle2 size={10} />
+                                VERIFIED
                             </span>
                         </div>
 
-                        {/* Profile Completion Fields - Available to all users */}
                         {/* Date of Birth */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('dob') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <Calendar size={18} />
-                                </div>
+                                <Calendar size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Date of Birth</p>
                                     <p className="text-xs text-gray-500">
-                                        {dob ? new Date(dob).toLocaleDateString('en-GB') : 'Not set'}
+                                        {user.dob ? new Date(user.dob).toLocaleDateString('en-GB') : 'Not set'}
                                     </p>
                                 </div>
                             </div>
@@ -337,14 +302,12 @@ export function ProfilePage() {
                         </div>
 
                         {/* Gender */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('gender') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <UserIcon size={18} />
-                                </div>
+                                <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Gender</p>
-                                    <p className="text-xs text-gray-500">{gender || 'Not set'}</p>
+                                    <p className="text-xs text-gray-500">{user.gender || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -357,40 +320,43 @@ export function ProfilePage() {
                         </div>
 
                         {/* Phone Number */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('phone') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <Phone size={18} />
-                                </div>
+                                <Phone size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Phone Number</p>
                                     <input
                                         type="tel"
-                                        value={phoneNumber}
-                                        onChange={(e) => {
-                                            const val = e.target.value.replace(/\D/g, '');
-                                            setPhoneNumber(val);
-                                            updateProfileField('phoneNumber', val);
-                                        }}
+                                        value={user.phone || ''}
+                                        onChange={(e) => updateUser({ phone: e.target.value.replace(/\D/g, '') })}
                                         placeholder="01X-XXX XXXX"
                                         className="text-xs text-gray-500 bg-transparent border-none outline-none w-32"
                                     />
                                 </div>
                             </div>
-                            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                <XCircle size={10} /> Unverified
-                            </span>
+                            {user.phoneVerified ? (
+                                <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                    <CheckCircle2 size={10} />
+                                    VERIFIED
+                                </span>
+                            ) : (
+                                <button
+                                    onClick={() => setShowTacModal(true)}
+                                    className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 hover:bg-red-100"
+                                >
+                                    <XCircle size={10} />
+                                    UNVERIFIED
+                                </button>
+                            )}
                         </div>
 
                         {/* Salary Range */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('salary') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <Banknote size={18} />
-                                </div>
+                                <Banknote size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Salary Range</p>
-                                    <p className="text-xs text-gray-500">{salaryRange || 'Not set'}</p>
+                                    <p className="text-xs text-gray-500">{user.salary || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -403,14 +369,12 @@ export function ProfilePage() {
                         </div>
 
                         {/* Occupation */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('occupation') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <Briefcase size={18} />
-                                </div>
+                                <Briefcase size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Occupation</p>
-                                    <p className="text-xs text-gray-500">{occupation || 'Not set'}</p>
+                                    <p className="text-xs text-gray-500">{user.occupation || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -423,47 +387,31 @@ export function ProfilePage() {
                         </div>
 
                         {/* Postcode */}
-                        <div className="flex items-center justify-between">
+                        <div className={`flex items-center justify-between py-1 px-2 -mx-2 rounded-lg ${isFieldIncomplete('postcode') ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50' : ''}`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                    <MapPin size={18} />
-                                </div>
+                                <MapPin size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">Postcode</p>
                                     <input
                                         type="text"
-                                        value={postcode}
-                                        onChange={(e) => {
-                                            const val = e.target.value.replace(/\D/g, '').slice(0, 5);
-                                            setPostcode(val);
-                                            if (val.length === 5) {
-                                                const validation = validateMalaysianPostcode(val);
-                                                if (validation.valid) {
-                                                    updateProfileField('postcode', val);
-                                                }
-                                            } else if (val.length === 0) {
-                                                updateProfileField('postcode', '');
-                                            }
-                                        }}
+                                        value={user.postcode || ''}
+                                        onChange={(e) => handlePostcodeChange(e.target.value)}
                                         placeholder="XXXXX"
                                         maxLength={5}
                                         className="text-xs text-gray-500 bg-transparent border-none outline-none w-20"
                                     />
                                 </div>
                             </div>
-                            {postcode && postcode.length === 5 && (
-                                (() => {
-                                    const validation = validateMalaysianPostcode(postcode);
-                                    return validation.valid ? (
-                                        <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                            <CheckCircle2 size={10} /> {validation.state}
-                                        </span>
-                                    ) : (
-                                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                            <XCircle size={10} /> Invalid
-                                        </span>
-                                    );
-                                })()
+                            {user.postcode && user.postcode.length === 5 && (
+                                postcodeValidation?.valid ? (
+                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                                        {postcodeValidation.state}
+                                    </span>
+                                ) : (
+                                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+                                        Invalid
+                                    </span>
+                                )
                             )}
                         </div>
                     </div>
@@ -473,12 +421,9 @@ export function ProfilePage() {
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Budget</h3>
 
-                    {/* Monthly Budget Link - Renamed to Set Your Budget */}
                     <Link to="/budget" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <Wallet size={18} />
-                            </div>
+                            <Wallet size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Set Your Budget</p>
                                 <p className="text-xs text-gray-500">Limit: {budget.total.toFixed(2)}</p>
@@ -487,12 +432,9 @@ export function ProfilePage() {
                         <ChevronRight size={18} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                     </Link>
 
-                    {/* Budget Alerts - Moved here */}
                     <div className="flex items-center justify-between py-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <Bell size={18} />
-                            </div>
+                            <Bell size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Budget Alerts</p>
                                 <p className="text-xs text-gray-500">Get notified near limits</p>
@@ -506,12 +448,9 @@ export function ProfilePage() {
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Preferences</h3>
 
-                    {/* Theme Toggle */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
-                            </div>
+                            {theme === 'dark' ? <Moon size={18} className="text-slate-400" strokeWidth={1.5} /> : <Sun size={18} className="text-slate-400" strokeWidth={1.5} />}
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Dark Mode</p>
                                 <p className="text-xs text-gray-500">{theme === 'dark' ? 'On' : 'Off'}</p>
@@ -520,12 +459,9 @@ export function ProfilePage() {
                         <ToggleSwitch checked={theme === 'dark'} onChange={() => toggleTheme()} />
                     </div>
 
-                    {/* Push Notifications */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <Smartphone size={18} />
-                            </div>
+                            <Smartphone size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Push Notifications</p>
                                 <p className="text-xs text-gray-500">New receipt alerts</p>
@@ -534,12 +470,9 @@ export function ProfilePage() {
                         <ToggleSwitch checked={pushNotifications} onChange={setPushNotifications} />
                     </div>
 
-                    {/* Analytics Sharing */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <BarChart3 size={18} />
-                            </div>
+                            <BarChart3 size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Analytics Sharing</p>
                                 <p className="text-xs text-gray-500">Share anonymous usage data</p>
@@ -548,12 +481,9 @@ export function ProfilePage() {
                         <ToggleSwitch checked={analyticsSharing} onChange={setAnalyticsSharing} />
                     </div>
 
-                    {/* Biometric */}
                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <Lock size={18} />
-                            </div>
+                            <Lock size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Biometric Auth</p>
                                 <p className="text-xs text-gray-500">Secure logic with FaceID</p>
@@ -562,12 +492,9 @@ export function ProfilePage() {
                         <ToggleSwitch checked={biometricAuth} onChange={setBiometricAuth} />
                     </div>
 
-                    {/* Currency - Moved from Account Info */}
                     <div className="flex items-center justify-between py-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <CreditCard size={18} />
-                            </div>
+                            <CreditCard size={18} className="text-slate-400" strokeWidth={1.5} />
                             <div>
                                 <p className="text-sm font-medium text-gray-900">Currency</p>
                                 <p className="text-xs text-gray-500">{user.currency || 'RM'}</p>
@@ -583,25 +510,19 @@ export function ProfilePage() {
                     </div>
                 </div>
 
-
-
                 {/* Support & Legal */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Support</h3>
                     <Link to="#" className="flex items-center justify-between py-3 border-b border-gray-50 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <HelpCircle size={18} />
-                            </div>
+                            <HelpCircle size={18} className="text-slate-400" strokeWidth={1.5} />
                             <span className="text-sm font-medium text-gray-900">Help Center</span>
                         </div>
                         <ChevronRight size={18} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <Link to="#" className="flex items-center justify-between py-3 group">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg text-slate-400">
-                                <FileText size={18} />
-                            </div>
+                            <FileText size={18} className="text-slate-400" strokeWidth={1.5} />
                             <span className="text-sm font-medium text-gray-900">Terms & Privacy</span>
                         </div>
                         <ChevronRight size={18} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
@@ -678,6 +599,17 @@ export function ProfilePage() {
                 </div>
             )}
 
+            {/* TAC Verification Modal */}
+            <TacVerificationModal
+                isOpen={showTacModal}
+                onClose={() => setShowTacModal(false)}
+                onVerify={() => {
+                    updateUser({ phoneVerified: true });
+                    setShowTacModal(false);
+                }}
+                phone={user.phone || ''}
+            />
+
             {/* PopoverSelect Menus */}
             <PopoverSelect
                 isOpen={openPopover === 'gender'}
@@ -688,11 +620,8 @@ export function ProfilePage() {
                     { value: 'Male', label: 'Male' },
                     { value: 'Female', label: 'Female' }
                 ]}
-                value={gender}
-                onSelect={(val) => {
-                    setGender(val);
-                    updateProfileField('gender', val);
-                }}
+                value={user.gender || ''}
+                onSelect={(val) => updateUser({ gender: val as 'Male' | 'Female' | 'Other' })}
             />
             <PopoverSelect
                 isOpen={openPopover === 'salary'}
@@ -707,11 +636,8 @@ export function ProfilePage() {
                     { value: 'RM 10,000 - 15,000', label: 'RM 10,000 - 15,000' },
                     { value: 'Above RM 15,000', label: 'Above RM 15,000' }
                 ]}
-                value={salaryRange}
-                onSelect={(val) => {
-                    setSalaryRange(val);
-                    updateProfileField('salaryRange', val);
-                }}
+                value={user.salary || ''}
+                onSelect={(val) => updateUser({ salary: val })}
             />
             <PopoverSelect
                 isOpen={openPopover === 'occupation'}
@@ -727,11 +653,8 @@ export function ProfilePage() {
                     { value: 'Retired', label: 'Retired' },
                     { value: 'Other', label: 'Other' }
                 ]}
-                value={occupation}
-                onSelect={(val) => {
-                    setOccupation(val);
-                    updateProfileField('occupation', val);
-                }}
+                value={user.occupation || ''}
+                onSelect={(val) => updateUser({ occupation: val })}
             />
             <PopoverSelect
                 isOpen={openPopover === 'currency'}
@@ -743,7 +666,7 @@ export function ProfilePage() {
                     { value: 'USD', label: 'USD' }
                 ]}
                 value={user.currency || 'RM'}
-                onSelect={(val) => useStore.getState().updateUser({ currency: val })}
+                onSelect={(val) => updateUser({ currency: val })}
             />
 
             {/* Calendar Picker for DOB */}
@@ -751,12 +674,118 @@ export function ProfilePage() {
                 isOpen={showCalendar}
                 onClose={() => setShowCalendar(false)}
                 anchorRef={dobRef}
-                value={dob}
-                onChange={(date) => {
-                    setDob(date);
-                    updateProfileField('dateOfBirth', date);
-                }}
+                value={user.dob || ''}
+                onChange={(date) => updateUser({ dob: date })}
             />
+        </div>
+    );
+}
+
+// TAC Verification Modal Component
+function TacVerificationModal({
+    isOpen,
+    onClose,
+    onVerify,
+    phone
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onVerify: () => void;
+    phone: string;
+}) {
+    const [tacCode, setTacCode] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [countdown, setCountdown] = useState(60);
+
+    // Countdown timer
+    useState(() => {
+        if (!isOpen) return;
+        const timer = setInterval(() => {
+            setCountdown(prev => prev > 0 ? prev - 1 : 0);
+        }, 1000);
+        return () => clearInterval(timer);
+    });
+
+    const handleVerify = () => {
+        if (tacCode.length !== 6) return;
+        setIsVerifying(true);
+        // Mock: any 6-digit code is accepted
+        setTimeout(() => {
+            onVerify();
+            setIsVerifying(false);
+        }, 1500);
+    };
+
+    const handleResend = () => {
+        setCountdown(60);
+        // Mock resend
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
+            <div className="relative w-full max-w-md bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
+                <div className="p-6">
+                    <div className="text-center mb-6">
+                        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Phone size={24} className="text-blue-600" />
+                        </div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-2">Verify Phone Number</h2>
+                        <p className="text-sm text-gray-500">
+                            Enter the 6-digit code sent to<br />
+                            <span className="font-semibold text-gray-700">{phone || 'your phone'}</span>
+                        </p>
+                    </div>
+
+                    {/* TAC Input */}
+                    <div className="mb-6">
+                        <input
+                            type="text"
+                            value={tacCode}
+                            onChange={(e) => setTacCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                            placeholder="000000"
+                            maxLength={6}
+                            className="w-full text-center text-3xl font-mono font-bold tracking-[0.5em] bg-gray-50 border border-gray-200 rounded-xl py-4 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none"
+                            autoFocus
+                        />
+                    </div>
+
+                    {/* Resend */}
+                    <div className="text-center mb-6">
+                        {countdown > 0 ? (
+                            <p className="text-sm text-gray-400">
+                                Resend code in <span className="font-mono font-semibold">{countdown}s</span>
+                            </p>
+                        ) : (
+                            <button
+                                onClick={handleResend}
+                                className="text-sm text-blue-600 font-semibold hover:underline"
+                            >
+                                Resend Code
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-3">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleVerify}
+                            disabled={tacCode.length !== 6 || isVerifying}
+                            className="flex-1 py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isVerifying ? 'Verifying...' : 'Verify'}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

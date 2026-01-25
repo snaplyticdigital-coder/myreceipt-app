@@ -20,6 +20,7 @@ interface AuthContextType {
     firebaseUser: FirebaseUser | null;
     loading: boolean;
     error: string | null;
+    showWelcomeSheet: boolean;
     signIn: () => Promise<void>;
     signInEmail: (email: string, password: string) => Promise<void>;
     signUp: (email: string, password: string, name: string) => Promise<void>;
@@ -27,6 +28,7 @@ interface AuthContextType {
     logout: () => Promise<void>;
     clearError: () => void;
     refreshUser: () => Promise<void>;
+    dismissWelcomeSheet: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -113,6 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showWelcomeSheet, setShowWelcomeSheet] = useState(false);
+
+    const dismissWelcomeSheet = () => setShowWelcomeSheet(false);
 
     // Import store methods for user data initialization
     // We'll use dynamic import to avoid circular dependencies
@@ -175,6 +180,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             await signInWithGoogle();
             // Auth state listener will handle setting user
+            // Check profile completion after a short delay to allow store to initialize
+            setTimeout(async () => {
+                try {
+                    const { useStore } = await import('../lib/store');
+                    const { calculateProfileCompletion } = await import('../lib/profile-completion');
+                    const storeUser = useStore.getState().user;
+                    const completion = calculateProfileCompletion(storeUser);
+                    if (completion.percentage < 50) {
+                        setShowWelcomeSheet(true);
+                    }
+                } catch (e) {
+                    console.error('Error checking profile completion:', e);
+                }
+            }, 500);
         } catch (err) {
             setError(getErrorMessage(err));
             setLoading(false);
@@ -261,13 +280,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             firebaseUser,
             loading,
             error,
+            showWelcomeSheet,
             signIn,
             signInEmail: signInEmailHandler,
             signUp,
             loginAsGuest,
             logout,
             clearError,
-            refreshUser
+            refreshUser,
+            dismissWelcomeSheet
         }}>
             {children}
         </AuthContext.Provider>

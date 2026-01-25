@@ -147,13 +147,15 @@ export interface User {
     lifestyleCap: number;
     lifestyleYtd: number;
     enableSpouseOverflow?: boolean;
-    // Profile Completion Fields (universal - available to all users)
-    dateOfBirth?: string;              // ISO date string
-    gender?: 'Male' | 'Female';
-    phoneNumber?: string;
-    salaryRange?: string;
+    // Profile Enhancement Fields
+    dob?: string;                      // ISO date (YYYY-MM-DD)
+    gender?: 'Male' | 'Female' | 'Other';
+    phone?: string;                    // Malaysian format
+    phoneVerified?: boolean;
+    salary?: string;                   // Salary range
     occupation?: string;
-    postcode?: string;
+    postcode?: string;                 // 5-digit Malaysian
+    postcodeState?: string;            // Auto-populated from validation
     isFirstLogin?: boolean;            // For welcome flow trigger
     // Freemium Tier Fields
     tier: 'FREE' | 'PRO';
