@@ -186,6 +186,7 @@
 
     .page-enter {
         animation: page-slide-in 300ms cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
+        will-change: transform, opacity;
     }
 
     .page-exit {
@@ -193,6 +194,7 @@
         position: absolute;
         inset: 0;
         z-index: -1;
+        will-change: transform, opacity;
     }
 
     .page-transition-wrapper {
@@ -201,6 +203,13 @@
         min-height: 100%;
         overflow: visible;
         /* Must be visible for position: sticky to work */
+    }
+
+    /* Prevent sticky header flicker during transitions */
+    .sticky {
+        will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 }
 

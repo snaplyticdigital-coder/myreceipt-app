@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
-import { TrendingUp, Wallet, Star, ChevronRight, Zap, Upload, Sparkles } from 'lucide-react';
+import { TrendingUp, Wallet, Star, ChevronRight, Zap } from 'lucide-react';
 import { useMemo, useEffect, useState } from 'react';
 import {
     getEmptyStateMessage,
@@ -77,48 +77,6 @@ function CoPilotCard({
                     className={`shrink-0 self-center group-hover:translate-x-0.5 transition-all ${isGhostMode ? 'opacity-20' : 'opacity-40 group-hover:opacity-80'}`}
                 >
                     <ChevronRight size={18} className="text-gray-400" />
-                </div>
-            </div>
-        </Link>
-    );
-}
-
-// ============ EMPTY STATE CTA COMPONENT ============
-
-function CoPilotEmptyCTA() {
-    const [ctaMessage, setCtaMessage] = useState<CardMessage | null>(null);
-
-    useEffect(() => {
-        // Get a random encouragement message on mount
-        const message = getEmptyStateMessage('unlock_perk');
-        setCtaMessage(message);
-    }, []);
-
-    return (
-        <Link
-            to="/add-receipt"
-            className="block p-5 rounded-3xl glass-surface glass-glow-purple transition-all active:scale-[0.98] group relative overflow-hidden"
-        >
-            {/* Ghost Placeholder Illustration */}
-            <div className="absolute top-4 right-4 opacity-10">
-                <Sparkles size={64} className="text-purple-500" />
-            </div>
-
-            <div className="flex items-start gap-4 relative z-10">
-                <div className="shrink-0 p-3 bg-gradient-to-br from-purple-500 to-indigo-600 backdrop-blur-md rounded-2xl shadow-lg shadow-purple-200">
-                    <Upload size={24} className="text-white" />
-                </div>
-                <div className="flex-1">
-                    <h3 className="text-sm font-bold text-gray-800 mb-2">
-                        {ctaMessage?.emoji || '📱'} {ctaMessage?.template || "Hey boss, upload your transaction now!"}
-                    </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                        I need to <span className="font-semibold text-purple-600">kenal</span> your habit better before I can give solid advice lah.
-                    </p>
-                    <div className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-purple-600 group-hover:text-purple-700">
-                        <span>Upload First Receipt</span>
-                        <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-                    </div>
                 </div>
             </div>
         </Link>
@@ -305,13 +263,6 @@ export function CoPilotSection() {
                     isGhostMode={!hasTransactions}
                 />
             </div>
-
-            {/* Additional CTA for empty state */}
-            {!hasTransactions && (
-                <div className="mt-2">
-                    <CoPilotEmptyCTA />
-                </div>
-            )}
         </div>
     );
 }

@@ -53,31 +53,31 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
 
     return (
         <div className="grid grid-cols-2 gap-4">
-            {/* Widget 1: Monthly Budget */}
+            {/* Widget 1: Monthly Budget - Unified Styling */}
             {isBudgetNotSet ? (
                 // Empty State: Budget Setup CTA
                 <Link
                     to="/budget"
-                    className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 shadow-sm border border-blue-100 flex flex-col justify-between h-32 relative overflow-hidden group transition-all active:scale-[0.98]"
+                    className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-4 shadow-sm border border-blue-100 flex flex-col justify-between h-32 relative overflow-hidden group transition-all active:scale-[0.98]"
                 >
                     <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
                     <div className="relative z-10 flex flex-col h-full justify-between">
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                                <Wallet size={14} className="text-white" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                                <Wallet size={14} className="text-white" strokeWidth={2} />
                             </div>
                             <p className="text-xs font-bold text-gray-600 uppercase tracking-wider">Budget</p>
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-semibold text-gray-800">Set Up Monthly Budget</span>
-                            <ChevronRight size={16} className="text-purple-500 group-hover:translate-x-0.5 transition-transform" />
+                            <ChevronRight size={16} className="text-purple-500 group-hover:translate-x-0.5 transition-transform" strokeWidth={2} />
                         </div>
                     </div>
                 </Link>
             ) : (
                 // Normal State: Budget Progress
-                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
+                <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
                     <div className="relative z-10">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
                         <p className="text-xl font-extrabold text-gray-900 mt-1 tracking-tight">
@@ -97,32 +97,32 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                 </div>
             )}
 
-            {/* Widget 2: Free Transactions & Ad Rewards */}
-            <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-purple-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
+            {/* Widget 2: Free Transactions & Ad Rewards - Unified with Budget Card */}
+            <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
                 <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
                         {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse" />}
                     </div>
 
-                    <p className="text-base font-black text-gray-900 leading-none">
+                    <p className="text-xl font-extrabold text-gray-900 leading-none tracking-tight">
                         {transactionsLeft} <span className="text-xs font-bold text-gray-400 uppercase">left</span>
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-0.5">
                         Resets {formattedResetDate}
                     </p>
                 </div>
 
                 {/* 10-Dash Visual System */}
-                <div className="flex flex-wrap gap-1 mt-2.5 justify-start w-full relative z-10">
+                <div className="flex gap-1 justify-start w-full relative z-10">
                     {Array.from({ length: 10 }).map((_, i) => {
                         const isUsed = i < usage;
                         return (
                             <div
                                 key={i}
-                                className={`h-1 flex-1 rounded-full transition-all duration-500 ${isUsed
-                                    ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]' // Glow for used
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${isUsed
+                                    ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]'
                                     : 'bg-gray-100'
                                     }`}
                             />
@@ -130,22 +130,24 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                     })}
                 </div>
 
-                {/* Ad Reward Button */}
-                <div className="mt-auto pt-2 relative z-10">
+                {/* Ad Reward Button - Brand Gradient */}
+                <div className="mt-auto relative z-10">
                     <button
                         onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
                         disabled={isAdCooldownActive}
-                        className={`flex flex-col items-center justify-center w-full py-1.5 rounded-lg text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-900 hover:bg-gray-800'
+                        className={`flex flex-col items-center justify-center w-full py-2 rounded-xl text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive
+                            ? 'bg-gray-300 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-purple-200'
                             }`}
                     >
                         <div className="flex items-center gap-1.5">
-                            <PlayCircle size={12} strokeWidth={3} />
-                            <span className="text-xs font-black uppercase tracking-wider">
+                            <PlayCircle size={14} strokeWidth={2.5} className="text-white" />
+                            <span className="text-xs font-bold uppercase tracking-wide">
                                 {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
                             </span>
                         </div>
                         {isAdCooldownActive && (
-                            <span className="text-xs font-extrabold opacity-90 leading-none mt-1">
+                            <span className="text-[10px] font-semibold opacity-90 leading-none mt-0.5">
                                 Refills {remainingDays}d {displayHours}h
                             </span>
                         )}
