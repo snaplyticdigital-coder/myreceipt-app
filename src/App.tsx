@@ -23,6 +23,7 @@ import { AchievementsPage } from './pages/achievements';
 import { ReferralPage } from './pages/referral';
 import { DetailedExpensesPage } from './pages/detailed-expenses';
 import { TaxVaultPage } from './pages/tax-vault';
+import { DeleteAccountPage } from './pages/delete-account';
 
 // Wrapper to use hooks outside Router
 function AppContent() {
@@ -84,6 +85,7 @@ function AppContent() {
                 <Route path="referral" element={<ReferralPage />} />
                 <Route path="detailed-expenses" element={<DetailedExpensesPage />} />
                 <Route path="tax-vault" element={<TaxVaultPage />} />
+                <Route path="delete-account" element={<DeleteAccountPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>

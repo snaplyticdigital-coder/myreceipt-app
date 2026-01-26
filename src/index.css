@@ -205,6 +205,19 @@
         /* Must be visible for position: sticky to work */
     }
 
+    /* Navigation stability: Prevent layout reflow during transitions */
+    .page-enter,
+    .page-exit {
+        /* Contain layout to prevent scroll interference during animations */
+        contain: layout style;
+    }
+
+    /* Ensure smooth transitions without vertical jumping */
+    .page-transition-wrapper > div {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+
     /* Prevent sticky header flicker during transitions */
     .sticky {
         will-change: transform;

@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from './bottom-nav';
 import { PageTransition } from './page-transition';
@@ -26,14 +26,21 @@ export function AppLayout() {
 
     useBackButton(isAddModalOpen, () => setIsAddModalOpen(false));
 
-    // Force scroll to top on route change - runs BEFORE browser paint
-    useLayoutEffect(() => {
+    // Navigation stability fix: Reset scroll AFTER page transition animation completes
+    // This prevents mid-transition vertical "jumps" when sliding between pages
+    useEffect(() => {
         if (location.pathname !== prevPathRef.current) {
-            // Instant scroll reset - no animation
-            if (scrollRef.current) {
-                scrollRef.current.scrollTop = 0;
-            }
             prevPathRef.current = location.pathname;
+
+            // Wait for page transition animation to complete (300ms) before resetting scroll
+            // This ensures the outgoing page slides out smoothly without scroll interference
+            const timer = setTimeout(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = 0;
+                }
+            }, 310); // Slightly longer than 300ms animation to ensure completion
+
+            return () => clearTimeout(timer);
         }
     }, [location.pathname]);
 

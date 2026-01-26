@@ -6,15 +6,15 @@ import { useAuth } from '../contexts/auth-context';
 import { calculateProfileCompletion, getCompletionHint } from '../lib/profile-completion';
 import { validateMalaysianPostcode } from '../lib/locations';
 import {
-    Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, AlertTriangle,
+    Moon, Sun, Smartphone, Trophy, ChevronRight, Flame, LogOut, Trash2, Shield,
     Wallet, Bell, Lock, BarChart3, HelpCircle, FileText, CheckCircle2, XCircle,
     User as UserIcon, Mail, CreditCard, Crown, Calendar, Phone, Briefcase, MapPin, ChevronDown, Banknote, Settings
 } from 'lucide-react';
-import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { SectionHeader } from '../components/ui/section-header';
 import { TacVerificationModal } from '../components/modals/tac-verification-modal';
+import { LogoutConfirmModal } from '../components/modals/logout-confirm-modal';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -36,10 +36,9 @@ export function ProfilePage() {
     const navigate = useNavigate();
     const { user, theme, toggleTheme, streak, budget, updateUser } = useStore();
     const { logout, firebaseUser } = useAuth();
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [deleteConfirmText, setDeleteConfirmText] = useState('');
-    const [isDeleting, setIsDeleting] = useState(false);
     const [showTacModal, setShowTacModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     // Settings toggles
     const [budgetAlerts, setBudgetAlerts] = useState(true);
@@ -76,33 +75,15 @@ export function ProfilePage() {
     };
 
     const handleSignOut = async () => {
+        setIsLoggingOut(true);
         try {
             await logout();
             navigate('/login');
         } catch (error) {
             console.error('Sign out failed:', error);
-        }
-    };
-
-    const handleDeleteAccount = async () => {
-        if (deleteConfirmText !== 'DELETE') return;
-
-        setIsDeleting(true);
-        try {
-            if (firebaseUser) {
-                await deleteUser(firebaseUser);
-            }
-            navigate('/login');
-        } catch (error: any) {
-            if (error.code === 'auth/requires-recent-login') {
-                alert('For security, please sign out and sign back in before deleting your account.');
-            } else {
-                console.error('Delete account failed:', error);
-                alert('Failed to delete account. Please try again.');
-            }
         } finally {
-            setIsDeleting(false);
-            setShowDeleteModal(false);
+            setIsLoggingOut(false);
+            setShowLogoutModal(false);
         }
     };
 
@@ -568,75 +549,46 @@ export function ProfilePage() {
                     </Link>
                 </div>
 
-                {/* Danger Zone */}
-                <div className="space-y-3">
+                {/* Account Management */}
+                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <SectionHeader title="Account Management" icon={<Shield />} className="mb-4" />
+
                     <button
-                        onClick={handleSignOut}
-                        className="w-full py-4 bg-white text-gray-500 rounded-2xl font-medium border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors"
+                        onClick={() => setShowLogoutModal(true)}
+                        className="w-full flex items-center justify-between py-3 border-b border-gray-50 group"
                     >
-                        <LogOut size={18} />
-                        Sign Out
+                        <div className="flex items-center gap-3">
+                            <LogOut size={18} className="text-slate-400" strokeWidth={1.5} />
+                            <span className="text-sm font-medium text-gray-900">Sign Out</span>
+                        </div>
+                        <ChevronRight size={18} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                     </button>
+
                     <button
-                        onClick={() => setShowDeleteModal(true)}
-                        className="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-medium border border-red-100 shadow-sm hover:bg-red-100 flex items-center justify-center gap-2 transition-colors"
+                        onClick={() => navigate('/delete-account')}
+                        className="w-full flex items-center justify-between py-3 group"
                     >
-                        <Trash2 size={18} />
-                        Delete Account
+                        <div className="flex items-center gap-3">
+                            <Trash2 size={18} className="text-red-400" strokeWidth={1.5} />
+                            <span className="text-sm font-medium text-red-600">Delete Account</span>
+                        </div>
+                        <ChevronRight size={18} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                     </button>
-                    <p className="text-center text-xs text-gray-400 pt-2">
-                        Version 1.0.2 • Build 2405
-                    </p>
                 </div>
+
+                {/* Version Info */}
+                <p className="text-center text-xs text-gray-400 pt-2 pb-4">
+                    Version 1.0.2 • Build 2405
+                </p>
             </div>
 
-            {/* Delete Account Confirmation Modal */}
-            {showDeleteModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
-                            <AlertTriangle className="text-red-600" size={24} />
-                        </div>
-
-                        <h2 className="text-xl font-bold text-center text-gray-900 mb-2">Delete Account?</h2>
-                        <p className="text-gray-500 text-center text-sm mb-6">
-                            This action cannot be undone. All your data, receipts, and settings will be permanently deleted.
-                        </p>
-
-                        <div className="mb-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                            <label className="text-xs text-gray-500 block mb-2 text-center uppercase tracking-wide">
-                                Type <span className="font-mono font-bold text-red-600">DELETE</span> to confirm
-                            </label>
-                            <input
-                                type="text"
-                                value={deleteConfirmText}
-                                onChange={(e) => setDeleteConfirmText(e.target.value)}
-                                placeholder="DELETE"
-                                className="w-full text-center font-mono font-bold text-lg bg-white border border-gray-200 rounded-lg py-2 focus:ring-2 focus:ring-red-100 focus:border-red-400 outline-none"
-                            />
-                        </div>
-
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => {
-                                    setShowDeleteModal(false);
-                                    setDeleteConfirmText('');
-                                }}
-                                className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleDeleteAccount}
-                                disabled={deleteConfirmText !== 'DELETE' || isDeleting}
-                                className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-red-200"
-                            >
-                                {isDeleting ? 'Deleting...' : 'Delete'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Logout Confirmation Modal */}
+            <LogoutConfirmModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleSignOut}
+                isLoading={isLoggingOut}
+            />
 
             {/* TAC Verification Modal */}
             <TacVerificationModal
