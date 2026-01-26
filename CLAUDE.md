@@ -24,6 +24,8 @@ npx cap open android   # Open in Android Studio
 
 ### Firebase Functions (in functions/ directory)
 ```bash
+cd functions && npm install            # Install function dependencies
+cd functions && npm start              # Local server at http://localhost:8080
 cd functions && npm run deploy         # Deploy Cloud Functions
 cd functions && npm run deploy-gen2    # Deploy Gen 2 functions
 ```
@@ -42,8 +44,8 @@ cd functions && npm run deploy-gen2    # Deploy Gen 2 functions
 ```
 src/
 ├── lib/           # Core business logic & utilities
-├── components/    # React components (forms/, layout/, modals/, ui/, monetization/)
-├── pages/         # Route pages (15 pages)
+├── components/    # React components (forms/, layout/, modals/, ui/)
+├── pages/         # Route pages
 ├── services/      # Firebase service layer (receipts, users, storage)
 ├── contexts/      # React Context (auth with welcome sheet trigger)
 └── hooks/         # Custom hooks (back button handling)
@@ -51,6 +53,10 @@ src/
 functions/         # Firebase Cloud Functions (Node.js 20, Gen 2)
 android/           # Capacitor Android project
 ```
+
+### Routes (src/App.tsx)
+- **Public**: `/login`, `/signup`
+- **Protected** (under AppLayout): `/` (home), `/receipt/:id`, `/analytics`, `/budget`, `/profile`, `/search`, `/notifications`, `/tax-relief`, `/achievements`, `/referral`, `/detailed-expenses`, `/tax-vault`
 
 ### Critical Files
 - `src/lib/store.ts` - Zustand store: state, receipts, budgets, gamification, freemium logic, computed selectors
