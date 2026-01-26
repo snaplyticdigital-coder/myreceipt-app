@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useLayoutEffect, type ReactNode } from 'react';
+import { useRef, useState, useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface PageTransitionProps {
@@ -11,20 +11,6 @@ export function PageTransition({ children }: PageTransitionProps) {
     const [previousChildren, setPreviousChildren] = useState<ReactNode | null>(null);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const prevKeyRef = useRef(location.key);
-    const prevPathRef = useRef(location.pathname);
-
-    // Use useLayoutEffect to reset scroll BEFORE paint - prevents visual jump
-    useLayoutEffect(() => {
-        if (location.pathname !== prevPathRef.current) {
-            // Instantly lock scroll to top before any rendering
-            const scrollContainer = document.querySelector('.overflow-y-auto');
-            if (scrollContainer) {
-                // Disable smooth scrolling temporarily for instant jump
-                scrollContainer.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-            }
-            prevPathRef.current = location.pathname;
-        }
-    }, [location.pathname]);
 
     useEffect(() => {
         if (location.key !== prevKeyRef.current) {

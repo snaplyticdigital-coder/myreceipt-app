@@ -181,36 +181,38 @@ export function ProfilePage() {
                 </div>
             </div>
 
-            <div className="px-5 -mt-5 relative z-20 space-y-6">
-                {/* The 'Duitrack Growth' Banner */}
+            {/* Decoupled Referral Card - 16dp margin from header */}
+            <div className="px-5 mt-4 relative z-20">
                 <div
                     onClick={() => navigate('/referral')}
-                    className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-5 shadow-lg relative overflow-hidden group mb-6 transition-all hover:shadow-xl active:scale-98"
+                    className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-4 shadow-lg shadow-purple-500/20 relative overflow-hidden group transition-all hover:shadow-xl active:scale-[0.98]"
                 >
                     {/* Background Pattern */}
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-colors" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl -ml-8 -mb-8" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-8 -mt-8 group-hover:bg-white/20 transition-colors" />
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500/30 rounded-full blur-2xl -ml-6 -mb-6" />
 
-                    <div className="relative z-10 flex items-center justify-between">
-                        <div className="max-w-[70%]">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-bold text-white uppercase tracking-wider">
+                    <div className="relative z-10 flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider">
                                     Limited Offer
                                 </span>
                             </div>
-                            <h3 className="text-lg font-bold text-white leading-tight mb-2">
+                            <h3 className="text-base font-bold text-white leading-tight mb-1">
                                 Get 7 Days of Pro!
                             </h3>
-                            <p className="text-xs text-blue-100 font-medium">
+                            <p className="text-xs text-blue-100/90 font-medium">
                                 Share the savings with your besties.
                             </p>
                         </div>
-                        <div className="bg-white rounded-full p-2.5 shadow-sm group-hover:scale-110 transition-transform">
-                            <ChevronRight className="text-purple-600" size={24} />
+                        <div className="shrink-0 bg-white rounded-full p-2 shadow-md group-hover:scale-110 transition-transform">
+                            <ChevronRight className="text-purple-600" size={20} strokeWidth={2} />
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div className="px-5 mt-4 relative z-20 space-y-6">
                 {/* Upgrade Banner - Only for Free Tier */}
                 {user.tier === 'FREE' && (
                     <div className="relative overflow-hidden rounded-2xl p-5 shadow-sm border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useRef, useLayoutEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from './bottom-nav';
 import { PageTransition } from './page-transition';
 import { AddTransactionModal } from '../modals/add-transaction-modal';
@@ -20,8 +20,22 @@ export function AppLayout() {
 
     const { user } = useStore();
     const { showWelcomeSheet, dismissWelcomeSheet, firebaseUser } = useAuth();
+    const location = useLocation();
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const prevPathRef = useRef(location.pathname);
 
     useBackButton(isAddModalOpen, () => setIsAddModalOpen(false));
+
+    // Force scroll to top on route change - runs BEFORE browser paint
+    useLayoutEffect(() => {
+        if (location.pathname !== prevPathRef.current) {
+            // Instant scroll reset - no animation
+            if (scrollRef.current) {
+                scrollRef.current.scrollTop = 0;
+            }
+            prevPathRef.current = location.pathname;
+        }
+    }, [location.pathname]);
 
     const handleAddClick = (mode?: 'scan' | 'import' | 'manual') => {
         // Free Tier Limit Check
@@ -43,9 +57,12 @@ export function AppLayout() {
             <RewardSuccessModal />
             <TierCelebrationModal />
 
-            {/* Main Content Area */}
+            {/* Main Content Area - NO scroll-smooth to prevent transition glitches */}
             <main className="w-full h-full relative">
-                <div className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden scroll-smooth pb-[calc(60px+env(safe-area-inset-bottom)+20px)] bg-gray-50">
+                <div
+                    ref={scrollRef}
+                    className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden pb-[calc(60px+env(safe-area-inset-bottom)+20px)] bg-gray-50"
+                >
                     <div className="max-w-lg mx-auto min-h-full">
                         <PageTransition>
                             <Outlet />
