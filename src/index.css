@@ -75,6 +75,21 @@
         animation: slide-in-from-right 300ms ease-out;
     }
 
+    /* Slide in from bottom for bottom sheets */
+    @keyframes slideInFromBottom {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    .animate-slide-in-bottom {
+        animation: slideInFromBottom 300ms ease-out;
+    }
+
     /* Scale in animation for modals */
     @keyframes scale-in {
         from {

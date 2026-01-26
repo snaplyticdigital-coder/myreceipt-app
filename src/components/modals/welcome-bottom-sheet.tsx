@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
 
@@ -9,7 +10,29 @@ interface WelcomeBottomSheetProps {
 }
 
 export function WelcomeBottomSheet({ isOpen, onClose, userName, completionPercentage = 20 }: WelcomeBottomSheetProps) {
-    if (!isOpen) return null;
+    const [isVisible, setIsVisible] = useState(false);
+    const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+
+    // Handle open/close with animation
+    useEffect(() => {
+        if (isOpen) {
+            setIsVisible(true);
+            setIsAnimatingOut(false);
+        }
+    }, [isOpen]);
+
+    // Smooth dismiss handler with slide-down animation
+    const handleDismiss = () => {
+        setIsAnimatingOut(true);
+        // Wait for animation to complete before calling onClose
+        setTimeout(() => {
+            setIsVisible(false);
+            setIsAnimatingOut(false);
+            onClose();
+        }, 300);
+    };
+
+    if (!isVisible && !isOpen) return null;
 
     const benefits = [
         'Track all your receipts in one place',
@@ -20,29 +43,51 @@ export function WelcomeBottomSheet({ isOpen, onClose, userName, completionPercen
 
     return (
         <div className="fixed inset-0 z-[60] flex items-end justify-center">
-            {/* Backdrop */}
+            {/* Backdrop - clickable to dismiss */}
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-                onClick={onClose}
+                className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+                    isAnimatingOut ? 'opacity-0' : 'opacity-100'
+                }`}
+                onClick={handleDismiss}
+                style={{ cursor: 'pointer' }}
             />
 
             {/* Sheet */}
-            <div className="relative w-full max-w-md bg-white rounded-t-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
-                {/* Dismiss Button */}
+            <div
+                className={`relative w-full max-w-md bg-white rounded-t-3xl shadow-2xl overflow-hidden transition-transform duration-300 ease-out ${
+                    isAnimatingOut ? 'translate-y-full' : 'translate-y-0'
+                }`}
+                style={{
+                    animation: !isAnimatingOut ? 'slideInFromBottom 300ms ease-out' : undefined
+                }}
+            >
+                {/* Dismiss Button - MUST be above all other content */}
+                {/* Touch target: 44x44px minimum for accessibility */}
                 <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 z-10 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors"
+                    onClick={handleDismiss}
+                    className="absolute top-3 right-3 z-50 w-11 h-11 flex items-center justify-center bg-black/20 hover:bg-black/30 active:bg-black/40 rounded-full transition-colors"
+                    aria-label="Close welcome modal"
+                    style={{
+                        WebkitTapHighlightColor: 'transparent',
+                        touchAction: 'manipulation'
+                    }}
                 >
-                    <X size={18} className="text-white" />
+                    <X size={20} className="text-white" strokeWidth={2} />
                 </button>
 
                 {/* Hero Section with Gradient */}
                 <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 px-6 pt-8 pb-10 text-center relative overflow-hidden">
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-400/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl" />
+                    {/* Decorative elements - pointer-events-none to prevent blocking clicks */}
+                    <div
+                        className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"
+                        aria-hidden="true"
+                    />
+                    <div
+                        className="absolute bottom-0 left-0 w-32 h-32 bg-purple-400/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl pointer-events-none"
+                        aria-hidden="true"
+                    />
 
-                    <div className="relative z-10">
+                    <div className="relative z-10 pointer-events-none">
                         {/* Wave Emoji */}
                         <div className="text-5xl mb-4 animate-bounce">
                             👋
@@ -90,15 +135,20 @@ export function WelcomeBottomSheet({ isOpen, onClose, userName, completionPercen
                     <div className="space-y-3">
                         <Link
                             to="/profile"
-                            onClick={onClose}
+                            onClick={handleDismiss}
                             className="w-full flex items-center justify-center py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 active:scale-[0.98] transition-all"
                         >
                             Complete Profile
                         </Link>
 
+                        {/* Maybe Later - 16pt regular, centered */}
                         <button
-                            onClick={onClose}
-                            className="w-full py-3 text-sm text-gray-500 font-medium hover:text-gray-700 transition-colors"
+                            onClick={handleDismiss}
+                            className="w-full py-3 text-base text-gray-500 font-normal hover:text-gray-700 active:text-gray-900 transition-colors text-center"
+                            style={{
+                                WebkitTapHighlightColor: 'transparent',
+                                touchAction: 'manipulation'
+                            }}
                         >
                             Maybe later
                         </button>
