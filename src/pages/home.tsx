@@ -334,9 +334,12 @@ export function HomePage() {
         const previousTotal = diff.isDown
             ? currentTotal + diff.difference
             : currentTotal - diff.difference;
+
+        // Edge case fix: if previous period was RM 0.00 and current is > 0, show 100%
+        // This prevents divide-by-zero and correctly indicates "new spending"
         const pctChange = previousTotal > 0
             ? Math.round((diff.difference / previousTotal) * 100)
-            : 0;
+            : currentTotal > 0 ? 100 : 0;
 
         return {
             total: currentTotal,
@@ -459,12 +462,27 @@ export function HomePage() {
                         </button>
                     </div>
 
-                    {/* Difference Indicator with Percentage */}
+                    {/* Difference Indicator with Percentage - 14pt Medium typography */}
                     <div className="flex items-center gap-2">
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md ${isDown ? 'bg-green-400/20 text-green-100' : 'bg-red-400/20 text-red-100'}`}>
-                            <span className="font-bold">{isDown ? '↓' : '↑'} {percentageChange}%</span>
-                            <span className="opacity-80">•</span>
-                            <span>{mask(formatCurrency(Math.abs(difference)))} {isDown ? 'less' : 'more'} {vsLabel}</span>
+                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-md ${isDown ? 'bg-green-400/20 text-green-100' : 'bg-red-400/20 text-red-100'}`}>
+                            {/* Thin-stroke white arrow indicator */}
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className={isDown ? '' : 'rotate-180'}
+                            >
+                                <path d="M12 19V5" />
+                                <path d="M5 12l7-7 7 7" />
+                            </svg>
+                            <span className="font-medium">{percentageChange}%</span>
+                            <span className="opacity-60">•</span>
+                            <span className="opacity-90">{mask(formatCurrency(Math.abs(difference)))} {isDown ? 'less' : 'more'} {vsLabel}</span>
                         </div>
                     </div>
 
