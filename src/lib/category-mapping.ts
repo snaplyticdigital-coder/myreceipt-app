@@ -1,10 +1,10 @@
-// import type { SpendingCategory } from '../types';
+import type { SpendingCategory } from '../types';
 
 /**
  * Smartly infers the SpendingCategory based on merchant name and optional supplier type string.
  */
 
-export function inferCategory(merchantName?: string | null, supplierType?: string | null): string {
+export function inferCategory(merchantName?: string | null, supplierType?: string | null): SpendingCategory {
     const name = merchantName?.toLowerCase() || '';
     const type = supplierType?.toLowerCase() || '';
 

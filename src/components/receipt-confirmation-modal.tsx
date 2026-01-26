@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Check, FileText, Calendar, Banknote, Tag, Save, CreditCard, Plus, Trash2 } from 'lucide-react';
 import type { SpendingCategory, PaymentMethod, LhdnTag, LineItem } from '../types';
 import { generateId } from '../lib/format';
+import { SORTED_SPENDING_CATEGORIES } from '../lib/constants';
 
 const LHDN_TAGS: LhdnTag[] = ['Lifestyle', 'Education', 'Medical', 'Childcare', 'Books', 'Sports', 'Others'];
 
@@ -182,15 +183,9 @@ export function ReceiptConfirmationModal({ isOpen, onClose, onSave, parsedData, 
                                         onChange={(e) => setCategory(e.target.value as SpendingCategory)}
                                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-medium text-gray-800 appearance-none"
                                     >
-                                        <option value="Dining & Food">Dining & Food</option>
-                                        <option value="Groceries">Groceries</option>
-                                        <option value="Transportation">Transportation</option>
-                                        <option value="Utilities">Utilities</option>
-                                        <option value="Shopping">Shopping</option>
-                                        <option value="Healthcare">Healthcare</option>
-                                        <option value="Entertainment">Entertainment</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Others">Others</option>
+                                        {SORTED_SPENDING_CATEGORIES.map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>

@@ -18,6 +18,8 @@ export type SpendingCategory =
     | 'Shopping'
     | 'Education'
     | 'Utilities'
+    | 'Sports'
+    | 'Lifestyle'
     | 'Others';
 
 export type MerchantCategory =

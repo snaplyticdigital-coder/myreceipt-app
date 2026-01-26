@@ -543,6 +543,8 @@ export function HomePage() {
                                                         'Shopping': 'bg-indigo-500',
                                                         'Education': 'bg-amber-500',
                                                         'Utilities': 'bg-yellow-500',
+                                                        'Sports': 'bg-teal-500',
+                                                        'Lifestyle': 'bg-blue-500',
                                                         'Others': 'bg-gray-500'
                                                     }[transaction.spendingCategory] || 'bg-gray-500'
                                                         } text-white text-xs px-2.5 py-0.5 rounded-full font-medium flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer`}

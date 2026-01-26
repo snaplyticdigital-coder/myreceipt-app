@@ -1,13 +1,30 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { TrendingUp, PieChart, ChevronRight, ChevronLeft, Calendar, AlertTriangle, CheckCircle2, Repeat, Flame, TrendingDown, Sparkles, BarChart3, List, Store } from 'lucide-react';
+import {
+    TrendingUp,
+    PieChart,
+    ChevronRight,
+    ChevronLeft,
+    Calendar,
+    AlertTriangle,
+    CheckCircle2,
+    Repeat,
+    Flame,
+    TrendingDown,
+    Sparkles,
+    BarChart3,
+    List,
+    Store
+} from 'lucide-react';
 import { SectionHeader } from '../components/ui/section-header';
 import { useNavigate } from 'react-router-dom';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { generateAdvisories, getSpendingVelocity, calculateBurnRate } from '../lib/financial-intelligence';
+import { CATEGORY_COLORS } from '../lib/constants';
+import type { SpendingCategory, Receipt, Budget } from '../types';
 
 type TimePeriod = 'week' | 'month' | 'year' | 'custom';
 
@@ -194,9 +211,7 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
     );
 }
 
-// Import Receipt and Budget types for component props
-import type { Receipt, Budget } from '../types';
-
+// AnalyticsPage component follows
 export function AnalyticsPage() {
     const navigate = useNavigate();
     const { receipts, user, budget } = useStore();
@@ -480,18 +495,6 @@ export function AnalyticsPage() {
 
     const maxChartAmount = Math.max(...chartData.data.map(d => d.amount), 1);
 
-    const spendingCategoryColors: Record<string, { bg: string; gradient: string }> = {
-        'Groceries': { bg: 'bg-green-500', gradient: 'from-green-400 to-green-600' },
-        'Dining & Food': { bg: 'bg-orange-500', gradient: 'from-orange-400 to-orange-600' },
-        'Transportation': { bg: 'bg-blue-500', gradient: 'from-blue-400 to-blue-600' },
-        'Healthcare': { bg: 'bg-red-500', gradient: 'from-red-400 to-red-600' },
-        'Entertainment': { bg: 'bg-purple-500', gradient: 'from-purple-400 to-purple-600' },
-        'Shopping': { bg: 'bg-pink-500', gradient: 'from-pink-400 to-pink-600' },
-        'Education': { bg: 'bg-indigo-500', gradient: 'from-indigo-400 to-indigo-600' },
-        'Utilities': { bg: 'bg-gray-500', gradient: 'from-gray-400 to-gray-600' },
-        'Others': { bg: 'bg-slate-500', gradient: 'from-slate-400 to-slate-600' },
-    };
-
     const merchantCategoryColors: Record<string, string> = {
         'Restaurant': 'from-orange-400 to-orange-600',
         'Coffee Shop': 'from-amber-400 to-amber-600',
@@ -741,7 +744,7 @@ export function AnalyticsPage() {
                                         </svg>
 
                                         <svg className="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
-                                            {donutSegments.reduce((acc, segment, index) => {
+                                            {donutSegments.reduce((acc: any, segment, index) => {
                                                 const prevOffset = acc.offset;
                                                 const strokeDasharray = `${segment.percent * 2.51} ${251 - segment.percent * 2.51}`;
                                                 const gradients = ['url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#gradOthers)'];
@@ -755,39 +758,36 @@ export function AnalyticsPage() {
                                                         fill="none"
                                                         stroke={gradients[index % gradients.length]}
                                                         strokeWidth="12"
-                                                        strokeLinecap="round"
                                                         strokeDasharray={strokeDasharray}
                                                         strokeDashoffset={-prevOffset * 2.51}
-                                                        className="transition-all duration-1000 ease-out hover:stroke-width-14"
+                                                        strokeLinecap="round"
+                                                        className="transition-all duration-1000"
                                                     />
                                                 );
+
                                                 acc.offset += segment.percent;
                                                 return acc;
-                                            }, { elements: [] as React.ReactNode[], offset: 0 }).elements}
+                                            }, { elements: [], offset: 0 }).elements}
                                         </svg>
 
-                                        <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                            <span className="text-[10px] text-gray-400 uppercase font-medium">Total</span>
-                                            <span className="text-sm font-extrabold text-gray-900">{formatCurrency(totalSpending).replace('RM ', 'RM')}</span>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Total</p>
+                                            <p className="text-sm font-black text-gray-900 leading-none">
+                                                RM{totalSpending.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
+                                            </p>
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 space-y-3 min-w-0">
+                                    <div className="flex-1 space-y-2.5">
                                         {donutSegments.map((segment, index) => {
-                                            const gradients = [
-                                                'bg-gradient-to-r from-purple-500 to-blue-500',
-                                                'bg-gradient-to-r from-pink-500 to-purple-500',
-                                                'bg-gradient-to-r from-amber-500 to-pink-500',
-                                                'bg-gradient-to-r from-emerald-500 to-blue-500',
-                                                'bg-gradient-to-r from-slate-400 to-slate-300'
-                                            ];
+                                            const catColors: any = CATEGORY_COLORS[segment.category as SpendingCategory] || { ring: '#94a3b8' };
                                             return (
-                                                <div key={segment.category} className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2.5 min-w-0">
-                                                        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${gradients[index % gradients.length]}`} />
-                                                        <span className="text-xs text-gray-600 font-medium truncate">{segment.category}</span>
+                                                <div key={index} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: catColors.ring }} />
+                                                        <span className="text-[11px] font-bold text-gray-700 truncate max-w-[80px]">{segment.category}</span>
                                                     </div>
-                                                    <span className="text-xs font-bold text-gray-900">{segment.percent.toFixed(0)}%</span>
+                                                    <span className="text-[11px] font-black text-gray-900">{segment.percent.toFixed(0)}%</span>
                                                 </div>
                                             );
                                         })}
@@ -795,32 +795,32 @@ export function AnalyticsPage() {
                                 </div>
                             </div>
 
-                            {/* Spending by Category - Progress Bars */}
-                            <div className="bg-white rounded-2xl p-5 shadow-sm">
+                            {/* Detailed Category List - Premium Aesthetic */}
+                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                                 <SectionHeader
-                                    title="Category Breakdown"
+                                    title="Spending Breakdown"
                                     icon={<List />}
-                                    className="mb-4"
+                                    className="mb-8"
                                 />
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     {topSpendingCategories.map(([category, amount]) => {
                                         const percent = (amount / totalSpending) * 100;
-                                        const colorInfo = spendingCategoryColors[category] || { bg: 'bg-gray-500', gradient: 'from-gray-400 to-gray-600' };
+                                        const catColors: any = CATEGORY_COLORS[category as SpendingCategory] || { ring: '#94a3b8' };
                                         return (
                                             <div key={category} className="group">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className={`w-3 h-3 rounded-full ${colorInfo.bg}`} />
-                                                        <span className="text-sm font-medium text-gray-700">{category}</span>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: catColors.ring }} />
+                                                        <span className="text-[13px] font-bold text-gray-800">{category}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-sm font-bold text-gray-900">{formatCurrency(amount)}</span>
-                                                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{percent.toFixed(1)}%</span>
+                                                    <div className="text-right">
+                                                        <p className="text-[13px] font-black text-gray-900">{formatCurrency(amount)}</p>
+                                                        <p className="text-[10px] font-bold text-gray-400">{percent.toFixed(1)}%</p>
                                                     </div>
                                                 </div>
-                                                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
                                                     <div
-                                                        className={`h-full rounded-full bg-gradient-to-r ${colorInfo.gradient} transition-all duration-500 group-hover:shadow-lg`}
+                                                        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 transition-all duration-1000 shadow-sm"
                                                         style={{ width: `${percent}%` }}
                                                     />
                                                 </div>
@@ -831,7 +831,7 @@ export function AnalyticsPage() {
                             </div>
 
                             {/* Top Store Types - Cards Grid */}
-                            <div className="bg-white rounded-2xl p-5 shadow-sm">
+                            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                                 <SectionHeader
                                     title="Top Store Types"
                                     icon={<Store />}
@@ -849,7 +849,7 @@ export function AnalyticsPage() {
                                                 <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full" />
                                                 <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full" />
                                                 <span className="text-xs font-medium opacity-90 block mb-1">{category}</span>
-                                                <p className="text-xl font-bold">{formatCurrency(amount)}</p>
+                                                <p className="text-xl font-bold">{formatCurrency(amount).replace('RM', '')}</p>
                                                 <span className="text-xs opacity-75">{percent.toFixed(1)}% of total</span>
                                             </div>
                                         );

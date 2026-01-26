@@ -8,6 +8,7 @@ import { generateId } from '../../lib/format';
 import { categorizeItem } from '../../lib/categorization';
 import { InAppSelect } from '../ui/in-app-select';
 import { CalendarPicker } from '../ui/calendar-picker';
+import { SORTED_SPENDING_CATEGORIES } from '../../lib/constants';
 
 export interface TransactionFormData {
     merchant: string;
@@ -33,10 +34,7 @@ interface TransactionFormProps {
 
 export const LHDN_TAGS: LhdnTag[] = ['Lifestyle', 'Education', 'Medical', 'Childcare', 'Books', 'Sports', 'Others'];
 
-const MAIN_CATEGORIES: SpendingCategory[] = [
-    'Dining & Food', 'Groceries', 'Transportation', 'Utilities',
-    'Shopping', 'Healthcare', 'Entertainment', 'Education', 'Others'
-];
+const MAIN_CATEGORIES = SORTED_SPENDING_CATEGORIES;
 
 export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessing = false }: TransactionFormProps) {
 

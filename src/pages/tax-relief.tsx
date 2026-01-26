@@ -135,7 +135,7 @@ export function TaxReliefPage() {
 
 
             <div className="px-5 py-5 space-y-5">
-                <ProLockOverlay title="Unlock Tax Relief Tracker" description="Track your LHDN tax reliefs, monitor limits, and optimize your filing with Pro.">
+                <ProLockOverlay title="Maximize Your LHDN Refund, Boss!" variant="tax">
                     {/* Total Claimable Card */}
                     <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-50 to-blue-50 rounded-bl-[80px] -mr-4 -mt-4" />
@@ -171,13 +171,13 @@ export function TaxReliefPage() {
                             <div className="relative bg-white rounded-2xl p-5 border border-purple-100 shadow-sm overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full -mr-16 -mt-16" />
                                 <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200 shrink-0">
-                                        <Sparkles size={24} />
+                                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200/50 shrink-0 mt-0.5">
+                                        <Sparkles size={16} className="stroke-[1.5px]" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-gray-900 mb-1">Tax Saving Opportunity</h3>
+                                        <h3 className="text-sm font-bold text-gray-900 mb-1">Jimat Tax Sini (Opportunities)</h3>
                                         <p className="text-sm text-gray-700 leading-relaxed italic font-medium">
-                                            "Boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. If you don't use it by 31 Dec, it's gone k?"
+                                            "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. Better buy that laptop or book now before year-end k?"
                                         </p>
                                     </div>
                                 </div>
