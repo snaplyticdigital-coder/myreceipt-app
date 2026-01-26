@@ -56,7 +56,13 @@ android/           # Capacitor Android project
 
 ### Routes (src/App.tsx)
 - **Public**: `/login`, `/signup`
-- **Protected** (under AppLayout): `/` (home), `/receipt/:id`, `/analytics`, `/budget`, `/profile`, `/search`, `/notifications`, `/tax-relief`, `/achievements`, `/referral`, `/detailed-expenses`, `/tax-vault`
+- **Protected** (under AppLayout): `/` (home), `/receipt/:id`, `/analytics`, `/budget`, `/profile`, `/search`, `/notifications`, `/tax-relief`, `/achievements`, `/referral`, `/detailed-expenses`, `/tax-vault`, `/delete-account`
+
+### Navigation & Scroll Stability
+The app uses a custom page transition system (`src/components/layout/page-transition.tsx`) with scroll state management in `app-layout.tsx`. Key patterns:
+- Scroll reset happens AFTER page transition animation completes (310ms delay)
+- No `scroll-smooth` on main container to prevent visual "jumping" during transitions
+- `useEffect` with `setTimeout` ensures outgoing page slides out before scroll resets
 
 ### Critical Files
 - `src/lib/store.ts` - Zustand store: state, receipts, budgets, gamification, freemium logic, computed selectors
@@ -70,6 +76,8 @@ android/           # Capacitor Android project
 - `src/lib/duplicate-detection.ts` - Receipt deduplication logic
 - `src/types.ts` - Core TypeScript interfaces (User, Receipt, LineItem, Budget)
 - `src/contexts/auth-context.tsx` - Firebase auth flow + welcome sheet trigger
+- `src/components/layout/app-layout.tsx` - Main layout with scroll management and global modals
+- `src/lib/copilot-randomization.ts` - High-entropy message randomization for Co-Pilot cards (30 variations per type)
 
 ### State Management Pattern
 Zustand store in `store.ts` is the **single source of truth**:
@@ -100,12 +108,16 @@ Malaysian tax relief with 2025 limits:
 Auto-tags line items based on product categories. Routes spouse overflow when primary user exceeds limits.
 
 ### Financial Co-Pilot Insights
-Three insight types with Manglish copy:
-- **Sikit Lagi** (Gold) - Achievement progress toward goals
-- **Syoknya** (Green) - Spending habit mirror & trends
-- **Boleh Tahan** (Blue) - Daily budget advice & forecasting
+Three card types with Manglish copy and dual-state logic:
+- **Unlock Perk** (Gold/Amber) - Achievement progress toward goals
+- **Spending Shift** (Green/Emerald) - Spending habit mirror & trends
+- **Daily Runway** (Blue) - Daily budget advice & forecasting
 
-Severity levels: critical, positive, informational.
+**Dual-State Engine** (`src/lib/copilot-randomization.ts`):
+- **Empty State**: Ghost-styled cards with encouragement copy when `receipts.length === 0`
+- **Live State**: Real financial data interpolated into randomized messages
+- 30 unique Manglish variations per card type to prevent repetition
+- Session-based index tracking resets on app launch/refresh
 
 ### Freemium Model
 - **FREE**: 10 scans/month (resets monthly), +3 per ad watch (48hr cooldown)
