@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { ArrowLeft, Download, Share2, X, Plus, Store, MapPin, Calendar, AlertTriangle, Check, Edit2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, X, Plus, Store, MapPin, Calendar, AlertTriangle, Check, Edit2, AlertCircle } from 'lucide-react';
 import { isTypicallyIneligible } from '../lib/lhdn-logic';
 import type { LhdnTag } from '../types';
 
@@ -84,12 +84,7 @@ export function ReceiptDetailPage() {
                     </button>
                     <h1 className="text-lg font-semibold text-gray-900">Receipt Details</h1>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                            <Download size={20} className="text-blue-600" />
-                        </button>
-                        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                            <Share2 size={20} className="text-blue-600" />
-                        </button>
+                        {/* Placeholder for future actions */}
                     </div>
                 </div>
             </div>
@@ -361,17 +356,7 @@ export function ReceiptDetailPage() {
                     </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="space-y-3 pt-2">
-                    <button className="w-full bg-blue-600 text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
-                        <Download size={20} />
-                        Download PDF
-                    </button>
-                    <button className="w-full bg-white text-blue-600 font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors border border-gray-200 shadow-sm">
-                        <Share2 size={20} />
-                        Share Receipt
-                    </button>
-                </div>
+                {/* Action Buttons Removed */}
             </div>
         </div>
     );
