@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
-import { TrendingUp, Wallet, Star, ChevronRight, Zap, Receipt } from 'lucide-react';
+import { TrendingUp, Wallet, Star, ChevronRight, Zap, Receipt, Lock, Crown } from 'lucide-react';
 import { useMemo, useEffect, useState } from 'react';
 import {
     getEmptyStateMessage,
@@ -9,6 +9,31 @@ import {
     type LiveDataContext,
 } from '../lib/copilot-randomization';
 import { getTopTaxInsight, type TaxInsight } from '../lib/lhdn-logic';
+
+// ============ FREEMIUM TAX MARKETING TEASERS ============
+
+const TAX_MARKETING_TEASERS = [
+    {
+        message: "Did you know our app can help to utilize your LHDN tax relief? Unlock Pro to see how!",
+        emoji: "💡",
+    },
+    {
+        message: "Upload your receipt and let Duitrack tolong kira the tax for you. Don't miss out on refunds!",
+        emoji: "🧾",
+    },
+    {
+        message: "Eh boss, want to get the max LHDN refund? Upgrade now to unlock the Tax Expert!",
+        emoji: "💰",
+    },
+    {
+        message: "Your tax relief untapped lah! Go Pro to see exactly how much you can claim this year!",
+        emoji: "📊",
+    },
+    {
+        message: "LHDN got RM2,500 Lifestyle relief waiting for you. Upgrade to track it automatically!",
+        emoji: "🎯",
+    },
+];
 
 // ============ TYPE DEFINITIONS ============
 
@@ -84,14 +109,68 @@ function CoPilotCard({
     );
 }
 
+// ============ FREEMIUM TAX LOCK CARD (Marketing Hook) ============
+
+interface FreemiumTaxCardProps {
+    teaser: { message: string; emoji: string };
+}
+
+function FreemiumTaxCard({ teaser }: FreemiumTaxCardProps) {
+    return (
+        <div className="block p-4 rounded-3xl glass-surface glass-glow-teal relative overflow-hidden premium-card-shadow">
+            {/* Lock Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-900/5 to-teal-800/10 rounded-3xl z-0" />
+
+            {/* Subtle Lock Pattern */}
+            <div className="absolute top-2 right-2 z-10">
+                <div className="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center">
+                    <Lock size={12} className="text-teal-600" />
+                </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 relative z-10">
+                <div className="shrink-0 p-2.5 bg-teal-50/90 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative">
+                    <Receipt size={18} className="text-teal-500 opacity-60" />
+                    {/* Mini Lock Badge */}
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center shadow-sm">
+                        <Crown size={8} className="text-white" />
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-xs font-black uppercase tracking-widest mb-2 leading-none text-gray-400">
+                        Jimat Tax Sini
+                    </h3>
+                    <p className="text-sm font-semibold leading-snug text-gray-700">
+                        {teaser.emoji} {teaser.message}
+                    </p>
+                </div>
+            </div>
+
+            {/* Go Pro Button */}
+            <div className="mt-3 relative z-10">
+                <Link
+                    to="/profile"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-xs uppercase tracking-wide shadow-md hover:from-blue-600 hover:to-purple-700 active:scale-[0.98] transition-all"
+                >
+                    <Crown size={14} />
+                    <span>Unlock Pro</span>
+                </Link>
+            </div>
+        </div>
+    );
+}
+
 // ============ MAIN CO-PILOT SECTION ============
 
 export function CoPilotSection() {
-    const { budget, getMonthTotal, receipts, points } = useStore();
+    const { budget, getMonthTotal, receipts, points, user } = useStore();
     const budgetUsed = getMonthTotal();
 
     // Check if user has any transactions (dual-state logic)
     const hasTransactions = receipts.length > 0;
+
+    // Freemium check - FREE users see marketing teasers instead of real tax insights
+    const isFreeTier = user.tier === 'FREE';
 
     // State for randomized messages
     const [cardMessages, setCardMessages] = useState<{
@@ -100,11 +179,18 @@ export function CoPilotSection() {
         dailyRunway: CardMessage;
     } | null>(null);
 
-    // Tax insight for "Jimat Tax Sini" feature
+    // Randomized marketing teaser for FREE users (changes on each render/session)
+    const [marketingTeaser] = useState(() => {
+        const randomIndex = Math.floor(Math.random() * TAX_MARKETING_TEASERS.length);
+        return TAX_MARKETING_TEASERS[randomIndex];
+    });
+
+    // Tax insight for "Jimat Tax Sini" feature (PRO users only)
     const taxInsight = useMemo((): TaxInsight | null => {
-        if (!hasTransactions) return null;
+        // Don't calculate for FREE users - they see marketing instead
+        if (isFreeTier || !hasTransactions) return null;
         return getTopTaxInsight(receipts);
-    }, [receipts, hasTransactions]);
+    }, [receipts, hasTransactions, isFreeTier]);
 
     // Calculate live data context
     const liveContext = useMemo((): LiveDataContext => {
@@ -270,19 +356,25 @@ export function CoPilotSection() {
                     isGhostMode={!hasTransactions}
                 />
 
-                {/* Card 4: Jimat Tax Sini - LHDN Tax Insight (only shows when has transactions) */}
-                {taxInsight && (
-                    <CoPilotCard
-                        type="budget"
-                        title="Jimat Tax Sini"
-                        message={taxInsight.suggestion}
-                        emoji={taxInsight.emoji}
-                        icon={<Receipt size={18} className="text-teal-500" />}
-                        glowClass="glass-glow-teal"
-                        iconBgClass="bg-teal-50/90"
-                        href="/tax-relief"
-                        isGhostMode={false}
-                    />
+                {/* Card 4: Jimat Tax Sini - Freemium Split Logic */}
+                {isFreeTier ? (
+                    // FREE TIER: Show marketing teaser with lock overlay
+                    <FreemiumTaxCard teaser={marketingTeaser} />
+                ) : (
+                    // PRO TIER: Show real tax insights (only when has transactions)
+                    taxInsight && (
+                        <CoPilotCard
+                            type="budget"
+                            title="Jimat Tax Sini"
+                            message={taxInsight.suggestion}
+                            emoji={taxInsight.emoji}
+                            icon={<Receipt size={18} className="text-teal-500" />}
+                            glowClass="glass-glow-teal"
+                            iconBgClass="bg-teal-50/90"
+                            href="/tax-relief"
+                            isGhostMode={false}
+                        />
+                    )
                 )}
             </div>
         </div>

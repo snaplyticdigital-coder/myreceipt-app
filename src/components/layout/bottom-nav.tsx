@@ -7,9 +7,9 @@ interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
 }
 
-// Custom Duitrack Logo Component - Now uses the official logo image
+// Custom Duitrack Logo Component - Standardized with other nav icons
+// Unselected: Muted Gray/600 | Selected: Blue-to-Purple gradient with scale-pulse animation
 const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
-    // For active state, use the white logo image; for inactive, use a tinted version
     const isActive = color === NAV_COLORS.active;
 
     return (
@@ -17,16 +17,43 @@ const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { s
             className={`relative ${className}`}
             style={{ width: size, height: size }}
         >
+            {/* Base Layer: Inactive Gray State (always rendered as background) */}
             <img
                 src="/duitrack-logo-white.png"
                 alt="Duitrack"
-                className="w-full h-full object-contain"
+                className="absolute inset-0 w-full h-full object-contain"
                 style={{
-                    filter: isActive
-                        ? 'invert(30%) sepia(100%) saturate(1500%) hue-rotate(250deg) brightness(90%)' // Purple tint for active
-                        : 'invert(70%) sepia(0%) saturate(0%) brightness(60%)', // Gray for inactive
+                    // Gray/600 equivalent filter for consistency with other nav icons
+                    filter: 'invert(45%) sepia(0%) saturate(0%) brightness(65%)',
+                    opacity: isActive ? 0 : 1,
+                    transition: 'opacity 0.3s ease-out',
                 }}
             />
+
+            {/* Active Layer: Blue-to-Purple Gradient Effect */}
+            <div
+                className={`absolute inset-0 w-full h-full transition-all duration-300 ease-out ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{
+                    // Apply scale-pulse animation when active
+                    animation: isActive ? 'nav-logo-pulse 0.3s ease-out' : 'none',
+                }}
+            >
+                {/* Gradient overlay using CSS mask */}
+                <div
+                    className="w-full h-full"
+                    style={{
+                        background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+                        WebkitMaskImage: 'url(/duitrack-logo-white.png)',
+                        WebkitMaskSize: 'contain',
+                        WebkitMaskRepeat: 'no-repeat',
+                        WebkitMaskPosition: 'center',
+                        maskImage: 'url(/duitrack-logo-white.png)',
+                        maskSize: 'contain',
+                        maskRepeat: 'no-repeat',
+                        maskPosition: 'center',
+                    }}
+                />
+            </div>
         </div>
     );
 };
