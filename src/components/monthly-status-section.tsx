@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { AlertTriangle, PlayCircle } from 'lucide-react';
+import { AlertTriangle, PlayCircle, Wallet, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { ProBudgetCard } from './pro-budget-card';
 
@@ -47,28 +48,54 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
     const remainingDays = Math.floor(remainingHours / 24);
     const displayHours = remainingHours % 24;
 
+    // Check if budget is not set
+    const isBudgetNotSet = budget.total === 0;
+
     return (
         <div className="grid grid-cols-2 gap-4">
             {/* Widget 1: Monthly Budget */}
-            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
-                <div className="relative z-10">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
-                    <p className="text-xl font-extrabold text-gray-900 mt-1 tracking-tight">
-                        {mask(formatCurrency(currentSpend))}
-                    </p>
-                    <p className="text-xs text-gray-400 font-medium">
-                        / {mask(formatCurrency(budgetTotal))}
-                    </p>
-                </div>
+            {isBudgetNotSet ? (
+                // Empty State: Budget Setup CTA
+                <Link
+                    to="/budget"
+                    className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 shadow-sm border border-blue-100 flex flex-col justify-between h-32 relative overflow-hidden group transition-all active:scale-[0.98]"
+                >
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                                <Wallet size={14} className="text-white" />
+                            </div>
+                            <p className="text-xs font-bold text-gray-600 uppercase tracking-wider">Budget</p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-gray-800">Set Up Monthly Budget</span>
+                            <ChevronRight size={16} className="text-purple-500 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                    </div>
+                </Link>
+            ) : (
+                // Normal State: Budget Progress
+                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
+                    <div className="relative z-10">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
+                        <p className="text-xl font-extrabold text-gray-900 mt-1 tracking-tight">
+                            {mask(formatCurrency(currentSpend))}
+                        </p>
+                        <p className="text-xs text-gray-400 font-medium">
+                            / {mask(formatCurrency(budgetTotal))}
+                        </p>
+                    </div>
 
-                <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-2 relative z-10">
-                    <div
-                        className={`h-full rounded-full transition-all duration-700 ${budgetColor}`}
-                        style={{ width: `${budgetPercentage}%` }}
-                    />
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-2 relative z-10">
+                        <div
+                            className={`h-full rounded-full transition-all duration-700 ${budgetColor}`}
+                            style={{ width: `${budgetPercentage}%` }}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Widget 2: Free Transactions & Ad Rewards */}
             <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">

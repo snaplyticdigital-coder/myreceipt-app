@@ -15,7 +15,6 @@ import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { SectionHeader } from '../components/ui/section-header';
 import { TacVerificationModal } from '../components/modals/tac-verification-modal';
-import { getTierByPoints } from '../lib/design-tokens';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -35,7 +34,7 @@ function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: b
 
 export function ProfilePage() {
     const navigate = useNavigate();
-    const { user, theme, toggleTheme, points, streak, budget, updateUser } = useStore();
+    const { user, theme, toggleTheme, streak, budget, updateUser } = useStore();
     const { logout, firebaseUser } = useAuth();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -127,77 +126,59 @@ export function ProfilePage() {
             {/* Sticky Gradient Header */}
             <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600 to-blue-600 px-5 pt-[calc(1rem+env(safe-area-inset-top))] pb-8 rounded-b-[2rem] shadow-md relative overflow-hidden transition-all duration-200">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                {/* Get user's current tier based on points */}
-                {(() => {
-                    const tier = getTierByPoints(points);
-                    return (
-                        <div className="relative z-10">
-                            <div className="flex items-center justify-between mb-4">
-                                <h1 className="text-xl font-bold text-white">Profile</h1>
-                                <div className="flex items-center gap-2">
-                                    {/* Streak Pill */}
-                                    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full">
-                                        <Flame size={14} className="text-orange-300 fill-orange-300" />
-                                        <span className="text-xs font-bold text-white">{streak.currentStreak} Day Streak</span>
-                                    </div>
-
-                                    {/* Trophy Icon - Achievement Entry Point */}
-                                    <button
-                                        onClick={() => navigate('/achievements')}
-                                        className="relative p-2 rounded-full backdrop-blur-[10px] bg-white/10 transition-all active:scale-95 overflow-hidden"
-                                    >
-                                        {/* Gradient border ring */}
-                                        <div
-                                            className="absolute inset-0 rounded-full"
-                                            style={{
-                                                background: `linear-gradient(135deg, ${tier.colors.from}, ${tier.colors.to})`,
-                                                padding: '1.5px',
-                                            }}
-                                        >
-                                            <div className="w-full h-full rounded-full bg-white/20 backdrop-blur-[10px]" />
-                                        </div>
-                                        {/* Trophy Icon with tier color */}
-                                        <Trophy
-                                            size={16}
-                                            className="relative z-10"
-                                            strokeWidth={1.5}
-                                            style={{ color: tier.colors.from }}
-                                        />
-                                    </button>
-                                </div>
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                        <h1 className="text-xl font-bold text-white">Profile</h1>
+                        <div className="flex items-center gap-2">
+                            {/* Streak Pill */}
+                            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full">
+                                <Flame size={14} className="text-orange-300 fill-orange-300" />
+                                <span className="text-xs font-bold text-white">{streak.currentStreak} Day Streak</span>
                             </div>
 
-                            {/* User Profile Summary */}
-                            <div className="flex items-center gap-3">
-                                <div className="shrink-0 w-12 h-12 bg-white rounded-full p-0.5 shadow-lg">
-                                    {firebaseUser?.photoURL ? (
-                                        <img src={firebaseUser.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-600">
-                                            {(user.name || firebaseUser?.email || 'U').charAt(0).toUpperCase()}
-                                        </div>
-                                    )}
+                            {/* Trophy Icon - Achievement Entry Point (Cyber-Luxe Minimalist) */}
+                            <button
+                                onClick={() => navigate('/achievements')}
+                                className="p-2 rounded-full bg-white/10 backdrop-blur-[10px] border border-white/20 transition-all active:scale-95 hover:bg-white/20"
+                            >
+                                <Trophy
+                                    size={16}
+                                    className="text-white"
+                                    strokeWidth={1.5}
+                                />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* User Profile Summary */}
+                    <div className="flex items-center gap-3">
+                        <div className="shrink-0 w-12 h-12 bg-white rounded-full p-0.5 shadow-lg">
+                            {firebaseUser?.photoURL ? (
+                                <img src={firebaseUser.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-600">
+                                    {(user.name || firebaseUser?.email || 'U').charAt(0).toUpperCase()}
                                 </div>
-                                <div className="min-w-0">
-                                    <h2 className="text-lg font-bold text-white leading-tight truncate">
-                                        {firebaseUser?.displayName || user.name || 'User'}
-                                    </h2>
-                                    <p className="text-blue-100 text-xs truncate mb-2">{firebaseUser?.email || user.email}</p>
-                                    <div className="flex items-center gap-2">
-                                        <span className={`text-xs uppercase font-bold px-2 py-0.5 rounded-full ${user.tier === 'PRO' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm' : 'bg-white/20 text-white'}`}>
-                                            {user.tier === 'PRO' ? 'Pro Member' : 'Free Tier'}
-                                        </span>
-                                        {user.tier === 'PRO' && user.proExpiryDate && (
-                                            <span className="text-xs font-bold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 uppercase">
-                                                PRO UNTIL {new Date(user.proExpiryDate).toLocaleDateString('en-GB')}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                            )}
+                        </div>
+                        <div className="min-w-0">
+                            <h2 className="text-lg font-bold text-white leading-tight truncate">
+                                {firebaseUser?.displayName || user.name || 'User'}
+                            </h2>
+                            <p className="text-blue-100 text-xs truncate mb-2">{firebaseUser?.email || user.email}</p>
+                            <div className="flex items-center gap-2">
+                                <span className={`text-xs uppercase font-bold px-2 py-0.5 rounded-full ${user.tier === 'PRO' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm' : 'bg-white/20 text-white'}`}>
+                                    {user.tier === 'PRO' ? 'Pro Member' : 'Free Tier'}
+                                </span>
+                                {user.tier === 'PRO' && user.proExpiryDate && (
+                                    <span className="text-xs font-bold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 uppercase">
+                                        PRO UNTIL {new Date(user.proExpiryDate).toLocaleDateString('en-GB')}
+                                    </span>
+                                )}
                             </div>
                         </div>
-                    );
-                })()}
+                    </div>
+                </div>
             </div>
 
             <div className="px-5 -mt-5 relative z-20 space-y-6">

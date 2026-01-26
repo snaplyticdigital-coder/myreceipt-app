@@ -301,40 +301,51 @@ export function HomePage() {
     // ============================================
     // COMPUTED VALUES BASED ON SELECTED PERIOD
     // ============================================
-    const { total, difference, isDown, label, vsLabel } = useMemo(() => {
+    const { total, difference, isDown, label, vsLabel, percentageChange } = useMemo(() => {
+        let currentTotal: number;
+        let diff: { difference: number; isDown: boolean };
+        let periodLabel: string;
+        let comparisonLabel: string;
+
         switch (spendPeriod) {
-            case 'daily': {
-                const dayDiff = getDayDifference();
-                return {
-                    total: getDayTotal(),
-                    difference: dayDiff.difference,
-                    isDown: dayDiff.isDown,
-                    label: "Today's Spend",
-                    vsLabel: 'vs yesterday'
-                };
-            }
-            case 'weekly': {
-                const weekDiff = getWeekDifference();
-                return {
-                    total: getWeekTotal(),
-                    difference: weekDiff.difference,
-                    isDown: weekDiff.isDown,
-                    label: "This Week's Spend",
-                    vsLabel: 'vs last week'
-                };
-            }
+            case 'daily':
+                currentTotal = getDayTotal();
+                diff = getDayDifference();
+                periodLabel = "Today's Spend";
+                comparisonLabel = 'vs yesterday';
+                break;
+            case 'weekly':
+                currentTotal = getWeekTotal();
+                diff = getWeekDifference();
+                periodLabel = "This Week's Spend";
+                comparisonLabel = 'vs last week';
+                break;
             case 'monthly':
-            default: {
-                const monthDiff = getMonthDifference();
-                return {
-                    total: getMonthTotal(),
-                    difference: monthDiff.difference,
-                    isDown: monthDiff.isDown,
-                    label: "This Month's Spend",
-                    vsLabel: 'vs last month'
-                };
-            }
+            default:
+                currentTotal = getMonthTotal();
+                diff = getMonthDifference();
+                periodLabel = "This Month's Spend";
+                comparisonLabel = 'vs last month';
+                break;
         }
+
+        // Calculate percentage change
+        // Previous period total = current + difference (if down) or current - difference (if up)
+        const previousTotal = diff.isDown
+            ? currentTotal + diff.difference
+            : currentTotal - diff.difference;
+        const pctChange = previousTotal > 0
+            ? Math.round((diff.difference / previousTotal) * 100)
+            : 0;
+
+        return {
+            total: currentTotal,
+            difference: diff.difference,
+            isDown: diff.isDown,
+            label: periodLabel,
+            vsLabel: comparisonLabel,
+            percentageChange: pctChange
+        };
     }, [spendPeriod, getDayTotal, getDayDifference, getWeekTotal, getWeekDifference, getMonthTotal, getMonthDifference]);
 
     // Privacy mask helper
@@ -448,10 +459,11 @@ export function HomePage() {
                         </button>
                     </div>
 
-                    {/* Difference Indicator */}
+                    {/* Difference Indicator with Percentage */}
                     <div className="flex items-center gap-2">
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md ${isDown ? 'bg-green-400/20 text-green-100' : 'bg-orange-400/20 text-orange-50'}`}>
-                            <span>{isDown ? '↓' : '↑'}</span>
+                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md ${isDown ? 'bg-green-400/20 text-green-100' : 'bg-red-400/20 text-red-100'}`}>
+                            <span className="font-bold">{isDown ? '↓' : '↑'} {percentageChange}%</span>
+                            <span className="opacity-80">•</span>
                             <span>{mask(formatCurrency(Math.abs(difference)))} {isDown ? 'less' : 'more'} {vsLabel}</span>
                         </div>
                     </div>
