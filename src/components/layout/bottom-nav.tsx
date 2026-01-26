@@ -7,53 +7,53 @@ interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
 }
 
-// Custom Duitrack Logo Component - Standardized with other nav icons
-// Unselected: Muted Gray/600 | Selected: Blue-to-Purple gradient with scale-pulse animation
+/**
+ * DUITRACK LOGO NAV ICON
+ * Standardized to match Analytics, Tax, and Search icons exactly
+ *
+ * Size: 24dp (matching lucide-react icons)
+ * Unselected: Gray-400 (#9CA3AF) via CSS filter
+ * Selected: Purple-600 (#7c3aed) via CSS filter + 1.1x scale pulse
+ * Animation: 200ms ease-in transition
+ */
 const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
     const isActive = color === NAV_COLORS.active;
+
+    // CSS filters to match exact hex colors:
+    // Gray-400 (#9CA3AF): invert + sepia + saturate + brightness combo
+    // Purple-600 (#7c3aed): invert + sepia + saturate + hue-rotate combo
+    const grayFilter = 'invert(73%) sepia(6%) saturate(370%) hue-rotate(182deg) brightness(90%) contrast(86%)';
+    const purpleFilter = 'invert(27%) sepia(89%) saturate(4839%) hue-rotate(254deg) brightness(93%) contrast(93%)';
 
     return (
         <div
             className={`relative ${className}`}
             style={{ width: size, height: size }}
         >
-            {/* Base Layer: Inactive Gray State (always rendered as background) */}
+            {/* Layer 1: Inactive State (Gray-400) - mirrors other nav icons' inactive layer */}
             <img
                 src="/duitrack-logo-white.png"
-                alt="Duitrack"
+                alt=""
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{
-                    // Gray/600 equivalent filter for consistency with other nav icons
-                    filter: 'invert(45%) sepia(0%) saturate(0%) brightness(65%)',
+                    filter: grayFilter,
                     opacity: isActive ? 0 : 1,
-                    transition: 'opacity 0.3s ease-out',
+                    transition: 'opacity 200ms ease-in',
                 }}
             />
 
-            {/* Active Layer: Blue-to-Purple Gradient Effect */}
-            <div
-                className={`absolute inset-0 w-full h-full transition-all duration-300 ease-out ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            {/* Layer 2: Active State (Purple-600 with scale pulse) - mirrors other nav icons' active layer */}
+            <img
+                src="/duitrack-logo-white.png"
+                alt=""
+                className={`absolute inset-0 w-full h-full object-contain ${isActive ? 'nav-logo-active' : ''}`}
                 style={{
-                    // Apply scale-pulse animation when active
-                    animation: isActive ? 'nav-logo-pulse 0.3s ease-out' : 'none',
+                    filter: purpleFilter,
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? 'scale(1)' : 'scale(0.9)',
+                    transition: 'opacity 200ms ease-in, transform 200ms ease-in',
                 }}
-            >
-                {/* Gradient overlay using CSS mask */}
-                <div
-                    className="w-full h-full"
-                    style={{
-                        background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
-                        WebkitMaskImage: 'url(/duitrack-logo-white.png)',
-                        WebkitMaskSize: 'contain',
-                        WebkitMaskRepeat: 'no-repeat',
-                        WebkitMaskPosition: 'center',
-                        maskImage: 'url(/duitrack-logo-white.png)',
-                        maskSize: 'contain',
-                        maskRepeat: 'no-repeat',
-                        maskPosition: 'center',
-                    }}
-                />
-            </div>
+            />
         </div>
     );
 };
