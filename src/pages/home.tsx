@@ -466,6 +466,7 @@ export function HomePage() {
                     <div className="flex items-center gap-2">
                         <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-md ${isDown ? 'bg-green-400/20 text-green-100' : 'bg-red-400/20 text-red-100'}`}>
                             {/* Thin-stroke white arrow indicator */}
+                            {/* Arrow direction: UP (↑) for increase, DOWN (↓) for decrease */}
                             <svg
                                 width="14"
                                 height="14"
@@ -475,7 +476,7 @@ export function HomePage() {
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                className={isDown ? '' : 'rotate-180'}
+                                className={isDown ? 'rotate-180' : ''}
                             >
                                 <path d="M12 19V5" />
                                 <path d="M5 12l7-7 7 7" />
