@@ -12,6 +12,7 @@ const EXIT_REASONS = [
     { id: 'switched', label: 'Switched to another app' },
     { id: 'not-needed', label: 'No longer need the service' },
     { id: 'missing-features', label: 'Missing features I need' },
+    { id: 'other', label: 'Other' },
 ];
 
 export function DeleteAccountPage() {
@@ -28,9 +29,29 @@ export function DeleteAccountPage() {
 
     const userEmail = firebaseUser?.email || user.email;
 
+    // Continue button is enabled when:
+    // - Any of the 6 predefined reasons is selected, OR
+    // - "Other" is selected AND the text field has content
+    const canContinue = selectedReason !== null && (
+        selectedReason !== 'other' || otherReason.trim().length > 0
+    );
+
+    const handleReasonSelect = (reasonId: string) => {
+        setSelectedReason(reasonId);
+        setError(null);
+        // Clear "other" text if switching away from "other"
+        if (reasonId !== 'other') {
+            setOtherReason('');
+        }
+    };
+
     const handleContinue = () => {
-        if (!selectedReason && !otherReason.trim()) {
-            setError('Please select a reason or provide feedback.');
+        if (!canContinue) {
+            if (selectedReason === 'other' && !otherReason.trim()) {
+                setError('Please specify your reason.');
+            } else {
+                setError('Please select a reason.');
+            }
             return;
         }
         setError(null);
@@ -52,12 +73,8 @@ export function DeleteAccountPage() {
             }
             navigate('/login');
         } catch (err: any) {
-            if (err.code === 'auth/requires-recent-login') {
-                setError('For security, please sign out and sign back in before deleting your account.');
-            } else {
-                console.error('Delete account failed:', err);
-                setError('Failed to delete account. Please try again.');
-            }
+            console.error('Delete account failed:', err);
+            setError('Failed to delete account. Please try again.');
             setIsDeleting(false);
         }
     };
@@ -103,16 +120,18 @@ export function DeleteAccountPage() {
 
                     <div className="space-y-3">
                         {EXIT_REASONS.map((reason) => (
-                            <label
+                            <button
                                 key={reason.id}
-                                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                                type="button"
+                                onClick={() => handleReasonSelect(reason.id)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all text-left ${
                                     selectedReason === reason.id
                                         ? 'border-purple-400 bg-purple-50'
                                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                                 }`}
                             >
                                 <div
-                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${
                                         selectedReason === reason.id
                                             ? 'border-purple-600 bg-purple-600'
                                             : 'border-gray-300'
@@ -123,27 +142,28 @@ export function DeleteAccountPage() {
                                     )}
                                 </div>
                                 <span className="text-sm font-medium text-gray-700">{reason.label}</span>
-                            </label>
+                            </button>
                         ))}
 
-                        {/* Others Text Field */}
-                        <div className="pt-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Other (please specify)
-                            </label>
-                            <textarea
-                                value={otherReason}
-                                onChange={(e) => {
-                                    setOtherReason(e.target.value);
-                                    if (e.target.value.trim()) {
-                                        setSelectedReason(null);
-                                    }
-                                }}
-                                placeholder="Tell us more about your experience..."
-                                rows={3}
-                                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none resize-none transition-all"
-                            />
-                        </div>
+                        {/* Conditional "Other" Text Field - Only shown when "Other" is selected */}
+                        {selectedReason === 'other' && (
+                            <div className="pt-2 animate-in slide-in-from-top-2 duration-200">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Please specify
+                                </label>
+                                <textarea
+                                    value={otherReason}
+                                    onChange={(e) => {
+                                        setOtherReason(e.target.value);
+                                        setError(null);
+                                    }}
+                                    placeholder="Tell us more about your experience..."
+                                    rows={3}
+                                    autoFocus
+                                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none resize-none transition-all"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {error && !showEmailConfirm && (
@@ -154,7 +174,12 @@ export function DeleteAccountPage() {
                 {/* Continue Button */}
                 <button
                     onClick={handleContinue}
-                    className="w-full py-4 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold shadow-lg shadow-red-200 hover:from-red-600 hover:to-rose-700 transition-all active:scale-[0.98]"
+                    disabled={!canContinue}
+                    className={`w-full py-4 rounded-xl font-semibold shadow-lg transition-all active:scale-[0.98] ${
+                        canContinue
+                            ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-red-200 hover:from-red-600 hover:to-rose-700'
+                            : 'bg-gray-200 text-gray-400 shadow-none cursor-not-allowed'
+                    }`}
                 >
                     Continue
                 </button>
@@ -189,7 +214,10 @@ export function DeleteAccountPage() {
                             <input
                                 type="email"
                                 value={emailInput}
-                                onChange={(e) => setEmailInput(e.target.value)}
+                                onChange={(e) => {
+                                    setEmailInput(e.target.value);
+                                    setError(null);
+                                }}
                                 placeholder="your@email.com"
                                 className="w-full text-center font-medium text-base bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-100 focus:border-red-400 outline-none transition-all"
                             />
