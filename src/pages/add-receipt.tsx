@@ -207,7 +207,7 @@ export function AddReceiptPage() {
                         {/* Lifestyle Cap Warning */}
                         {wouldExceedCap && (
                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm">
-                                <p className="font-medium text-yellow-800 mb-1">Lifestyle cap will be exceeded</p>
+                                <p className="font-medium text-yellow-800 mb-2">Lifestyle cap will be exceeded</p>
                                 <p className="text-gray-600 text-xs">
                                     Remaining: RM {remainingCap.toFixed(2)} of RM {user.lifestyleCap}.
                                 </p>
@@ -223,7 +223,7 @@ export function AddReceiptPage() {
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder="e.g., Watsons"
                             />
-                            {errors.merchant && <p className="text-xs text-red-500 mt-1">{errors.merchant}</p>}
+                            {errors.merchant && <p className="text-xs text-red-500 mt-2">{errors.merchant}</p>}
                         </div>
 
                         <div>
@@ -388,7 +388,7 @@ export function AddReceiptPage() {
                                             </div>
                                             <div className="text-center">
                                                 <p className="font-semibold text-gray-800">Processing with AI...</p>
-                                                <p className="text-xs text-gray-500 mt-1">Extracting receipt details</p>
+                                                <p className="text-xs text-gray-500 mt-2">Extracting receipt details</p>
                                             </div>
                                         </>
                                     ) : (
@@ -398,7 +398,7 @@ export function AddReceiptPage() {
                                             </div>
                                             <div className="text-center">
                                                 <p className="font-semibold text-gray-800">Select File to Import</p>
-                                                <p className="text-xs text-gray-500 mt-1">PDF, JPEG, or PNG</p>
+                                                <p className="text-xs text-gray-500 mt-2">PDF, JPEG, or PNG</p>
                                             </div>
                                         </>
                                     )}
@@ -435,7 +435,7 @@ export function AddReceiptPage() {
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-blue-800">AI Extracted</p>
-                                            <p className="text-[10px] text-blue-600">Review and edit if needed</p>
+                                            <p className="text-xs text-blue-600">Review and edit if needed</p>
                                         </div>
                                     </div>
                                     <button
@@ -469,7 +469,7 @@ export function AddReceiptPage() {
                                         )}
                                     </div>
                                     {fieldConfidence && isLowConfidence(fieldConfidence.merchant) && (
-                                        <p className="text-[10px] text-amber-600 mt-1 ml-1">Low confidence - please verify</p>
+                                        <p className="text-xs text-amber-600 mt-2 ml-1">Low confidence - please verify</p>
                                     )}
                                 </div>
 
@@ -507,7 +507,7 @@ export function AddReceiptPage() {
                                         )}
                                     </div>
                                     {fieldConfidence && isLowConfidence(fieldConfidence.totalAmount) && (
-                                        <p className="text-[10px] text-amber-600 mt-1 ml-1">Low confidence - please verify</p>
+                                        <p className="text-xs text-amber-600 mt-2 ml-1">Low confidence - please verify</p>
                                     )}
                                 </div>
 

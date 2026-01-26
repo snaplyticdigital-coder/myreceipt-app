@@ -169,7 +169,7 @@ function ToastItem({
                     {toast.title}
                 </p>
                 {toast.message && (
-                    <p className={`text-xs mt-0.5 ${config.messageColor}`}>
+                    <p className={`text-xs mt-1 ${config.messageColor}`}>
                         {toast.message}
                     </p>
                 )}

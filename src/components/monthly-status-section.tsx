@@ -53,11 +53,11 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
                 <div className="relative z-10">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
-                    <p className="text-xl font-extrabold text-gray-900 mt-0.5 tracking-tight">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
+                    <p className="text-xl font-extrabold text-gray-900 mt-1 tracking-tight">
                         {mask(formatCurrency(currentSpend))}
                     </p>
-                    <p className="text-[10px] text-gray-400 font-medium">
+                    <p className="text-xs text-gray-400 font-medium">
                         / {mask(formatCurrency(budgetTotal))}
                     </p>
                 </div>
@@ -74,15 +74,15 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
             <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-16 h-16 bg-purple-50/50 rounded-full blur-2xl -mr-8 -mt-8" />
                 <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-1">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
+                    <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
                         {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse" />}
                     </div>
 
                     <p className="text-base font-black text-gray-900 leading-none">
-                        {transactionsLeft} <span className="text-[10px] font-bold text-gray-400 uppercase">left</span>
+                        {transactionsLeft} <span className="text-xs font-bold text-gray-400 uppercase">left</span>
                     </p>
-                    <p className="text-[9px] text-gray-400 mt-0.5">
+                    <p className="text-xs text-gray-400 mt-1">
                         Resets {formattedResetDate}
                     </p>
                 </div>
@@ -113,12 +113,12 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                     >
                         <div className="flex items-center gap-1.5">
                             <PlayCircle size={12} strokeWidth={3} />
-                            <span className="text-[9px] font-black uppercase tracking-wider">
+                            <span className="text-xs font-black uppercase tracking-wider">
                                 {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
                             </span>
                         </div>
                         {isAdCooldownActive && (
-                            <span className="text-[8px] font-extrabold opacity-90 leading-none mt-0.5">
+                            <span className="text-xs font-extrabold opacity-90 leading-none mt-1">
                                 Refills {remainingDays}d {displayHours}h
                             </span>
                         )}

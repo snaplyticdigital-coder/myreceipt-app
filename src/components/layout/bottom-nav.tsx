@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Search, PieChart, FileText, Camera, Upload, PenLine } from 'lucide-react';
+import { NAV_COLORS } from '../../lib/design-tokens';
 
 interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
@@ -37,8 +38,8 @@ const NAV_ITEMS = [
 export function BottomNav({ onAddClick }: BottomNavProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isGiggling, setIsGiggling] = useState(false);
-    const ACTIVE_COLOR = '#7c3aed'; // Primary Brand Purple
-    const INACTIVE_COLOR = '#9CA3AF'; // Gray-400
+    const ACTIVE_COLOR = NAV_COLORS.active;
+    const INACTIVE_COLOR = NAV_COLORS.inactive;
 
     const triggerHaptic = () => {
         if ('vibrate' in navigator) {
@@ -183,7 +184,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
 
                     {/* --- 4. NAVIGATION ICONS (Liquid Flow) --- */}
                     <div className="absolute bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom)]">
-                        <div className="h-[60px] flex items-center px-1">
+                        <div className="h-16 flex items-center px-1">
 
                             {/* Left Group */}
                             <div className="flex-1 flex justify-around items-center pl-2 pr-6">
@@ -199,7 +200,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className="relative w-6 h-6 mb-1">
+                                                <div className="relative w-6 h-6 mb-2">
                                                     {/* Layer 1: Base Grey Outline (Always visible as background, or 'replaced'?) 
                                                         Prompt: "icon's grey outline must be 'replaced' by... fluid liquid-filling motion"
                                                         This means the grey one should disappear? No, usually liquid fill means filling UP the stroke.
@@ -223,7 +224,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                                                     />
                                                 </div>
                                                 <span
-                                                    className={`text-[11px] font-medium transition-colors duration-350 ${isActive ? 'text-purple-600' : 'text-gray-400'}`}
+                                                    className={`text-xs font-medium transition-colors duration-350 ${isActive ? 'text-purple-600' : 'text-gray-400'}`}
                                                 >
                                                     {item.label}
                                                 </span>
@@ -250,7 +251,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className="relative w-6 h-6 mb-1">
+                                                <div className="relative w-6 h-6 mb-2">
                                                     <item.icon
                                                         size={24}
                                                         color={INACTIVE_COLOR}
@@ -265,7 +266,7 @@ export function BottomNav({ onAddClick }: BottomNavProps) {
                                                     />
                                                 </div>
                                                 <span
-                                                    className={`text-[11px] font-medium transition-colors duration-350 ${isActive ? 'text-purple-600' : 'text-gray-400'}`}
+                                                    className={`text-xs font-medium transition-colors duration-350 ${isActive ? 'text-purple-600' : 'text-gray-400'}`}
                                                 >
                                                     {item.label}
                                                 </span>

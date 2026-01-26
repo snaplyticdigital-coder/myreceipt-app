@@ -26,7 +26,7 @@ export function TaxVaultPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-5 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-lg border-b border-white/10">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-5 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-lg border-b border-white/10">
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => navigate(-1)}
@@ -52,7 +52,7 @@ export function TaxVaultPage() {
                             <Lock size={18} className="text-purple-600" />
                         </div>
                         <div>
-                            <h2 className="text-sm font-bold text-purple-900 mb-1">
+                            <h2 className="text-sm font-bold text-purple-900 mb-2">
                                 LHDN 7-Year Rule
                             </h2>
                             <p className="text-xs text-purple-700 leading-relaxed">
@@ -95,7 +95,7 @@ export function TaxVaultPage() {
                                                     {year}
                                                 </h3>
                                                 {isCurrentYear && (
-                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full">
+                                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
                                                         CURRENT
                                                     </span>
                                                 )}

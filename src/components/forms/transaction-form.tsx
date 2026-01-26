@@ -248,7 +248,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                                 placeholder="e.g. Starbucks"
                             />
                         </div>
-                        {errors.merchant && <p className="text-[10px] text-red-500 mt-1 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.merchant}</p>}
+                        {errors.merchant && <p className="text-xs text-red-500 mt-2 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.merchant}</p>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -266,7 +266,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                                 </div>
                                 <ChevronDown size={16} className="text-gray-400" />
                             </button>
-                            {errors.date && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.date}</p>}
+                            {errors.date && <p className="text-xs text-red-500 mt-2 ml-1">{errors.date}</p>}
                         </div>
                         <div>
                             <label className="text-xs font-semibold text-gray-500 mb-1.5 block">Total Amount (RM) *</label>
@@ -281,9 +281,9 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                                     placeholder="0.00"
                                 />
                             </div>
-                            {errors.amount && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.amount}</p>}
+                            {errors.amount && <p className="text-xs text-red-500 mt-2 ml-1">{errors.amount}</p>}
                             {!mathValid && amount && (
-                                <p className="text-[10px] text-amber-600 mt-1 ml-1 flex items-center gap-1 font-medium">
+                                <p className="text-xs text-amber-600 mt-2 ml-1 flex items-center gap-1 font-medium">
                                     <AlertTriangle size={10} /> Total doesn't match items + tax (Calc: {calculatedTotal.toFixed(2)})
                                 </p>
                             )}
@@ -333,7 +333,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                         <div className="flex items-center justify-between mb-1.5">
                             <label className="text-xs font-semibold text-gray-500">Tax Rate (SST %)</label>
                             {tax1Value > 0 && (
-                                <span className="text-[10px] font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                                     RM {tax1Value.toFixed(2)}
                                 </span>
                             )}
@@ -355,7 +355,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                                     <label className="text-xs font-semibold text-gray-500">Service Charge / Other</label>
                                     <div className="flex items-center gap-2">
                                         {tax2Value > 0 && (
-                                            <span className="text-[10px] font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                            <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                                                 RM {tax2Value.toFixed(2)}
                                             </span>
                                         )}
@@ -392,7 +392,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="text-xs font-semibold text-gray-500">Bill Rounding</label>
-                                <span className="text-[10px] font-normal text-gray-400">Optional</span>
+                                <span className="text-xs font-normal text-gray-400">Optional</span>
                             </div>
                             <div className="relative">
                                 <input
@@ -425,9 +425,9 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
 
                     {/* Headers - STRICT ALIGNMENT */}
                     <div className="flex gap-2 px-3 pb-1 items-end">
-                        <div className="flex-[2] text-[10px] font-bold text-gray-400 uppercase tracking-wider text-left pl-3">Item Name</div>
-                        <div className="w-12 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Qty</div>
-                        <div className="w-20 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-right pr-2">Price (RM)</div>
+                        <div className="flex-[2] text-xs font-bold text-gray-400 uppercase tracking-wider text-left pl-3">Item Name</div>
+                        <div className="w-12 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Qty</div>
+                        <div className="w-20 text-xs font-bold text-gray-400 uppercase tracking-wider text-right pr-2">Price (RM)</div>
                         <div className="w-8"></div>
                     </div>
 
@@ -446,7 +446,7 @@ export function TransactionForm({ initialData, onSave, onDirtyChange, isProcessi
                                         {item.productTags && item.productTags.length > 0 && (
                                             <div className="flex gap-1 flex-wrap">
                                                 {item.productTags.map(tag => (
-                                                    <span key={tag} className="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-md font-medium">
+                                                    <span key={tag} className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-md font-medium">
                                                         {tag}
                                                     </span>
                                                 ))}

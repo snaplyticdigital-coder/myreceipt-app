@@ -106,12 +106,12 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                             { title: "Tax Relief Automation", desc: "Claim every RM back with zero effort." }
                         ].map((benefit, idx) => (
                             <div key={idx} className="flex gap-3">
-                                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
                                     <Check size={12} className="text-green-600" strokeWidth={3} />
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-sm font-bold text-gray-900">{benefit.title}</p>
-                                    <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{benefit.desc}</p>
+                                    <p className="text-xs text-gray-500 leading-tight mt-1">{benefit.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -127,12 +127,12 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                                 }`}
                         >
                             {/* Badge */}
-                            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
                                 SAVE 16%
                             </div>
-                            <p className="text-xs text-gray-500 font-medium mb-0.5">Annual</p>
+                            <p className="text-xs text-gray-500 font-medium mb-1">Annual</p>
                             <p className="text-lg font-bold text-gray-900">RM129.90</p>
-                            <p className="text-[10px] text-gray-400">/year</p>
+                            <p className="text-xs text-gray-400">/year</p>
 
                             {selectedPlan === 'annual' && (
                                 <div className="absolute top-3 right-3 text-indigo-600">
@@ -150,9 +150,9 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                                 : 'border-gray-200 hover:border-indigo-200'
                                 }`}
                         >
-                            <p className="text-xs text-gray-500 font-medium mb-0.5">Monthly</p>
+                            <p className="text-xs text-gray-500 font-medium mb-1">Monthly</p>
                             <p className="text-lg font-bold text-gray-900">RM12.90</p>
-                            <p className="text-[10px] text-gray-400">/month</p>
+                            <p className="text-xs text-gray-400">/month</p>
 
                             {selectedPlan === 'monthly' && (
                                 <div className="absolute top-3 right-3 text-indigo-600">
@@ -201,7 +201,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     </div>
 
                     {/* 5. Trust Signals */}
-                    <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-400 font-medium">
+                    <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
                         <Shield size={12} />
                         <span>Secure payment via FPX & Card</span>
                         <span className="w-1 h-1 bg-gray-300 rounded-full" />

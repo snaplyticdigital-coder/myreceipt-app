@@ -251,7 +251,7 @@ export function CalendarPicker({
             {/* Weekday Headers */}
             <div className="grid grid-cols-7 gap-0 px-3 py-2 border-b border-gray-100">
                 {WEEKDAYS.map(day => (
-                    <div key={day} className="text-center text-[10px] font-bold text-gray-400 uppercase">
+                    <div key={day} className="text-center text-xs font-bold text-gray-400 uppercase">
                         {day}
                     </div>
                 ))}

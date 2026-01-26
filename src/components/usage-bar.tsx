@@ -58,8 +58,8 @@ export function UsageBar() {
 
                 {/* Upgrade Nudge */}
                 <div className="mt-3 flex items-center justify-between">
-                    <p className="text-[10px] text-gray-400">Resets {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-                    <Link to="/profile" className="flex items-center gap-1 text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full hover:bg-purple-100 transition-colors">
+                    <p className="text-xs text-gray-400">Resets {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                    <Link to="/profile" className="flex items-center gap-1 text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full hover:bg-purple-100 transition-colors">
                         <Crown size={10} />
                         GO PRO
                     </Link>

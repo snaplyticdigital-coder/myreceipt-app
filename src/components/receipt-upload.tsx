@@ -146,7 +146,7 @@ export const ReceiptUpload = forwardRef<ReceiptUploadHandle, ReceiptUploadProps>
                             <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
                         </div>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1">Analyzing Receipt</h3>
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">Analyzing Receipt</h3>
                     <p className="text-gray-500 text-sm">Extracting details...</p>
                 </div>
             ) : (

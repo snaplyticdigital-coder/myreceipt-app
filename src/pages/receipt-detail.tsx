@@ -102,7 +102,7 @@ export function ReceiptDetailPage() {
                             <Store size={24} className="text-blue-600" />
                         </div>
                         <div className="flex-1">
-                            <h2 className="text-lg font-bold text-gray-900 leading-tight mb-1">{receipt.merchant}</h2>
+                            <h2 className="text-lg font-bold text-gray-900 leading-tight mb-2">{receipt.merchant}</h2>
                             {receipt.location && (
                                 <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
                                     <MapPin size={12} />
@@ -113,7 +113,7 @@ export function ReceiptDetailPage() {
                     </div>
 
                     {receipt.receiptNumber && (
-                        <p className="text-right text-[10px] text-gray-400 mb-2 font-mono">{receipt.receiptNumber}</p>
+                        <p className="text-right text-xs text-gray-400 mb-2 font-mono">{receipt.receiptNumber}</p>
                     )}
 
                     <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 py-3 border-t border-b border-gray-100 mb-5 bg-gray-50/50 rounded-lg mx-[-8px]">
@@ -122,8 +122,8 @@ export function ReceiptDetailPage() {
                     </div>
 
                     <div className="text-center">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Amount</p>
-                        <p className="text-2xl font-bold text-gray-900">{formatCurrency(receipt.amount)}</p>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Total Amount</p>
+                        <p className="text-2xl font-bold text-gray-900 tabular-nums">{formatCurrency(receipt.amount)}</p>
                     </div>
                 </div>
 
@@ -169,12 +169,12 @@ export function ReceiptDetailPage() {
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="flex-1 pr-4">
                                             <p className="text-sm font-medium text-gray-900 leading-snug">{item.name}</p>
-                                            <p className="text-[10px] text-gray-400 mt-0.5">
+                                            <p className="text-xs text-gray-400 mt-1">
                                                 {item.category || receipt.spendingCategory}
                                                 {item.productTags && item.productTags.length > 0 && (
                                                     <span className="ml-2 flex flex-wrap gap-1 inline-flex align-middle">
                                                         {item.productTags.map(tag => (
-                                                            <span key={tag} className="text-[9px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md font-medium border border-blue-100">
+                                                            <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md font-medium border border-blue-100">
                                                                 {tag}
                                                             </span>
                                                         ))}
@@ -183,8 +183,8 @@ export function ReceiptDetailPage() {
                                             </p>
                                         </div>
                                         <div className="text-right flex-shrink-0">
-                                            <p className="text-[10px] text-gray-400 mb-0.5">Qty: {item.qty}</p>
-                                            <p className="text-sm font-bold text-gray-900">{formatCurrency(item.qty * item.unit)}</p>
+                                            <p className="text-xs text-gray-400 mb-1">Qty: {item.qty}</p>
+                                            <p className="text-sm font-bold text-gray-900 tabular-nums">{formatCurrency(item.qty * item.unit)}</p>
                                         </div>
                                     </div>
 
@@ -283,10 +283,10 @@ export function ReceiptDetailPage() {
 
                         return hasMismatch ? (
                             <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
-                                <AlertCircle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                                <AlertCircle size={16} className="text-amber-600 flex-shrink-0 mt-1" />
                                 <div>
                                     <p className="text-xs font-semibold text-amber-800">Total Mismatch Detected</p>
-                                    <p className="text-[10px] text-amber-700 mt-0.5">
+                                    <p className="text-xs text-amber-700 mt-1">
                                         Calculated: {formatCurrency(calculatedTotal)} vs Stored: {formatCurrency(receipt.amount)}. Please verify line items.
                                     </p>
                                 </div>
@@ -338,7 +338,7 @@ export function ReceiptDetailPage() {
                         )}
 
                         {/* Row 5: Total Price After Tax */}
-                        <div className="flex items-center justify-between pt-3 mt-1 border-t border-dashed border-gray-200">
+                        <div className="flex items-center justify-between pt-3 mt-2 border-t border-dashed border-gray-200">
                             <span className="text-sm font-bold text-gray-900">Total Price After Tax</span>
                             <span className="text-lg font-bold text-blue-600">{formatCurrency(receipt.amount)}</span>
                         </div>

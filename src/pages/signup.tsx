@@ -85,13 +85,13 @@ export function SignUpPage() {
                     </svg>
                 </div>
 
-                <h1 className="text-xl font-bold text-blue-500 mb-0.5">MyReceipt</h1>
+                <h1 className="text-xl font-bold text-blue-500 mb-1">MyReceipt</h1>
                 <p className="text-xs text-gray-500">Track your spending, effortlessly</p>
             </div>
 
             {/* Form Section */}
             <div className="px-6 pb-8">
-                <h2 className="text-lg font-bold text-gray-900 mb-0.5">Create account</h2>
+                <h2 className="text-lg font-bold text-gray-900 mb-1">Create account</h2>
                 <p className="text-xs text-gray-500 mb-4">Sign up to get started</p>
 
                 {/* Error Message */}

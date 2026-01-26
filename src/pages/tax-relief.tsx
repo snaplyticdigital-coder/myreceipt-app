@@ -83,8 +83,8 @@ export function TaxReliefPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
-                <div className="flex justify-between items-start mb-1">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-md border-b border-white/10">
+                <div className="flex justify-between items-start mb-2">
                     <div>
                         <h1 className="text-lg font-bold text-white">Tax Relief</h1>
                         <p className="text-xs text-white/80">LHDN tax-claimable expenses</p>
@@ -115,7 +115,7 @@ export function TaxReliefPage() {
                     </button>
                     <div className="text-center">
                         <p className="text-xs font-semibold text-white">Tax Year {selectedYear}</p>
-                        <p className="text-[10px] text-white/70">
+                        <p className="text-xs text-white/70">
                             Assessment Year {selectedYear}
                         </p>
                     </div>
@@ -146,17 +146,17 @@ export function TaxReliefPage() {
                                 icon={<FileText />}
                                 className="mb-4"
                             />
-                            <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalClaimable)}</p>
+                            <p className="text-2xl font-bold text-gray-900 tabular-nums">{formatCurrency(totalClaimable)}</p>
                         </div>
                     </div>
 
                     {/* Lifestyle Cap Alert */}
                     {lifestyleExceeded && (
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-                            <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                            <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-1" />
                             <div>
                                 <p className="text-sm font-bold text-amber-900">Annual Lifestyle Cap Exceeded</p>
-                                <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                                <p className="text-xs text-amber-700 mt-2 leading-relaxed">
                                     You've fully utilized your annual Lifestyle relief of {formatCurrency(lifestyleCap)}.
                                     Additional lifestyle expenses for this year won't provide further tax deduction.
                                 </p>
@@ -171,11 +171,11 @@ export function TaxReliefPage() {
                             <div className="relative bg-white rounded-2xl p-5 border border-purple-100 shadow-sm overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full -mr-16 -mt-16" />
                                 <div className="flex items-start gap-4">
-                                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200/50 shrink-0 mt-0.5">
+                                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200/50 shrink-0 mt-1">
                                         <Sparkles size={16} className="stroke-[1.5px]" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-gray-900 mb-1">Jimat Tax Sini (Opportunities)</h3>
+                                        <h3 className="text-sm font-bold text-gray-900 mb-2">Jimat Tax Sini (Opportunities)</h3>
                                         <p className="text-sm text-gray-700 leading-relaxed italic font-medium">
                                             "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. Better buy that laptop or book now before year-end k?"
                                         </p>
@@ -217,7 +217,7 @@ export function TaxReliefPage() {
                                                 <span className="text-sm font-medium text-gray-700">{cat.tag}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <p className="text-sm font-bold text-gray-900">{formatCurrency(cat.amount)}</p>
+                                                <p className="text-sm font-bold text-gray-900 tabular-nums">{formatCurrency(cat.amount)}</p>
                                                 <ChevronRight size={14} className="text-gray-400" />
                                             </div>
                                         </div>
@@ -230,8 +230,8 @@ export function TaxReliefPage() {
                                             </div>
                                         )}
                                         {cat.limit && (
-                                            <div className="flex justify-end mt-1">
-                                                <p className="text-[10px] text-gray-400">
+                                            <div className="flex justify-end mt-2">
+                                                <p className="text-xs text-gray-400">
                                                     Limit: {formatCurrency(cat.limit)}
                                                 </p>
                                             </div>
@@ -250,13 +250,13 @@ export function TaxReliefPage() {
                             </div>
                             <div>
                                 <h3 className="text-sm font-bold text-gray-900">Tax Relief Knowledge</h3>
-                                <p className="text-[10px] text-blue-600 uppercase font-bold tracking-wider">Education</p>
+                                <p className="text-xs text-blue-600 uppercase font-bold tracking-wider">Education</p>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-blue-200/50">
-                                <p className="text-xs font-bold text-gray-800 mb-1">What is the Lifestyle Cap?</p>
+                                <p className="text-xs font-bold text-gray-800 mb-2">What is the Lifestyle Cap?</p>
                                 <p className="text-xs text-gray-600 leading-relaxed">
                                     The "Lifestyle" relief is an annual tax deduction of up to **RM 2,500**.
                                     It covers your personal spending on reading materials, computers, smartphones,
@@ -265,7 +265,7 @@ export function TaxReliefPage() {
                             </div>
 
                             <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-blue-200/50">
-                                <p className="text-xs font-bold text-gray-800 mb-1">Pro Tip: Exceeded the Limit?</p>
+                                <p className="text-xs font-bold text-gray-800 mb-2">Pro Tip: Exceeded the Limit?</p>
                                 <p className="text-xs text-gray-600 leading-relaxed">
                                     If you've spent more than RM 2,500 on lifestyle items, consider asking your spouse
                                     to buy the next item under their name so they can claim it instead!

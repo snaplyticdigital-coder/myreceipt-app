@@ -429,7 +429,7 @@ export function SearchPage() {
 
                     {/* Autocomplete Suggestions Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+                        <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
                             {suggestions.map((suggestion, idx) => (
                                 <button
                                     key={idx}
@@ -450,7 +450,7 @@ export function SearchPage() {
                 <div className="flex gap-3">
                     {/* Category Filter */}
                     <div className="flex-1">
-                        <label className="text-xs font-medium text-gray-500 mb-1 block">Category</label>
+                        <label className="text-xs font-medium text-gray-500 mb-2 block">Category</label>
                         <button
                             ref={categoryRef}
                             type="button"
@@ -466,7 +466,7 @@ export function SearchPage() {
 
                     {/* Sort By */}
                     <div className="flex-1">
-                        <label className="text-xs font-medium text-gray-500 mb-1 block">Sort By</label>
+                        <label className="text-xs font-medium text-gray-500 mb-2 block">Sort By</label>
                         <button
                             ref={sortRef}
                             type="button"
@@ -502,7 +502,7 @@ export function SearchPage() {
                     {filteredReceipts.length === 0 ? (
                         <div className="bg-white rounded-xl p-6 text-center shadow-sm">
                             <p className="text-sm text-gray-500">No receipts found</p>
-                            <p className="text-xs text-gray-400 mt-1">Try searching by merchant, tag, or category</p>
+                            <p className="text-xs text-gray-400 mt-2">Try searching by merchant, tag, or category</p>
                         </div>
                     ) : (
                         <div className="space-y-2">
@@ -527,9 +527,9 @@ export function SearchPage() {
                                         {/* Merchant Info */}
                                         <div className="flex-1 min-w-0">
                                             <Link to={`/receipt/${receipt.id}`}>
-                                                <p className="text-sm font-bold text-gray-900 mb-0.5">{receipt.merchant}</p>
+                                                <p className="text-sm font-bold text-gray-900 mb-1">{receipt.merchant}</p>
                                             </Link>
-                                            <div className="flex items-center gap-1 mb-1">
+                                            <div className="flex items-center gap-1 mb-2">
                                                 <span className="text-xs text-gray-500">{receipt.itemCount} items</span>
                                                 {/* Interactive category tag */}
                                                 <div className="relative">
@@ -551,7 +551,7 @@ export function SearchPage() {
                                                             'Lifestyle': 'bg-blue-500',
                                                             'Others': 'bg-gray-500'
                                                         }[receipt.spendingCategory] || 'bg-gray-500'
-                                                            } text-white text-[10px] px-2 py-0.5 rounded-full font-medium flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer`}
+                                                            } text-white text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer`}
                                                     >
                                                         {receipt.spendingCategory}
                                                     </button>
@@ -598,7 +598,7 @@ export function SearchPage() {
                                                 {receipt.merchantInfo.subCategories.map((subCat, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[10px] text-gray-500 px-2 py-0.5 rounded-full border border-gray-200 bg-gray-50"
+                                                        className="text-xs text-gray-500 px-2 py-0.5 rounded-full border border-gray-200 bg-gray-50"
                                                     >
                                                         {subCat}
                                                     </span>
@@ -611,7 +611,7 @@ export function SearchPage() {
                                             <p className="text-sm font-bold text-gray-900">
                                                 {formatCurrency(receipt.amount)}
                                             </p>
-                                            <p className="text-[10px] text-gray-500 mt-0.5">
+                                            <p className="text-xs text-gray-500 mt-1">
                                                 {new Date(receipt.date).toLocaleDateString('en-MY', {
                                                     day: 'numeric',
                                                     month: 'short'

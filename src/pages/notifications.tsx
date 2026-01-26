@@ -141,7 +141,7 @@ export function NotificationsPage() {
                     <div className="bg-white rounded-2xl text-center py-12 shadow-sm">
                         <Bell size={48} className="mx-auto text-gray-300 mb-4" />
                         <p className="text-gray-500">No notifications yet</p>
-                        <p className="text-sm text-gray-400 mt-1">We'll notify you about important spending insights</p>
+                        <p className="text-sm text-gray-400 mt-2">We'll notify you about important spending insights</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
@@ -158,7 +158,7 @@ export function NotificationsPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         {'title' in notification && (
-                                            <p className="text-sm font-semibold text-gray-900 mb-1">
+                                            <p className="text-sm font-semibold text-gray-900 mb-2">
                                                 {notification.title}
                                             </p>
                                         )}

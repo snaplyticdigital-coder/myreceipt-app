@@ -205,7 +205,7 @@ export function DetailedExpensesPage() {
         <div className="min-h-screen bg-gray-50 animate-slide-in-right">
             {/* Header */}
             <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
-                <div className="flex items-center justify-between px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]">
+                <div className="flex items-center justify-between px-4 py-3 pt-[calc(1rem+env(safe-area-inset-top))]">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={handleBack}
@@ -283,14 +283,14 @@ export function DetailedExpensesPage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="font-bold text-gray-900">{formatCurrency(receipt.amount)}</p>
+                                                    <p className="font-bold text-gray-900 tabular-nums">{formatCurrency(receipt.amount)}</p>
                                                     {source === 'tax' && receipt.claimable && !isAuditMode && (
-                                                        <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">
+                                                        <span className="text-xs px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">
                                                             Claimable
                                                         </span>
                                                     )}
                                                     {isAuditMode && (
-                                                        <span className="text-[10px] text-gray-400">
+                                                        <span className="text-xs text-gray-400">
                                                             {receipt.items.length} items
                                                         </span>
                                                     )}
@@ -321,13 +321,13 @@ export function DetailedExpensesPage() {
                                                                     </div>
 
                                                                     {/* Status Badge */}
-                                                                    <div className="flex items-center gap-2 mt-1">
+                                                                    <div className="flex items-center gap-2 mt-2">
                                                                         <button
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
                                                                                 handleAttemptOverride(receipt, item);
                                                                             }}
-                                                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-colors ${isClaimable
+                                                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${isClaimable
                                                                                 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
                                                                                 : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                                                                 }`}
@@ -347,11 +347,11 @@ export function DetailedExpensesPage() {
 
                                                                         {/* Category or Reason */}
                                                                         {isClaimable && item.tag ? (
-                                                                            <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded border border-blue-100">
+                                                                            <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded border border-blue-100">
                                                                                 {item.tag}
                                                                             </span>
                                                                         ) : exclusionReason && (
-                                                                            <span className="text-[10px] text-gray-500 italic">
+                                                                            <span className="text-xs text-gray-500 italic">
                                                                                 {exclusionReason}
                                                                             </span>
                                                                         )}
@@ -439,7 +439,7 @@ export function DetailedExpensesPage() {
                             <h3 className="text-lg font-bold text-gray-900 text-center mb-2">
                                 Override Exclusion?
                             </h3>
-                            <p className="text-sm text-gray-600 text-center mb-1">
+                            <p className="text-sm text-gray-600 text-center mb-2">
                                 <strong>"{confirmDialog.itemName}"</strong>
                             </p>
                             <p className="text-sm text-gray-500 text-center">

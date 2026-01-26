@@ -296,7 +296,7 @@ export function InsightsCard() {
                                 {insight.icon}
                             </div>
                             <div className="flex-1 min-w-0 py-0.5">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-2">
                                     <h4 className="font-bold text-gray-800 text-sm tracking-tight">{insight.title}</h4>
                                 </div>
                                 <p className="text-xs text-gray-600 leading-relaxed font-medium line-clamp-2">

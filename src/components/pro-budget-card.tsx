@@ -75,7 +75,7 @@ export function ProBudgetCard({ isPrivacyMode = false }: ProBudgetCardProps) {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start mb-1">
+                <div className="flex justify-between items-start mb-2">
                     <h3 className="text-sm font-medium text-gray-500">Monthly Budget</h3>
                     <Link to="/budget" className="text-xs font-semibold text-blue-600 hover:text-blue-700">
                         Manage
@@ -92,7 +92,7 @@ export function ProBudgetCard({ isPrivacyMode = false }: ProBudgetCardProps) {
                 </div>
 
                 {/* Status Message */}
-                <div className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium ${bgColor} ${color}`}>
+                <div className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${bgColor} ${color}`}>
                     {percent >= 90 ? (
                         <>
                             <AlertCircle size={12} />

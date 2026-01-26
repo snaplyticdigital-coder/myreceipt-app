@@ -13,13 +13,13 @@ export function StickyAdBanner() {
         <div className="fixed bottom-[96px] left-5 right-5 z-40 animate-in slide-in-from-bottom-10 fade-in duration-500">
             <div className="bg-gray-900/95 backdrop-blur-md rounded-xl p-3 shadow-2xl border border-white/10 flex items-center justify-between">
                 <div className="flex-1">
-                    <p className="text-xs font-bold text-white mb-0.5">Remove Ads & Unlock Pro</p>
-                    <p className="text-[10px] text-gray-300">Get unlimited scans & analytics</p>
+                    <p className="text-xs font-bold text-white mb-1">Remove Ads & Unlock Pro</p>
+                    <p className="text-xs text-gray-300">Get unlimited scans & analytics</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => useStore.getState().upgradeToPro()}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg active:scale-95 transition-transform"
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg active:scale-95 transition-transform"
                     >
                         Upgrade
                     </button>

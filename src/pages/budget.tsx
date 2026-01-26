@@ -96,11 +96,11 @@ export function BudgetPage() {
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs text-white/70 mb-1">Total Monthly Budget</p>
+                            <p className="text-xs text-white/70 mb-2">Total Monthly Budget</p>
                             <p className="text-2xl font-bold text-white">
                                 {formatCurrency(budget.total)}
                             </p>
-                            <p className="text-xs text-white/60 mt-1">
+                            <p className="text-xs text-white/60 mt-2">
                                 Sum of {budget.categories.length} categories
                             </p>
                         </div>
@@ -131,7 +131,7 @@ export function BudgetPage() {
 
                 {/* Budget Tip */}
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-2xl p-4">
-                    <p className="text-sm font-medium text-gray-700 mb-1">💡 Budget Tip</p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">💡 Budget Tip</p>
                     <p className="text-xs text-gray-500">
                         Set realistic limits based on your past spending. You can always adjust them later as you track your expenses.
                     </p>

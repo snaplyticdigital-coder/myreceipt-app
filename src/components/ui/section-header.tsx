@@ -32,11 +32,11 @@ export function SectionHeader({
                     )}
                 </div>
                 <div>
-                    <h2 className="text-[15px] font-bold text-gray-800 tracking-tight leading-tight">
+                    <h2 className="text-base font-bold text-gray-800 tracking-tight leading-tight">
                         {title}
                     </h2>
                     {subtitle && (
-                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mt-0.5">
+                        <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mt-1">
                             {subtitle}
                         </p>
                     )}

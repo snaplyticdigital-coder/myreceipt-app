@@ -26,8 +26,8 @@ function CoPilotCard({ title, message, icon, glowClass, iconBgClass, href }: CoP
                     {icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 leading-none">{title}</h3>
-                    <p className="text-[13px] font-semibold text-gray-800 leading-snug">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2 leading-none">{title}</h3>
+                    <p className="text-sm font-semibold text-gray-800 leading-snug">
                         {message}
                     </p>
                 </div>
@@ -66,10 +66,10 @@ export function CoPilotSection() {
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-200">
                         <Zap size={16} className="text-white" fill="currentColor" />
                     </div>
-                    <h2 className="text-[15px] font-bold text-gray-800 tracking-tight">Financial Co-Pilot</h2>
+                    <h2 className="text-base font-bold text-gray-800 tracking-tight">Financial Co-Pilot</h2>
                 </div>
                 <div className="px-2 py-0.5 bg-purple-100 rounded-md">
-                    <span className="text-[10px] font-bold text-purple-700 uppercase tracking-tighter">AI Analysis</span>
+                    <span className="text-xs font-bold text-purple-700 uppercase tracking-tighter">AI Analysis</span>
                 </div>
             </div>
 

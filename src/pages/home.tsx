@@ -369,7 +369,7 @@ export function HomePage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-50 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
+            <div className="sticky top-0 z-50 px-4 pb-3 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-gray-100/50">
                 <div className="flex items-center gap-3">
                     {/* Profile Avatar with Gear Overlay */}
                     <Link to="/profile" className="flex-shrink-0 relative">
@@ -383,13 +383,13 @@ export function HomePage() {
                     </Link>
                     <div>
                         <p className="text-base font-bold text-gray-900">{greeting}, {user.name}!</p>
-                        <p className="text-[11px] text-gray-500">Track your expenses wisely</p>
+                        <p className="text-xs text-gray-500">Track your expenses wisely</p>
                     </div>
                 </div>
                 <Link to="/notifications" className="relative p-2">
                     <Bell size={20} className="text-gray-700" />
                     {unreadCount > 0 && (
-                        <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-semibold">
+                        <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-semibold">
                             {unreadCount}
                         </span>
                     )}
@@ -403,7 +403,7 @@ export function HomePage() {
                 {/* 1. Hero Card: Dynamic Spending Card with Privacy Toggle */}
                 <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-5 text-white shadow-lg shadow-blue-500/20 relative">
                     {/* Period Dropdown */}
-                    <div className="relative inline-block mb-1">
+                    <div className="relative inline-block mb-2">
                         <button
                             onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
                             className="flex items-center gap-1 text-xs text-blue-100 font-medium tracking-wide uppercase hover:text-white transition-colors"
@@ -414,7 +414,7 @@ export function HomePage() {
 
                         {/* Dropdown Menu */}
                         {showPeriodDropdown && (
-                            <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 min-w-[140px]">
+                            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 min-w-[140px]">
                                 {(['daily', 'weekly', 'monthly'] as const).map((period) => (
                                     <button
                                         key={period}
@@ -438,7 +438,7 @@ export function HomePage() {
 
                     {/* Amount Row with Eye Toggle */}
                     <div className="flex items-center gap-3 mb-3">
-                        <p className="text-3xl font-bold tracking-tight">{mask(formatCurrency(total))}</p>
+                        <p className="text-3xl font-bold tracking-tight tabular-nums">{mask(formatCurrency(total))}</p>
                         <button
                             onClick={() => setPrivacyMode(!privacyMode)}
                             className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -493,7 +493,7 @@ export function HomePage() {
 
                     {/* Phase 3: Clarifying microcopy for transactions vs receipts */}
                     {transactionCount > 0 && (
-                        <p className="text-[10px] text-gray-500 mb-3">
+                        <p className="text-xs text-gray-500 mb-3">
                             {hasMultipleItems
                                 ? `${receiptItemCount} items uploaded (grouped into ${transactionCount} transaction${transactionCount !== 1 ? 's' : ''} this week)`
                                 : `${transactionCount} transaction${transactionCount !== 1 ? 's' : ''} this week`
@@ -523,9 +523,9 @@ export function HomePage() {
                                     {/* Merchant Info */}
                                     <div className="flex-1 min-w-0">
                                         <Link to={`/receipt/${transaction.id}`}>
-                                            <p className="text-sm font-bold text-gray-900 mb-0.5">{transaction.merchant}</p>
+                                            <p className="text-sm font-bold text-gray-900 mb-1">{transaction.merchant}</p>
                                         </Link>
-                                        <div className="flex items-center gap-1 mb-1">
+                                        <div className="flex items-center gap-1 mb-2">
                                             <span className="text-sm text-gray-500">{transaction.itemCount} items</span>
                                             {/* Phase 7: Interactive category tag */}
                                             <div className="relative">
@@ -608,7 +608,7 @@ export function HomePage() {
                                         <p className="text-base font-bold text-gray-900">
                                             {mask(formatCurrency(transaction.amount))}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-0.5">
+                                        <p className="text-xs text-gray-500 mt-1">
                                             {new Date(transaction.date).toLocaleDateString('en-MY', {
                                                 day: 'numeric',
                                                 month: 'short'

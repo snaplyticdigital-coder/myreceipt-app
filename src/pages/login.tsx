@@ -122,7 +122,7 @@ export function LoginPage() {
 
             {/* Form Section */}
             <div className="px-6 pb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Welcome back</h2>
                 <p className="text-xs text-gray-500 mb-6">Sign in to continue</p>
 
                 {/* Error Message */}

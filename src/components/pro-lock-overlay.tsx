@@ -49,20 +49,20 @@ export function ProLockOverlay({
                 {variant === 'analytics' && (
                     <div className="space-y-3 mb-6 text-left max-w-xs mx-auto">
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>Find Your Hidden Leaks:</strong> We catch weird spikes in your bills before they eat your wallet.</p>
                         </div>
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>Predict Your Future:</strong> Our AI forecasts your month-end balance. No more pokai last minute!</p>
                         </div>
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>The RM 12.90 Hack:</strong> Pro users save over RM 100/mo via custom Savings Opportunities.</p>
                         </div>
@@ -72,20 +72,20 @@ export function ProLockOverlay({
                 {variant === 'tax' && (
                     <div className="space-y-3 mb-6 text-left max-w-xs mx-auto">
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>Claim Every Sen:</strong> We find the receipts you missed so you get the biggest refund possible.</p>
                         </div>
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>Limit Tracking (Real-Time):</strong> Know exactly how much Lifestyle or Medical relief you have left. Don't lose it because you forgot to spend it.</p>
                         </div>
                         <div className="flex gap-2">
-                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span className="text-[10px] text-green-600 font-bold">✓</span>
+                            <div className="shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                                <span className="text-xs text-green-600 font-bold">✓</span>
                             </div>
                             <p className="text-xs text-gray-700"><strong>The RM 12.90 Hack:</strong> Pro users typically get back an extra RM 300 - RM 800 in refunds just by filling their relief categories correctly.</p>
                         </div>

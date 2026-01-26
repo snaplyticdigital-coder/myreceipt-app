@@ -23,8 +23,8 @@ import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { StickyAdBanner } from '../components/sticky-ad-banner';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { generateAdvisories, getSpendingVelocity, calculateBurnRate } from '../lib/financial-intelligence';
-import { CATEGORY_COLORS } from '../lib/constants';
-import type { SpendingCategory, Receipt, Budget } from '../types';
+import { getCategoryColor } from '../lib/constants';
+import type { Receipt, Budget } from '../types';
 
 type TimePeriod = 'week' | 'month' | 'year' | 'custom';
 
@@ -81,8 +81,8 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                         <Sparkles size={16} className="text-white" fill="currentColor" />
                     </div>
                     <div>
-                        <h2 className="text-[15px] font-bold text-gray-800 tracking-tight">Financial Intelligence</h2>
-                        <p className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Pro Insights</p>
+                        <h2 className="text-base font-bold text-gray-800 tracking-tight">Financial Intelligence</h2>
+                        <p className="text-xs uppercase font-bold text-blue-600 tracking-wider">Pro Insights</p>
                     </div>
                 </div>
 
@@ -90,8 +90,8 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                 {burnRate.budgetTotal > 0 && (
                     <div className="mb-5 p-4 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white shadow-xl shadow-slate-200">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Burn Rate</span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide ${burnRate.percentOfBudget > 100 ? 'bg-red-500 text-white' :
+                            <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Burn Rate</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wide ${burnRate.percentOfBudget > 100 ? 'bg-red-500 text-white' :
                                 burnRate.percentOfBudget > 85 ? 'bg-amber-500 text-white' :
                                     'bg-emerald-500 text-white'
                                 }`}>
@@ -103,13 +103,13 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                                 <p className="text-2xl font-black tracking-tight">
                                     RM{burnRate.dailyBurnRate.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                                 </p>
-                                <p className="text-[11px] font-medium text-slate-400">per day avg</p>
+                                <p className="text-xs font-medium text-slate-400">per day avg</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-bold text-slate-300">
                                     → RM{burnRate.projectedMonthEnd.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                                 </p>
-                                <p className="text-[10px] font-medium text-slate-400">{burnRate.daysRemaining} days left</p>
+                                <p className="text-xs font-medium text-slate-400">{burnRate.daysRemaining} days left</p>
                             </div>
                         </div>
                         {/* Progress bar */}
@@ -128,16 +128,16 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                 {/* Spending Velocity - Grid Layout */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
                     <div className="p-3 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm">
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Daily Avg</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Daily Avg</p>
                         <p className="text-lg font-black text-gray-800">
                             RM{velocity.dailyAverage.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                         </p>
                     </div>
                     <div className="p-3 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm">
-                        <div className="flex items-center justify-between mb-1">
-                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Trend</p>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Trend</p>
                             {velocity.trend !== 'stable' && (
-                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${velocity.trend === 'down' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'
+                                <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${velocity.trend === 'down' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'
                                     }`}>
                                     {velocity.trend === 'down' ? '↓' : '↑'} {Math.abs(velocity.trendPercent).toFixed(0)}%
                                 </span>
@@ -161,7 +161,7 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                     <div className="space-y-3">
                         <div className="flex items-center justify-between mb-2 px-1">
                             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Alerts</h3>
-                            <span className="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-bold">
+                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-bold">
                                 {advisories.length}
                             </span>
                         </div>
@@ -178,14 +178,14 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                                             {getAdvisoryIcon(advisory.type, advisory.severity)}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-0.5">
-                                                <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-500 leading-none">{advisory.title}</h3>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 leading-none">{advisory.title}</h3>
                                             </div>
-                                            <p className="text-[13px] font-bold text-gray-800 leading-snug">
+                                            <p className="text-sm font-bold text-gray-800 leading-snug">
                                                 {advisory.description}
                                             </p>
                                             {advisory.metric && advisory.metric.comparison > 0 && (
-                                                <div className="mt-2 flex items-center gap-3 text-[10px] font-medium text-gray-500 bg-white/50 rounded-lg p-1.5 w-fit">
+                                                <div className="mt-2 flex items-center gap-3 text-xs font-medium text-gray-500 bg-white/50 rounded-lg p-1.5 w-fit">
                                                     <span>Now: <strong className="text-gray-800">RM{advisory.metric.current.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
                                                     <span className="text-gray-300">|</span>
                                                     <span>Avg: <strong className="text-gray-800">RM{advisory.metric.comparison.toLocaleString('en-MY', { maximumFractionDigits: 0 })}</strong></span>
@@ -203,7 +203,7 @@ function ProMemberAdvisories({ receipts, budget }: { receipts: Receipt[]; budget
                             <CheckCircle2 size={28} className="text-blue-500" />
                         </div>
                         <p className="text-sm font-bold text-gray-800">All clear, boss!</p>
-                        <p className="text-xs text-gray-500 mt-1">No advisories - your spending patterns look healthy.</p>
+                        <p className="text-xs text-gray-500 mt-2">No advisories - your spending patterns look healthy.</p>
                     </div>
                 )}
             </div>
@@ -528,8 +528,8 @@ export function AnalyticsPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             <StickyAdBanner />
-            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-md border-b border-white/10">
-                <div className="flex items-center justify-between mb-1">
+            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-md border-b border-white/10">
+                <div className="flex items-center justify-between mb-2">
                     <div>
                         <h1 className="text-lg font-bold text-white">Analytics</h1>
                         <p className="text-xs text-white/80">Track your spending insights</p>
@@ -570,7 +570,7 @@ export function AnalyticsPage() {
 
                 {selectedPeriod === 'custom' ? (
                     <div className="mt-2 bg-white/10 rounded-xl p-3">
-                        <p className="text-[10px] text-white/70 uppercase font-medium mb-2">Select Date Range</p>
+                        <p className="text-xs text-white/70 uppercase font-medium mb-2">Select Date Range</p>
                         <div className="flex items-center gap-2">
                             <button
                                 ref={startDateRef}
@@ -600,7 +600,7 @@ export function AnalyticsPage() {
                         </button>
                         <div className="text-center">
                             <p className="text-xs font-semibold text-white">{getPeriodLabel}</p>
-                            <p className="text-[10px] text-white/70">
+                            <p className="text-xs text-white/70">
                                 {periodDateRange.startDate.toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}
                                 {' - '}
                                 {periodDateRange.endDate.toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -638,8 +638,8 @@ export function AnalyticsPage() {
                             </div>
                         </div>
                         <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Total Spent</p>
-                        <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(totalSpending).replace('RM', '')}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                        <p className="text-2xl font-bold text-gray-900 mt-2 tabular-nums">{formatCurrency(totalSpending).replace('RM', '')}</p>
+                        <p className="text-xs text-gray-400 mt-2">{periodLabels[selectedPeriod]}</p>
                     </div>
                 </div>
 
@@ -659,8 +659,8 @@ export function AnalyticsPage() {
                             </div>
                         </div>
                         <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Transactions</p>
-                        <p className="text-2xl font-bold text-gray-900 mt-1">{filteredReceipts.length}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">{periodLabels[selectedPeriod]}</p>
+                        <p className="text-2xl font-bold text-gray-900 mt-2">{filteredReceipts.length}</p>
+                        <p className="text-xs text-gray-400 mt-2">{periodLabels[selectedPeriod]}</p>
                     </div>
                 </div>
             </div>
@@ -681,7 +681,7 @@ export function AnalyticsPage() {
                                 <div key={index} className="flex flex-col items-center flex-1 min-w-0 group">
                                     <div className="w-full flex flex-col items-center relative">
                                         {!item.isFuture && item.amount > 0 && (
-                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                                                 {formatCurrency(item.amount)}
                                             </div>
                                         )}
@@ -695,7 +695,7 @@ export function AnalyticsPage() {
                                             style={{ height: `${Math.max(height, item.isFuture ? 10 : 6)}px` }}
                                         />
                                     </div>
-                                    <span className={`text-[9px] sm:text-[10px] mt-2 font-medium truncate w-full text-center ${item.isHighlighted ? 'text-purple-600' : 'text-gray-400'
+                                    <span className={`text-xs sm:text-xs mt-2 font-medium truncate w-full text-center ${item.isHighlighted ? 'text-purple-600' : 'text-gray-400'
                                         }`}>
                                         {item.label}
                                     </span>
@@ -718,36 +718,30 @@ export function AnalyticsPage() {
 
                                 <div className="flex items-center gap-8">
                                     <div className="relative w-36 h-36 flex-shrink-0">
+                                        {/* Dynamic SVG gradients based on actual categories */}
                                         <svg style={{ position: 'absolute', width: 0, height: 0 }}>
                                             <defs>
-                                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#8B5CF6" />
-                                                    <stop offset="100%" stopColor="#3B82F6" />
-                                                </linearGradient>
-                                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#EC4899" />
-                                                    <stop offset="100%" stopColor="#8B5CF6" />
-                                                </linearGradient>
-                                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#F59E0B" />
-                                                    <stop offset="100%" stopColor="#EC4899" />
-                                                </linearGradient>
-                                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#10B981" />
-                                                    <stop offset="100%" stopColor="#3B82F6" />
-                                                </linearGradient>
-                                                <linearGradient id="gradOthers" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                    <stop offset="0%" stopColor="#94A3B8" />
-                                                    <stop offset="100%" stopColor="#CBD5E1" />
-                                                </linearGradient>
+                                                {donutSegments.map((segment) => {
+                                                    const colors = getCategoryColor(segment.category);
+                                                    return (
+                                                        <linearGradient
+                                                            key={`grad-${segment.category}`}
+                                                            id={`grad-${segment.category.replace(/\s+/g, '-')}`}
+                                                            x1="0%" y1="0%" x2="100%" y2="100%"
+                                                        >
+                                                            <stop offset="0%" stopColor={colors.gradientFrom} />
+                                                            <stop offset="100%" stopColor={colors.gradientTo} />
+                                                        </linearGradient>
+                                                    );
+                                                })}
                                             </defs>
                                         </svg>
 
                                         <svg className="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
-                                            {donutSegments.reduce((acc: any, segment, index) => {
+                                            {donutSegments.reduce((acc: { elements: React.ReactNode[]; offset: number }, segment) => {
                                                 const prevOffset = acc.offset;
                                                 const strokeDasharray = `${segment.percent * 2.51} ${251 - segment.percent * 2.51}`;
-                                                const gradients = ['url(#grad1)', 'url(#grad2)', 'url(#grad3)', 'url(#grad4)', 'url(#gradOthers)'];
+                                                const gradientId = `url(#grad-${segment.category.replace(/\s+/g, '-')})`;
 
                                                 acc.elements.push(
                                                     <circle
@@ -756,7 +750,7 @@ export function AnalyticsPage() {
                                                         cy="50"
                                                         r="40"
                                                         fill="none"
-                                                        stroke={gradients[index % gradients.length]}
+                                                        stroke={gradientId}
                                                         strokeWidth="12"
                                                         strokeDasharray={strokeDasharray}
                                                         strokeDashoffset={-prevOffset * 2.51}
@@ -771,7 +765,7 @@ export function AnalyticsPage() {
                                         </svg>
 
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Total</p>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-2">Total</p>
                                             <p className="text-sm font-black text-gray-900 leading-none">
                                                 RM{totalSpending.toLocaleString('en-MY', { maximumFractionDigits: 0 })}
                                             </p>
@@ -779,15 +773,15 @@ export function AnalyticsPage() {
                                     </div>
 
                                     <div className="flex-1 space-y-2.5">
-                                        {donutSegments.map((segment, index) => {
-                                            const catColors: any = CATEGORY_COLORS[segment.category as SpendingCategory] || { ring: '#94a3b8' };
+                                        {donutSegments.map((segment) => {
+                                            const colors = getCategoryColor(segment.category);
                                             return (
-                                                <div key={index} className="flex items-center justify-between">
+                                                <div key={segment.category} className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: catColors.ring }} />
-                                                        <span className="text-[11px] font-bold text-gray-700 truncate max-w-[80px]">{segment.category}</span>
+                                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.ring }} />
+                                                        <span className="text-xs font-bold text-gray-700 truncate max-w-[80px]">{segment.category}</span>
                                                     </div>
-                                                    <span className="text-[11px] font-black text-gray-900">{segment.percent.toFixed(0)}%</span>
+                                                    <span className="text-xs font-black text-gray-900">{segment.percent.toFixed(0)}%</span>
                                                 </div>
                                             );
                                         })}
@@ -795,7 +789,7 @@ export function AnalyticsPage() {
                                 </div>
                             </div>
 
-                            {/* Detailed Category List - Premium Aesthetic */}
+                            {/* Detailed Category List - Synchronized Colors */}
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                                 <SectionHeader
                                     title="Spending Breakdown"
@@ -805,23 +799,27 @@ export function AnalyticsPage() {
                                 <div className="space-y-6">
                                     {topSpendingCategories.map(([category, amount]) => {
                                         const percent = (amount / totalSpending) * 100;
-                                        const catColors: any = CATEGORY_COLORS[category as SpendingCategory] || { ring: '#94a3b8' };
+                                        const colors = getCategoryColor(category);
                                         return (
                                             <div key={category} className="group">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <div className="flex items-center gap-2.5">
-                                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: catColors.ring }} />
-                                                        <span className="text-[13px] font-bold text-gray-800">{category}</span>
+                                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors.ring }} />
+                                                        <span className="text-sm font-bold text-gray-800">{category}</span>
                                                     </div>
                                                     <div className="text-right">
-                                                        <p className="text-[13px] font-black text-gray-900">{formatCurrency(amount)}</p>
-                                                        <p className="text-[10px] font-bold text-gray-400">{percent.toFixed(1)}%</p>
+                                                        <p className="text-sm font-black text-gray-900 tabular-nums">{formatCurrency(amount)}</p>
+                                                        <p className="text-xs font-bold text-gray-400">{percent.toFixed(1)}%</p>
                                                     </div>
                                                 </div>
                                                 <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                    {/* Category-specific gradient bar */}
                                                     <div
-                                                        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 transition-all duration-1000 shadow-sm"
-                                                        style={{ width: `${percent}%` }}
+                                                        className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 shadow-sm"
+                                                        style={{
+                                                            width: `${percent}%`,
+                                                            background: `linear-gradient(to right, ${colors.gradientFrom}, ${colors.gradientTo})`
+                                                        }}
                                                     />
                                                 </div>
                                             </div>
@@ -848,7 +846,7 @@ export function AnalyticsPage() {
                                             >
                                                 <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-white/10 rounded-full" />
                                                 <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full" />
-                                                <span className="text-xs font-medium opacity-90 block mb-1">{category}</span>
+                                                <span className="text-xs font-medium opacity-90 block mb-2">{category}</span>
                                                 <p className="text-xl font-bold">{formatCurrency(amount).replace('RM', '')}</p>
                                                 <span className="text-xs opacity-75">{percent.toFixed(1)}% of total</span>
                                             </div>

@@ -195,7 +195,7 @@ export function AddTransactionModal({ isOpen, onClose, initialView }: AddTransac
                                 <div className="text-center">
                                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-4"></div>
                                     <p className="text-blue-600 font-bold">Analyzing Receipt...</p>
-                                    <p className="text-gray-400 text-xs mt-1">Extracting merchant & line items</p>
+                                    <p className="text-gray-400 text-xs mt-2">Extracting merchant & line items</p>
                                 </div>
                             ) : (
                                 <ReceiptUpload

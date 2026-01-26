@@ -14,6 +14,8 @@ import { deleteUser } from 'firebase/auth';
 import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { SectionHeader } from '../components/ui/section-header';
+import { TacVerificationModal } from '../components/modals/tac-verification-modal';
+import { getTierByPoints } from '../lib/design-tokens';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -33,7 +35,7 @@ function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: b
 
 export function ProfilePage() {
     const navigate = useNavigate();
-    const { user, theme, toggleTheme, points, badges, streak, budget, updateUser } = useStore();
+    const { user, theme, toggleTheme, points, streak, budget, updateUser } = useStore();
     const { logout, firebaseUser } = useAuth();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -125,63 +127,80 @@ export function ProfilePage() {
             {/* Sticky Gradient Header */}
             <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600 to-blue-600 px-5 pt-[calc(1rem+env(safe-area-inset-top))] pb-8 rounded-b-[2rem] shadow-md relative overflow-hidden transition-all duration-200">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <h1 className="text-xl font-bold text-white">Profile</h1>
-                        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full">
-                            <Flame size={14} className="text-orange-300 fill-orange-300" />
-                            <span className="text-xs font-bold text-white">{streak.currentStreak} Day Streak</span>
-                        </div>
-                    </div>
+                {/* Get user's current tier based on points */}
+                {(() => {
+                    const tier = getTierByPoints(points);
+                    return (
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h1 className="text-xl font-bold text-white">Profile</h1>
+                                <div className="flex items-center gap-2">
+                                    {/* Streak Pill */}
+                                    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full">
+                                        <Flame size={14} className="text-orange-300 fill-orange-300" />
+                                        <span className="text-xs font-bold text-white">{streak.currentStreak} Day Streak</span>
+                                    </div>
 
-                    {/* User Profile Summary */}
-                    <div className="flex items-center gap-3">
-                        <div className="shrink-0 w-12 h-12 bg-white rounded-full p-0.5 shadow-lg">
-                            {firebaseUser?.photoURL ? (
-                                <img src={firebaseUser.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-600">
-                                    {(user.name || firebaseUser?.email || 'U').charAt(0).toUpperCase()}
+                                    {/* Trophy Icon - Achievement Entry Point */}
+                                    <button
+                                        onClick={() => navigate('/achievements')}
+                                        className="relative p-2 rounded-full backdrop-blur-[10px] bg-white/10 transition-all active:scale-95 overflow-hidden"
+                                    >
+                                        {/* Gradient border ring */}
+                                        <div
+                                            className="absolute inset-0 rounded-full"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${tier.colors.from}, ${tier.colors.to})`,
+                                                padding: '1.5px',
+                                            }}
+                                        >
+                                            <div className="w-full h-full rounded-full bg-white/20 backdrop-blur-[10px]" />
+                                        </div>
+                                        {/* Trophy Icon with tier color */}
+                                        <Trophy
+                                            size={16}
+                                            className="relative z-10"
+                                            strokeWidth={1.5}
+                                            style={{ color: tier.colors.from }}
+                                        />
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                        <div className="min-w-0">
-                            <h2 className="text-lg font-bold text-white leading-tight truncate">
-                                {firebaseUser?.displayName || user.name || 'User'}
-                            </h2>
-                            <p className="text-blue-100 text-xs truncate mb-1">{firebaseUser?.email || user.email}</p>
-                            <div className="flex items-center gap-2">
-                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${user.tier === 'PRO' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm' : 'bg-white/20 text-white'}`}>
-                                    {user.tier === 'PRO' ? 'Pro Member' : 'Free Tier'}
-                                </span>
-                                {user.tier === 'PRO' && user.proExpiryDate && (
-                                    <span className="text-[10px] font-bold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 uppercase">
-                                        PRO UNTIL {new Date(user.proExpiryDate).toLocaleDateString('en-GB')}
-                                    </span>
-                                )}
+                            </div>
+
+                            {/* User Profile Summary */}
+                            <div className="flex items-center gap-3">
+                                <div className="shrink-0 w-12 h-12 bg-white rounded-full p-0.5 shadow-lg">
+                                    {firebaseUser?.photoURL ? (
+                                        <img src={firebaseUser.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-600">
+                                            {(user.name || firebaseUser?.email || 'U').charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="min-w-0">
+                                    <h2 className="text-lg font-bold text-white leading-tight truncate">
+                                        {firebaseUser?.displayName || user.name || 'User'}
+                                    </h2>
+                                    <p className="text-blue-100 text-xs truncate mb-2">{firebaseUser?.email || user.email}</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-xs uppercase font-bold px-2 py-0.5 rounded-full ${user.tier === 'PRO' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm' : 'bg-white/20 text-white'}`}>
+                                            {user.tier === 'PRO' ? 'Pro Member' : 'Free Tier'}
+                                        </span>
+                                        {user.tier === 'PRO' && user.proExpiryDate && (
+                                            <span className="text-xs font-bold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 uppercase">
+                                                PRO UNTIL {new Date(user.proExpiryDate).toLocaleDateString('en-GB')}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    );
+                })()}
             </div>
 
             <div className="px-5 -mt-5 relative z-20 space-y-6">
-                {/* Achievements Banner */}
-                <Link to="/achievements" className="block transform transition-transform active:scale-98">
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600">
-                                <Trophy size={24} className="fill-yellow-600" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900">Achievements</h3>
-                                <p className="text-sm text-gray-500">{badges.length} badges • {points.toLocaleString()} points</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={20} className="text-gray-400" />
-                    </div>
-                </Link>
-
                 {/* The 'Duitrack Growth' Banner */}
                 <div
                     onClick={() => navigate('/referral')}
@@ -193,12 +212,12 @@ export function ProfilePage() {
 
                     <div className="relative z-10 flex items-center justify-between">
                         <div className="max-w-[70%]">
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-bold text-white uppercase tracking-wider">
                                     Limited Offer
                                 </span>
                             </div>
-                            <h3 className="text-lg font-bold text-white leading-tight mb-1">
+                            <h3 className="text-lg font-bold text-white leading-tight mb-2">
                                 Get 7 Days of Pro!
                             </h3>
                             <p className="text-xs text-blue-100 font-medium">
@@ -256,7 +275,7 @@ export function ProfilePage() {
                             />
                         </div>
                         {completionHint && (
-                            <p className="text-[10px] text-gray-400 mt-1.5">{completionHint}</p>
+                            <p className="text-xs text-gray-400 mt-1.5">{completionHint}</p>
                         )}
                     </div>
 
@@ -266,17 +285,17 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Name</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Name</p>
                                     {isEditingName ? (
                                         <input
                                             type="text"
                                             value={editNameValue}
                                             onChange={(e) => setEditNameValue(e.target.value)}
-                                            className="text-[12px] text-gray-700 bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-400 w-40 mt-0.5"
+                                            className="text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-400 w-40 mt-1"
                                             autoFocus
                                         />
                                     ) : (
-                                        <p className="text-[12px] text-gray-500 mt-0.5">{user.name || 'Not set'}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{user.name || 'Not set'}</p>
                                     )}
                                 </div>
                             </div>
@@ -308,11 +327,11 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Mail size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Email</p>
-                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.email}</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Email</p>
+                                    <p className="text-xs text-gray-500 mt-1">{user.email}</p>
                                 </div>
                             </div>
-                            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
                                 <CheckCircle2 size={10} />
                                 VERIFIED
                             </span>
@@ -323,8 +342,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Calendar size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Date of Birth</p>
-                                    <p className="text-[12px] text-gray-500 mt-0.5">
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Date of Birth</p>
+                                    <p className="text-xs text-gray-500 mt-1">
                                         {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-GB') : 'Not set'}
                                     </p>
                                 </div>
@@ -343,8 +362,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <UserIcon size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Gender</p>
-                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.gender || 'Not set'}</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Gender</p>
+                                    <p className="text-xs text-gray-500 mt-1">{user.gender || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -361,25 +380,25 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Phone size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Phone Number</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Phone Number</p>
                                     <input
                                         type="tel"
                                         value={user.phone || ''}
                                         onChange={(e) => updateUser({ phone: e.target.value.replace(/\D/g, '') })}
                                         placeholder="01X-XXX XXXX"
-                                        className="text-[12px] text-gray-500 bg-transparent border-none outline-none w-32 mt-0.5"
+                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-32 mt-1"
                                     />
                                 </div>
                             </div>
                             {user.phoneVerified ? (
-                                <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1">
                                     <CheckCircle2 size={10} />
                                     VERIFIED
                                 </span>
                             ) : (
                                 <button
                                     onClick={() => setShowTacModal(true)}
-                                    className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 hover:bg-red-100"
+                                    className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 hover:bg-red-100"
                                 >
                                     <XCircle size={10} />
                                     UNVERIFIED
@@ -392,8 +411,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Banknote size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Salary Range</p>
-                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.salaryRange || 'Not set'}</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Salary Range</p>
+                                    <p className="text-xs text-gray-500 mt-1">{user.salaryRange || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -410,8 +429,8 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <Briefcase size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Occupation</p>
-                                    <p className="text-[12px] text-gray-500 mt-0.5">{user.occupation || 'Not set'}</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Occupation</p>
+                                    <p className="text-xs text-gray-500 mt-1">{user.occupation || 'Not set'}</p>
                                 </div>
                             </div>
                             <button
@@ -428,24 +447,24 @@ export function ProfilePage() {
                             <div className="flex items-center gap-3">
                                 <MapPin size={18} className="text-slate-400" strokeWidth={1.5} />
                                 <div>
-                                    <p className="text-[13px] font-bold text-gray-900 leading-tight">Postcode</p>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight">Postcode</p>
                                     <input
                                         type="text"
                                         value={user.postcode || ''}
                                         onChange={(e) => handlePostcodeChange(e.target.value)}
                                         placeholder="XXXXX"
                                         maxLength={5}
-                                        className="text-[12px] text-gray-500 bg-transparent border-none outline-none w-20 mt-0.5"
+                                        className="text-xs text-gray-500 bg-transparent border-none outline-none w-20 mt-1"
                                     />
                                 </div>
                             </div>
                             {user.postcode && user.postcode.length === 5 && (
                                 postcodeValidation?.valid ? (
-                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                                    <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
                                         {postcodeValidation.state}
                                     </span>
                                 ) : (
-                                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+                                    <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
                                         Invalid
                                     </span>
                                 )
@@ -714,114 +733,6 @@ export function ProfilePage() {
                 value={user.dateOfBirth || ''}
                 onChange={(date) => updateUser({ dateOfBirth: date })}
             />
-        </div>
-    );
-}
-
-// TAC Verification Modal Component
-function TacVerificationModal({
-    isOpen,
-    onClose,
-    onVerify,
-    phone
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-    onVerify: () => void;
-    phone: string;
-}) {
-    const [tacCode, setTacCode] = useState('');
-    const [isVerifying, setIsVerifying] = useState(false);
-    const [countdown, setCountdown] = useState(60);
-
-    // Countdown timer
-    useState(() => {
-        if (!isOpen) return;
-        const timer = setInterval(() => {
-            setCountdown(prev => prev > 0 ? prev - 1 : 0);
-        }, 1000);
-        return () => clearInterval(timer);
-    });
-
-    const handleVerify = () => {
-        if (tacCode.length !== 6) return;
-        setIsVerifying(true);
-        // Mock: any 6-digit code is accepted
-        setTimeout(() => {
-            onVerify();
-            setIsVerifying(false);
-        }, 1500);
-    };
-
-    const handleResend = () => {
-        setCountdown(60);
-        // Mock resend
-    };
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
-            <div className="relative w-full max-w-md bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
-                <div className="p-6">
-                    <div className="text-center mb-6">
-                        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Phone size={24} className="text-blue-600" />
-                        </div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-2">Verify Phone Number</h2>
-                        <p className="text-sm text-gray-500">
-                            Enter the 6-digit code sent to<br />
-                            <span className="font-semibold text-gray-700">{phone || 'your phone'}</span>
-                        </p>
-                    </div>
-
-                    {/* TAC Input */}
-                    <div className="mb-6">
-                        <input
-                            type="text"
-                            value={tacCode}
-                            onChange={(e) => setTacCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                            placeholder="000000"
-                            maxLength={6}
-                            className="w-full text-center text-3xl font-mono font-bold tracking-[0.5em] bg-gray-50 border border-gray-200 rounded-xl py-4 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none"
-                            autoFocus
-                        />
-                    </div>
-
-                    {/* Resend */}
-                    <div className="text-center mb-6">
-                        {countdown > 0 ? (
-                            <p className="text-sm text-gray-400">
-                                Resend code in <span className="font-mono font-semibold">{countdown}s</span>
-                            </p>
-                        ) : (
-                            <button
-                                onClick={handleResend}
-                                className="text-sm text-blue-600 font-semibold hover:underline"
-                            >
-                                Resend Code
-                            </button>
-                        )}
-                    </div>
-
-                    <div className="flex gap-3">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleVerify}
-                            disabled={tacCode.length !== 6 || isVerifying}
-                            className="flex-1 py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isVerifying ? 'Verifying...' : 'Verify'}
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }

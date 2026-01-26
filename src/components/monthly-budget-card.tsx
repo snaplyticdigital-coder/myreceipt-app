@@ -6,6 +6,8 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { Target } from 'lucide-react';
+import { formatCurrency } from '../lib/format';
+import { getProgressColor } from '../lib/design-tokens';
 
 export function MonthlyBudgetCard() {
     const { budget, getMonthTotal } = useStore();
@@ -42,12 +44,8 @@ export function MonthlyBudgetCard() {
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentUsed / 100) * circumference;
 
-    // Determine color based on usage
-    const getProgressColor = () => {
-        if (percentUsed >= 100) return '#ef4444'; // red-500
-        if (percentUsed >= 80) return '#f59e0b';  // amber-500
-        return '#3b82f6'; // blue-500
-    };
+    // Progress color from design tokens
+    const progressColor = getProgressColor(percentUsed);
 
     return (
         <Link
@@ -73,7 +71,7 @@ export function MonthlyBudgetCard() {
                             cy="24"
                             r={radius}
                             fill="none"
-                            stroke={getProgressColor()}
+                            stroke={progressColor}
                             strokeWidth="4"
                             strokeLinecap="round"
                             strokeDasharray={circumference}
@@ -89,11 +87,11 @@ export function MonthlyBudgetCard() {
 
                 {/* Budget Info */}
                 <div className="flex-1">
-                    <p className="text-sm text-gray-500 mb-0.5">Monthly Budget</p>
-                    <p className="text-lg font-bold text-gray-900">
-                        RM {monthSpent.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <p className="text-sm text-gray-500 mb-2">Monthly Budget</p>
+                    <p className="text-lg font-bold text-gray-900 tabular-nums">
+                        {formatCurrency(monthSpent)}
                         <span className="text-sm font-normal text-gray-400">
-                            {' '}/ RM {budgetTotal.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            {' '}/ {formatCurrency(budgetTotal)}
                         </span>
                     </p>
                 </div>

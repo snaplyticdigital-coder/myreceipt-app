@@ -33,7 +33,7 @@ export function ProfileCompletionCTA() {
                                     <ChevronRight size={16} />
                                 </div>
                             </div>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{completionHint}</p>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{completionHint}</p>
                         </div>
                     </div>
 
@@ -45,7 +45,7 @@ export function ProfileCompletionCTA() {
                                 style={{ width: `${profileCompletion.percentage}%` }}
                             />
                         </div>
-                        <span className="text-[10px] font-black text-gray-800 bg-white px-2 py-0.5 rounded-lg shadow-sm">{profileCompletion.percentage}%</span>
+                        <span className="text-xs font-black text-gray-800 bg-white px-2 py-0.5 rounded-lg shadow-sm">{profileCompletion.percentage}%</span>
                     </div>
                 </div>
             </div>

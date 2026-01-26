@@ -64,25 +64,25 @@ export function AchievementsPage() {
                         </div>
                         <div className="text-right">
                             <div className="text-2xl font-bold">{points}</div>
-                            <div className="text-[10px] uppercase tracking-wider text-white/80">Total Points</div>
+                            <div className="text-xs uppercase tracking-wider text-white/80">Total Points</div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2">
                         <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
                             <div className="text-lg font-bold">{unlockedCount}/{totalAchievements}</div>
-                            <div className="text-[10px] text-white/80">Achievements</div>
+                            <div className="text-xs text-white/80">Achievements</div>
                         </div>
                         <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
                             <div className="text-lg font-bold flex items-center justify-center gap-1">
                                 <Flame size={14} className="text-orange-400" fill="currentColor" />
                                 {streak.currentStreak}
                             </div>
-                            <div className="text-[10px] text-white/80">Day Streak</div>
+                            <div className="text-xs text-white/80">Day Streak</div>
                         </div>
                         <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
                             <div className="text-lg font-bold">0</div>
-                            <div className="text-[10px] text-white/80">Challenges</div>
+                            <div className="text-xs text-white/80">Challenges</div>
                         </div>
                     </div>
                 </div>
@@ -151,21 +151,21 @@ export function AchievementsPage() {
                                                 </div>
 
                                                 {/* Title */}
-                                                <h4 className={`text-xs font-semibold mb-1 leading-tight ${item.progress.isUnlocked ? 'text-gray-900' : 'text-gray-500'
+                                                <h4 className={`text-xs font-semibold mb-2 leading-tight ${item.progress.isUnlocked ? 'text-gray-900' : 'text-gray-500'
                                                     }`}>
                                                     {item.title}
                                                 </h4>
 
                                                 {/* Progress Bar */}
                                                 <div className="w-full mt-auto pt-2">
-                                                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden mb-1">
+                                                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden mb-2">
                                                         <div
                                                             className={`h-full rounded-full ${item.progress.isUnlocked ? 'bg-blue-500' : 'bg-gray-300'
                                                                 }`}
                                                             style={{ width: `${item.progress.progressPercent}%` }}
                                                         />
                                                     </div>
-                                                    <div className="text-[10px] text-gray-400 text-center">
+                                                    <div className="text-xs text-gray-400 text-center">
                                                         {Math.round(item.progress.progressPercent)}%
                                                     </div>
                                                 </div>
@@ -182,7 +182,7 @@ export function AchievementsPage() {
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Target className="text-gray-400" size={32} />
                         </div>
-                        <h3 className="text-gray-900 font-bold mb-1">No Active Challenges</h3>
+                        <h3 className="text-gray-900 font-bold mb-2">No Active Challenges</h3>
                         <p className="text-sm text-gray-500">Check back later for new challenges!</p>
                     </div>
                 )}

@@ -1,31 +1,32 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { ChevronRight } from 'lucide-react';
+import { TIER_COLORS } from '../lib/design-tokens';
 
-// Strict Tier Definitions with "Uncompromising Colors & Icons"
+// Strict Tier Definitions using Design Tokens
 const TIERS = [
     {
         name: 'Bronze Member',
         icon: '🥉',
-        color: 'bg-gradient-to-r from-[#D97706] to-[#B45309]', // Warm Bronze/Orange
+        color: `bg-gradient-to-r ${TIER_COLORS.bronze.bg}`,
         minPoints: 0
     },
     {
         name: 'Silver Member',
         icon: '🥈',
-        color: 'bg-gradient-to-r from-[#94A3B8] to-[#64748B]', // Cool Silver/Grey
+        color: `bg-gradient-to-r ${TIER_COLORS.silver.bg}`,
         minPoints: 500
     },
     {
         name: 'Gold Member',
         icon: '🥇',
-        color: 'bg-gradient-to-r from-[#EAB308] to-[#CA8A04]', // Rich Yellow-Gold
+        color: `bg-gradient-to-r ${TIER_COLORS.gold.bg}`,
         minPoints: 2500
     },
     {
         name: 'Diamond Member',
         icon: '💎',
-        color: 'bg-gradient-to-r from-[#22D3EE] to-[#2563EB]', // Bright Blue/Cyan Diamond
+        color: `bg-gradient-to-r ${TIER_COLORS.diamond.bg}`,
         minPoints: 7500
     },
 ];
@@ -58,7 +59,7 @@ export function GamificationCard() {
                     </div>
 
                     {/* Middle Section: Label + Progress Bar */}
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-2">
                         <span className="text-sm font-bold text-white uppercase tracking-wide drop-shadow-sm leading-none">
                             {currentTier.name}
                         </span>
@@ -74,8 +75,8 @@ export function GamificationCard() {
                 </div>
 
                 {/* Right Section: Points + Chevron */}
-                <div className="flex items-center gap-1">
-                    <span className="text-sm font-bold text-white drop-shadow-sm">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white drop-shadow-sm tabular-nums">
                         {points.toLocaleString()} pts
                     </span>
                     <ChevronRight size={18} className="text-white opacity-80" />
