@@ -7,24 +7,27 @@ interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
 }
 
-// Custom Duitrack Logo Component
-const DuitrackIcon = ({ size = 24, strokeWidth = 1.5, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
+// Custom Duitrack Logo Component - Now uses the official logo image
+const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
+    // For active state, use the white logo image; for inactive, use a tinted version
+    const isActive = color === NAV_COLORS.active;
+
     return (
-        <svg
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
+        <div
+            className={`relative ${className}`}
+            style={{ width: size, height: size }}
         >
-            <path d="M4 4 h 2 v 16 h -2 Z" /> {/* Left Bar */}
-            <path d="M6 4 h 6 c 5 0 8 4 8 8 s -3 8 -8 8 h -6" /> {/* D Curve */}
-            <path d="M14 10 l -4 4 l 4 4" /> {/* Arrow (Abstracted) */}
-        </svg>
+            <img
+                src="/duitrack-logo-white.png"
+                alt="Duitrack"
+                className="w-full h-full object-contain"
+                style={{
+                    filter: isActive
+                        ? 'invert(30%) sepia(100%) saturate(1500%) hue-rotate(250deg) brightness(90%)' // Purple tint for active
+                        : 'invert(70%) sepia(0%) saturate(0%) brightness(60%)', // Gray for inactive
+                }}
+            />
+        </div>
     );
 };
 

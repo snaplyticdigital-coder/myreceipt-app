@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../lib/store';
-import { TrendingUp, Wallet, Star, ChevronRight, Zap } from 'lucide-react';
+import { TrendingUp, Wallet, Star, ChevronRight, Zap, Receipt } from 'lucide-react';
 import { useMemo, useEffect, useState } from 'react';
 import {
     getEmptyStateMessage,
@@ -8,6 +8,7 @@ import {
     resetSessionIndices,
     type LiveDataContext,
 } from '../lib/copilot-randomization';
+import { getTopTaxInsight, type TaxInsight } from '../lib/lhdn-logic';
 
 // ============ TYPE DEFINITIONS ============
 
@@ -98,6 +99,12 @@ export function CoPilotSection() {
         spendingShift: CardMessage;
         dailyRunway: CardMessage;
     } | null>(null);
+
+    // Tax insight for "Jimat Tax Sini" feature
+    const taxInsight = useMemo((): TaxInsight | null => {
+        if (!hasTransactions) return null;
+        return getTopTaxInsight(receipts);
+    }, [receipts, hasTransactions]);
 
     // Calculate live data context
     const liveContext = useMemo((): LiveDataContext => {
@@ -206,7 +213,7 @@ export function CoPilotSection() {
     if (!cardMessages) return null;
 
     return (
-        <div className="space-y-4 px-1">
+        <div className="space-y-4">
             {/* Section Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -262,6 +269,21 @@ export function CoPilotSection() {
                     href={hasTransactions ? "/budget" : "/add-receipt"}
                     isGhostMode={!hasTransactions}
                 />
+
+                {/* Card 4: Jimat Tax Sini - LHDN Tax Insight (only shows when has transactions) */}
+                {taxInsight && (
+                    <CoPilotCard
+                        type="budget"
+                        title="Jimat Tax Sini"
+                        message={taxInsight.suggestion}
+                        emoji={taxInsight.emoji}
+                        icon={<Receipt size={18} className="text-teal-500" />}
+                        glowClass="glass-glow-teal"
+                        iconBgClass="bg-teal-50/90"
+                        href="/tax-relief"
+                        isGhostMode={false}
+                    />
+                )}
             </div>
         </div>
     );

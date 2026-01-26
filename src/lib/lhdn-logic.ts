@@ -599,3 +599,234 @@ export function getLhdnReliefSummary(receipts: Receipt[]): {
         return { category, spent, limit, remaining, percentUsed };
     });
 }
+
+// ============================================
+// JIMAT TAX SINI - Smart Tax Insight Engine
+// ============================================
+
+/**
+ * Tax insight type for the "Jimat Tax Sini" Co-Pilot feature
+ */
+export interface TaxInsight {
+    category: LhdnTag;
+    remaining: number;
+    limit: number;
+    percentUsed: number;
+    suggestion: string;
+    emoji: string;
+    priority: 'high' | 'medium' | 'low';
+}
+
+/**
+ * Category-specific suggestion templates (Manglish)
+ * IMPORTANT: Medical is ONLY for health-related items (checkups, vaccines, treatments)
+ * Laptops, books, gadgets belong to Lifestyle category
+ */
+const TAX_SUGGESTION_TEMPLATES: Record<LhdnTag, {
+    highRemaining: string[];  // >70% remaining
+    mediumRemaining: string[]; // 30-70% remaining
+    lowRemaining: string[];    // <30% remaining
+    emoji: string;
+}> = {
+    Medical: {
+        highRemaining: [
+            "Eh boss, you still have RM {amount} for health! Better do that full medical check-up or vaccination now k?",
+            "Banyak lagi Medical relief boss! RM {amount} available. Time for dental check or health screening!",
+            "Your RM {amount} Medical balance untouched! Go get that annual checkup or vaccine before year end!",
+        ],
+        mediumRemaining: [
+            "Medical relief half used. Still got RM {amount} for checkups, vaccines or mental health consultation!",
+            "RM {amount} left for Medical. Consider fertility treatment, physiotherapy or health screening!",
+        ],
+        lowRemaining: [
+            "Medical relief almost maxed! Only RM {amount} left. Use wisely for remaining health needs!",
+        ],
+        emoji: "🏥",
+    },
+    Lifestyle: {
+        highRemaining: [
+            "Boss, Lifestyle relief still ada RM {amount}! Perfect for that new laptop, phone or online course!",
+            "Got RM {amount} Lifestyle balance! Buy computer, smartphone, or upskill with courses - all claimable!",
+            "Internet, gadgets, books - RM {amount} waiting! Time to upgrade your tech or skills!",
+        ],
+        mediumRemaining: [
+            "Lifestyle relief halfway there. RM {amount} left for phones, laptops, books or courses!",
+            "RM {amount} Lifestyle balance. Get that tablet, internet subscription, or skill workshop!",
+        ],
+        lowRemaining: [
+            "Lifestyle relief almost habis! Only RM {amount}. Choose wisely - book, course or gadget?",
+        ],
+        emoji: "💻",
+    },
+    Books: {
+        highRemaining: [
+            "Bookworm alert! RM {amount} available for reading materials. Time to stock up!",
+            "Books, magazines, ebooks - RM {amount} claimable. Feed your mind, boss!",
+        ],
+        mediumRemaining: [
+            "Half your Books relief used. Still got RM {amount} for more reading materials!",
+        ],
+        lowRemaining: [
+            "Books relief running low - RM {amount} left. Choose your next read wisely!",
+        ],
+        emoji: "📚",
+    },
+    Sports: {
+        highRemaining: [
+            "Get fit and claim tax! RM {amount} for gym, sports equipment or fitness classes!",
+            "Sports relief RM {amount} available! Gym membership, badminton racket, or swimming lessons?",
+        ],
+        mediumRemaining: [
+            "RM {amount} Sports relief left. Time for new equipment or renew that gym membership!",
+        ],
+        lowRemaining: [
+            "Sports relief almost done - RM {amount}. One more gym month or equipment purchase?",
+        ],
+        emoji: "🏃",
+    },
+    Education: {
+        highRemaining: [
+            "Education relief loaded with RM {amount}! Perfect for courses, certifications or degree fees!",
+            "Got RM {amount} for Education. Masters degree, professional cert, or upskilling - all claimable!",
+        ],
+        mediumRemaining: [
+            "Education halfway used. RM {amount} left for courses or certifications!",
+        ],
+        lowRemaining: [
+            "Education relief almost maxed! RM {amount} remaining for final course payments.",
+        ],
+        emoji: "🎓",
+    },
+    Childcare: {
+        highRemaining: [
+            "TASKA/TADIKA fees are claimable! RM {amount} available for registered childcare!",
+            "Got kids 6 and below? RM {amount} Childcare relief waiting - for registered centers only!",
+        ],
+        mediumRemaining: [
+            "Childcare relief half used. RM {amount} left for TASKA/TADIKA fees!",
+        ],
+        lowRemaining: [
+            "Childcare relief almost full! Only RM {amount} for remaining nursery fees.",
+        ],
+        emoji: "👶",
+    },
+    Others: {
+        highRemaining: [],
+        mediumRemaining: [],
+        lowRemaining: [],
+        emoji: "📝",
+    },
+};
+
+/**
+ * Generate smart tax insights based on user's current LHDN relief usage
+ * Returns prioritized suggestions for categories with high remaining balance
+ */
+export function generateTaxInsights(receipts: Receipt[]): TaxInsight[] {
+    const summary = getLhdnReliefSummary(receipts);
+    const insights: TaxInsight[] = [];
+
+    summary.forEach(({ category, limit, remaining, percentUsed }) => {
+        const tag = category as LhdnTag;
+        const templates = TAX_SUGGESTION_TEMPLATES[tag];
+
+        if (!templates || templates.highRemaining.length === 0) return;
+
+        let suggestionPool: string[];
+        let priority: 'high' | 'medium' | 'low';
+
+        // Determine suggestion tier based on remaining percentage
+        const remainingPercent = 100 - percentUsed;
+
+        if (remainingPercent > 70) {
+            suggestionPool = templates.highRemaining;
+            priority = 'high';
+        } else if (remainingPercent > 30) {
+            suggestionPool = templates.mediumRemaining;
+            priority = 'medium';
+        } else if (remaining > 0) {
+            suggestionPool = templates.lowRemaining;
+            priority = 'low';
+        } else {
+            return; // No suggestion if fully used
+        }
+
+        // Pick a random suggestion from the pool
+        const randomIndex = Math.floor(Math.random() * suggestionPool.length);
+        const suggestion = suggestionPool[randomIndex].replace('{amount}', remaining.toFixed(0));
+
+        insights.push({
+            category: tag,
+            remaining,
+            limit,
+            percentUsed,
+            suggestion,
+            emoji: templates.emoji,
+            priority,
+        });
+    });
+
+    // Sort by priority (high first) then by remaining amount (highest first)
+    insights.sort((a, b) => {
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
+        return b.remaining - a.remaining;
+    });
+
+    return insights;
+}
+
+/**
+ * Get the top tax insight for display in Co-Pilot card
+ * Prioritizes categories with highest remaining balance
+ */
+export function getTopTaxInsight(receipts: Receipt[]): TaxInsight | null {
+    const insights = generateTaxInsights(receipts);
+    return insights.length > 0 ? insights[0] : null;
+}
+
+/**
+ * Check if an item is correctly categorized for LHDN
+ * CRITICAL: Laptops/phones/books are Lifestyle, NOT Medical
+ */
+export function validateLhdnCategorization(itemName: string, assignedTag: LhdnTag): {
+    isValid: boolean;
+    correctTag?: LhdnTag;
+    reason?: string;
+} {
+    const lowerName = itemName.toLowerCase();
+
+    // Items that should NEVER be Medical
+    const notMedicalItems = ['laptop', 'computer', 'phone', 'smartphone', 'tablet', 'ipad', 'macbook',
+        'book', 'magazine', 'newspaper', 'ebook', 'course', 'training', 'internet', 'wifi', 'broadband'];
+
+    if (assignedTag === 'Medical') {
+        const isWronglyMedical = notMedicalItems.some(kw => lowerName.includes(kw));
+        if (isWronglyMedical) {
+            return {
+                isValid: false,
+                correctTag: 'Lifestyle',
+                reason: 'Gadgets, books, and courses belong to Lifestyle (RM 2,500), not Medical relief.',
+            };
+        }
+    }
+
+    // Items that should be Medical (not Lifestyle)
+    const medicalOnlyItems = ['vaccine', 'vaccination', 'checkup', 'check-up', 'treatment', 'surgery',
+        'dental', 'clinic', 'hospital', 'doctor', 'prescription', 'physiotherapy', 'fertility'];
+
+    if (assignedTag === 'Lifestyle') {
+        const shouldBeMedical = medicalOnlyItems.some(kw => lowerName.includes(kw));
+        if (shouldBeMedical) {
+            return {
+                isValid: false,
+                correctTag: 'Medical',
+                reason: 'Health treatments and checkups belong to Medical (RM 10,000), not Lifestyle.',
+            };
+        }
+    }
+
+    return { isValid: true };
+}
