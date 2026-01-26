@@ -13,48 +13,31 @@ interface BottomNavProps {
  *
  * Size: 24dp (matching lucide-react icons)
  * Unselected: Gray-400 (#9CA3AF) via CSS filter
- * Selected: Purple-600 (#7c3aed) via CSS filter + 1.1x scale pulse
+ * Selected: Purple-600 (#7c3aed) via CSS filter
  * Animation: 200ms ease-in transition
  */
 const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
     const isActive = color === NAV_COLORS.active;
 
-    // CSS filters to match exact hex colors:
-    // Gray-400 (#9CA3AF): invert + sepia + saturate + brightness combo
-    // Purple-600 (#7c3aed): invert + sepia + saturate + hue-rotate combo
+    // Single filter approach - switches between gray and purple
+    // Gray-400 (#9CA3AF) filter
     const grayFilter = 'invert(73%) sepia(6%) saturate(370%) hue-rotate(182deg) brightness(90%) contrast(86%)';
+    // Purple-600 (#7c3aed) filter
     const purpleFilter = 'invert(27%) sepia(89%) saturate(4839%) hue-rotate(254deg) brightness(93%) contrast(93%)';
 
     return (
-        <div
-            className={`relative ${className}`}
-            style={{ width: size, height: size }}
-        >
-            {/* Layer 1: Inactive State (Gray-400) - mirrors other nav icons' inactive layer */}
-            <img
-                src="/duitrack-logo-white.png"
-                alt=""
-                className="absolute inset-0 w-full h-full object-contain"
-                style={{
-                    filter: grayFilter,
-                    opacity: isActive ? 0 : 1,
-                    transition: 'opacity 200ms ease-in',
-                }}
-            />
-
-            {/* Layer 2: Active State (Purple-600 with scale pulse) - mirrors other nav icons' active layer */}
-            <img
-                src="/duitrack-logo-white.png"
-                alt=""
-                className={`absolute inset-0 w-full h-full object-contain ${isActive ? 'nav-logo-active' : ''}`}
-                style={{
-                    filter: purpleFilter,
-                    opacity: isActive ? 1 : 0,
-                    transform: isActive ? 'scale(1)' : 'scale(0.9)',
-                    transition: 'opacity 200ms ease-in, transform 200ms ease-in',
-                }}
-            />
-        </div>
+        <img
+            src="/duitrack-logo-white.png"
+            alt="Duitrack"
+            className={`${className} ${isActive ? 'nav-logo-active' : ''}`}
+            style={{
+                width: size,
+                height: size,
+                objectFit: 'contain',
+                filter: isActive ? purpleFilter : grayFilter,
+                transition: 'filter 200ms ease-in, transform 200ms ease-in',
+            }}
+        />
     );
 };
 
