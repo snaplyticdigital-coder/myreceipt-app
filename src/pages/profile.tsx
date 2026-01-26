@@ -15,6 +15,7 @@ import { PopoverSelect } from '../components/ui/in-app-select';
 import { CalendarPicker } from '../components/ui/calendar-picker';
 import { SectionHeader } from '../components/ui/section-header';
 import { TacVerificationModal } from '../components/modals/tac-verification-modal';
+import { ReferralBanner } from '../components/referral-banner';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -182,34 +183,8 @@ export function ProfilePage() {
             </div>
 
             <div className="px-5 -mt-5 relative z-20 space-y-6">
-                {/* The 'Duitrack Growth' Banner */}
-                <div
-                    onClick={() => navigate('/referral')}
-                    className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-5 shadow-lg relative overflow-hidden group mb-6 transition-all hover:shadow-xl active:scale-98"
-                >
-                    {/* Background Pattern */}
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-colors" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl -ml-8 -mb-8" />
-
-                    <div className="relative z-10 flex items-center justify-between">
-                        <div className="max-w-[70%]">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-bold text-white uppercase tracking-wider">
-                                    Limited Offer
-                                </span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white leading-tight mb-2">
-                                Get 7 Days of Pro!
-                            </h3>
-                            <p className="text-xs text-blue-100 font-medium">
-                                Share the savings with your besties.
-                            </p>
-                        </div>
-                        <div className="bg-white rounded-full p-2.5 shadow-sm group-hover:scale-110 transition-transform">
-                            <ChevronRight className="text-purple-600" size={24} />
-                        </div>
-                    </div>
-                </div>
+                {/* Standalone Dismissible Referral Banner */}
+                <ReferralBanner className="mb-2" />
 
                 {/* Upgrade Banner - Only for Free Tier */}
                 {user.tier === 'FREE' && (
