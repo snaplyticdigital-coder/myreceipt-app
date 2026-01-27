@@ -34,7 +34,8 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
     const usage = Math.max(0, 10 - transactionsLeft);
     const isLimitReached = transactionsLeft <= 0;
     const nextReset = user.nextResetDate ? new Date(user.nextResetDate) : new Date();
-    const formattedResetDate = format(nextReset, 'd MMM');
+    // Full formal date format: "26 February 2026"
+    const formattedResetDate = format(nextReset, 'd MMMM yyyy');
 
     // Ad Cooldown Logic
     const lastAdWatch = user.lastAdWatch ? new Date(user.lastAdWatch) : null;
@@ -97,41 +98,52 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                 </div>
             )}
 
-            {/* Widget 2: Free Transactions & Ad Rewards - Unified with Budget Card */}
-            <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
-                <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
-                        {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse" />}
+            {/* Widget 2: Free Scans Card - Dashboard Metric Layout */}
+            <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col h-32 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
+
+                {/* Top Section: Scan Count + Label */}
+                <div className="relative z-10 flex-1">
+                    {/* Dashboard Metric Layout: Number left, label right */}
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold text-gray-900 leading-none tracking-tight">
+                            {transactionsLeft}
+                        </span>
+                        <div className="flex flex-col">
+                            <span className="text-[12px] font-medium text-gray-500 uppercase tracking-wide leading-tight">
+                                Scans
+                            </span>
+                            <span className="text-[12px] font-medium text-gray-500 uppercase tracking-wide leading-tight">
+                                Left
+                            </span>
+                        </div>
+                        {isLimitReached && <AlertTriangle size={14} className="text-amber-500 animate-pulse ml-auto" />}
                     </div>
 
-                    <p className="text-xl font-extrabold text-gray-900 leading-none tracking-tight">
-                        {transactionsLeft} <span className="text-xs font-bold text-gray-400 uppercase">left</span>
-                    </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    {/* Full Date Format - Muted Gray/500 */}
+                    <p className="text-[12px] text-gray-500 font-normal mt-1">
                         Resets {formattedResetDate}
                     </p>
+
+                    {/* 10-Dash Progress Pill - Shifted up with 8dp margin from date */}
+                    <div className="flex gap-1 justify-start w-full mt-2">
+                        {Array.from({ length: 10 }).map((_, i) => {
+                            const isUsed = i < usage;
+                            return (
+                                <div
+                                    key={i}
+                                    className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${isUsed
+                                        ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]'
+                                        : 'bg-gray-100'
+                                        }`}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
 
-                {/* 10-Dash Visual System */}
-                <div className="flex gap-1 justify-start w-full relative z-10">
-                    {Array.from({ length: 10 }).map((_, i) => {
-                        const isUsed = i < usage;
-                        return (
-                            <div
-                                key={i}
-                                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${isUsed
-                                    ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]'
-                                    : 'bg-gray-100'
-                                    }`}
-                            />
-                        );
-                    })}
-                </div>
-
-                {/* Ad Reward Button - Brand Gradient */}
-                <div className="mt-auto relative z-10">
+                {/* Ad Reward Button - Brand Gradient with 16dp safety margin */}
+                <div className="relative z-10 mt-4">
                     <button
                         onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
                         disabled={isAdCooldownActive}
