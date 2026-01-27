@@ -104,24 +104,19 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
 
                 {/* Top Section: Scan Count + Label */}
                 <div className="relative z-10 flex-1">
-                    {/* Dashboard Metric Layout: Number left, label right */}
-                    <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-gray-900 leading-none tracking-tight">
-                            {transactionsLeft}
-                        </span>
-                        <div className="flex flex-col">
-                            <span className="text-[12px] font-medium text-gray-500 uppercase tracking-wide leading-tight">
-                                Scans
-                            </span>
-                            <span className="text-[12px] font-medium text-gray-500 uppercase tracking-wide leading-tight">
-                                Left
-                            </span>
-                        </div>
-                        {isLimitReached && <AlertTriangle size={14} className="text-amber-500 animate-pulse ml-auto" />}
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
+                        {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse" />}
                     </div>
 
-                    {/* Full Date Format - Muted Gray/500 */}
-                    <p className="text-[12px] text-gray-500 font-normal mt-1">
+                    {/* Dashboard Metric: Large number with inline label */}
+                    <p className="text-xl font-extrabold text-gray-900 leading-none tracking-tight">
+                        {transactionsLeft} <span className="text-xs font-bold text-gray-400 uppercase">left</span>
+                    </p>
+
+                    {/* Full Date Format - Muted Gray/500, 12pt */}
+                    <p className="text-[12px] text-gray-500 font-normal mt-0.5">
                         Resets {formattedResetDate}
                     </p>
 
