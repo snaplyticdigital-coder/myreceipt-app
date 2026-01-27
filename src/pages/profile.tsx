@@ -15,6 +15,7 @@ import { CalendarPicker } from '../components/ui/calendar-picker';
 import { SectionHeader } from '../components/ui/section-header';
 import { TacVerificationModal } from '../components/modals/tac-verification-modal';
 import { LogoutConfirmModal } from '../components/modals/logout-confirm-modal';
+import { PaywallModal } from '../components/modals/paywall-modal';
 
 // Toggle Switch Component
 function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -38,6 +39,7 @@ export function ProfilePage() {
     const { logout, firebaseUser } = useAuth();
     const [showTacModal, setShowTacModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showPaywallModal, setShowPaywallModal] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     // Settings toggles
@@ -209,7 +211,7 @@ export function ProfilePage() {
                                 </div>
                             </div>
                             <button
-                                onClick={() => useStore.getState().upgradeToPro()}
+                                onClick={() => setShowPaywallModal(true)}
                                 className="bg-white text-amber-600 text-xs font-bold px-4 py-2 rounded-full shadow-sm hover:bg-amber-50 transition-colors active:scale-95"
                             >
                                 Upgrade
@@ -667,6 +669,12 @@ export function ProfilePage() {
                 anchorRef={dobRef}
                 value={user.dateOfBirth || ''}
                 onChange={(date) => updateUser({ dateOfBirth: date })}
+            />
+
+            {/* Paywall Modal for Pro Upgrade */}
+            <PaywallModal
+                isOpen={showPaywallModal}
+                onClose={() => setShowPaywallModal(false)}
             />
         </div>
     );
