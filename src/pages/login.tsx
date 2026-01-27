@@ -44,14 +44,21 @@ export function LoginPage() {
 
     const handleGoogleSignIn = async () => {
         setIsSubmitting(true);
+
+        // Timeout for Google Sign-In (15 seconds)
+        const timeout = new Promise<never>((_, reject) => {
+            setTimeout(() => reject(new Error('Google Sign-In timed out. Please try Guest login instead.')), 15000);
+        });
+
         try {
-            await signIn();
-            // If native, signIn returns null and redirects. 
+            await Promise.race([signIn(), timeout]);
+            // If native, signIn returns null and redirects.
             // If web, it awaits popup and we redirect in useEffect.
         } catch (err: any) {
             console.error('Google Sign In Error:', err);
-            // Alert the user so they can report the specific error code
-            alert(`Login Failed: ${err.message || JSON.stringify(err)}`);
+            // Show user-friendly error
+            const message = err.message || 'Sign-in failed';
+            alert(`${message}\n\nTip: Try "Continue as Guest" to test the app.`);
             setIsSubmitting(false);
         }
     };
