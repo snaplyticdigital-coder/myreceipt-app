@@ -34,8 +34,7 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
     const usage = Math.max(0, 10 - transactionsLeft);
     const isLimitReached = transactionsLeft <= 0;
     const nextReset = user.nextResetDate ? new Date(user.nextResetDate) : new Date();
-    // Full formal date format: "26 February 2026"
-    const formattedResetDate = format(nextReset, 'd MMMM yyyy');
+    const formattedResetDate = format(nextReset, 'd MMM');
 
     // Ad Cooldown Logic
     const lastAdWatch = user.lastAdWatch ? new Date(user.lastAdWatch) : null;
@@ -98,65 +97,62 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                 </div>
             )}
 
-            {/* Widget 2: Free Scans Card - Zero-Overlap Architecture */}
+            {/* Widget 2: Free Transactions & Ad Rewards - Unified with Budget Card */}
             <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
-
-                {/* Content Stack - Left aligned */}
-                <div className="relative z-10 flex flex-col items-start">
-                    {/* Row 1: Label left, Count right (spaceBetween) */}
-                    <div className="flex items-center justify-between w-full">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Free Scans</p>
-                        <div className="flex items-center gap-1">
-                            <span className="text-lg font-extrabold text-gray-900 leading-none">{transactionsLeft}</span>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase">left</span>
-                            {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse ml-1" />}
-                        </div>
+                        {isLimitReached && <AlertTriangle size={12} className="text-amber-500 animate-pulse" />}
                     </div>
 
-                    {/* Row 2: Reset Date - Compact spacing */}
-                    <p className="text-[11px] text-gray-500 font-normal mt-1">
+                    <p className="text-xl font-extrabold text-gray-900 leading-none tracking-tight">
+                        {transactionsLeft} <span className="text-xs font-bold text-gray-400 uppercase">left</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">
                         Resets {formattedResetDate}
                     </p>
-
-                    {/* Row 3: Progress Pill - Immediately below date */}
-                    <div className="flex gap-1 w-full mt-1.5">
-                        {Array.from({ length: 10 }).map((_, i) => {
-                            const isUsed = i < usage;
-                            return (
-                                <div
-                                    key={i}
-                                    className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${isUsed
-                                        ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]'
-                                        : 'bg-gray-100'
-                                        }`}
-                                />
-                            );
-                        })}
-                    </div>
                 </div>
 
-                {/* Action Button - 16dp gap via justify-between on parent */}
-                <button
-                    onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
-                    disabled={isAdCooldownActive}
-                    className={`relative z-10 flex flex-col items-center justify-center w-full py-2 rounded-xl text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-purple-200'
-                        }`}
-                >
-                    <div className="flex items-center gap-1.5">
-                        <PlayCircle size={14} strokeWidth={2.5} className="text-white" />
-                        <span className="text-xs font-bold uppercase tracking-wide">
-                            {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
-                        </span>
-                    </div>
-                    {isAdCooldownActive && (
-                        <span className="text-[10px] font-semibold opacity-90 leading-none mt-0.5">
-                            Refills {remainingDays}d {displayHours}h
-                        </span>
-                    )}
-                </button>
+                {/* 10-Dash Visual System */}
+                <div className="flex gap-1 justify-start w-full relative z-10">
+                    {Array.from({ length: 10 }).map((_, i) => {
+                        const isUsed = i < usage;
+                        return (
+                            <div
+                                key={i}
+                                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${isUsed
+                                    ? 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]'
+                                    : 'bg-gray-100'
+                                    }`}
+                            />
+                        );
+                    })}
+                </div>
+
+                {/* Ad Reward Button - Brand Gradient */}
+                <div className="mt-auto relative z-10">
+                    <button
+                        onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
+                        disabled={isAdCooldownActive}
+                        className={`flex flex-col items-center justify-center w-full py-2 rounded-xl text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive
+                            ? 'bg-gray-300 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-purple-200'
+                            }`}
+                    >
+                        <div className="flex items-center gap-1.5">
+                            <PlayCircle size={14} strokeWidth={2.5} className="text-white" />
+                            <span className="text-xs font-bold uppercase tracking-wide">
+                                {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
+                            </span>
+                        </div>
+                        {isAdCooldownActive && (
+                            <span className="text-[10px] font-semibold opacity-90 leading-none mt-0.5">
+                                Refills {remainingDays}d {displayHours}h
+                            </span>
+                        )}
+                    </button>
+                </div>
             </div>
         </div>
     );
