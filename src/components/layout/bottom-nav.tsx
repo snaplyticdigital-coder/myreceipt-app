@@ -27,7 +27,7 @@ const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { s
 
     return (
         <img
-            src="/duitrack-logo.png?v=2"
+            src="/duitrack-logo.png?v=3"
             alt="Duitrack"
             className={`${className} ${isActive ? 'nav-logo-active' : ''}`}
             style={{
