@@ -20,14 +20,14 @@ const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { s
     const isActive = color === NAV_COLORS.active;
 
     // Single filter approach - switches between gray and purple
-    // Gray-400 (#9CA3AF) filter
-    const grayFilter = 'invert(73%) sepia(6%) saturate(370%) hue-rotate(182deg) brightness(90%) contrast(86%)';
-    // Purple-600 (#7c3aed) filter
-    const purpleFilter = 'invert(27%) sepia(89%) saturate(4839%) hue-rotate(254deg) brightness(93%) contrast(93%)';
+    // Gray-400 (#9CA3AF) filter - muted gray for inactive state
+    const grayFilter = 'brightness(0) saturate(100%) invert(70%) sepia(5%) saturate(400%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+    // Purple-600 (#7c3aed) filter - vibrant purple for active state
+    const purpleFilter = 'brightness(0) saturate(100%) invert(29%) sepia(98%) saturate(2000%) hue-rotate(250deg) brightness(95%) contrast(100%)';
 
     return (
         <img
-            src="/duitrack-logo.png"
+            src="/duitrack-logo.png?v=2"
             alt="Duitrack"
             className={`${className} ${isActive ? 'nav-logo-active' : ''}`}
             style={{
