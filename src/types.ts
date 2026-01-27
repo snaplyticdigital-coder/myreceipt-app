@@ -166,6 +166,7 @@ export interface User {
     nextResetDate: string; // ISO timestamp for next reset (Anniversary Billing)
     lastAdWatch?: string; // ISO timestamp
     proExpiryDate?: string; // ISO timestamp
+    billingCycle?: 'monthly' | 'annual'; // Subscription billing cycle
     // Referral System
     referralCode?: string;
     referralsCount?: number;

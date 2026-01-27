@@ -95,7 +95,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     };
 
     const handleUpgrade = () => {
-        upgradeToPro();
+        upgradeToPro(selectedPlan);
         onClose();
     };
 

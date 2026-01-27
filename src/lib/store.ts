@@ -107,7 +107,7 @@ interface AppStore {
     setSelectedMonth: (month: string) => void;
     // Freemium Actions
     watchAd: () => void;
-    upgradeToPro: () => void;
+    upgradeToPro: (plan?: 'monthly' | 'annual') => void;
     checkMonthlyReset: () => void;
     getAdCooldown: () => number;
     incrementScanCount: () => void;
@@ -656,13 +656,25 @@ export const useStore = create<AppStore>((set, get) => ({
         showToast("Reward earned! +3 scans added.", "success");
     },
 
-    upgradeToPro: () => {
+    upgradeToPro: (plan: 'monthly' | 'annual' = 'annual') => {
+        const now = new Date();
+        let expiryDate: Date;
+
+        if (plan === 'monthly') {
+            // Monthly: expires 1 month from now
+            expiryDate = new Date(now.setMonth(now.getMonth() + 1));
+        } else {
+            // Annual: expires 1 year from now
+            expiryDate = new Date(now.setFullYear(now.getFullYear() + 1));
+        }
+
         set((state) => ({
             user: {
                 ...state.user,
                 tier: 'PRO',
                 scansRemaining: 9999, // Unlimited essentially
-                proExpiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+                proExpiryDate: expiryDate.toISOString(),
+                billingCycle: plan, // Track the billing cycle
             }
         }));
     },
