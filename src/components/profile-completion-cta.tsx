@@ -22,14 +22,16 @@ export function ProfileCompletionCTA() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110" />
 
                 <div className="relative z-10">
+                    {/* Icon + Content Row - Standardized 40x40dp icon with 16dp gap */}
                     <div className="flex items-center gap-4 mb-3.5">
-                        <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:rotate-3 transition-transform">
-                            <UserCircle2 size={24} className="text-white" />
+                        {/* Icon Container: 40x40dp, 12px radius, matching Co-Pilot standard */}
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform flex-shrink-0">
+                            <UserCircle2 size={20} className="text-white" strokeWidth={2} />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm font-black text-gray-800 tracking-tight">Complete Your Profile</h3>
-                                <div className="p-1 rounded-full bg-gray-50 text-gray-400 group-hover:text-blue-500 group-hover:bg-blue-50 transition-colors">
+                                <div className="p-1 rounded-full bg-gray-50 text-gray-400 group-hover:text-purple-500 group-hover:bg-purple-50 transition-colors">
                                     <ChevronRight size={16} />
                                 </div>
                             </div>
