@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.myreceipt.app',
+  appId: 'com.snaplytic.duitrack.dev',
   appName: 'Duitrack',
   webDir: 'dist',
   plugins: {
