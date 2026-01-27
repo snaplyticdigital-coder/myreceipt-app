@@ -193,10 +193,10 @@ export function getTierByPoints(points: number): TierInfo {
     if (points >= 7500) {
         return { key: 'diamond', name: 'Diamond Member', colors: TIER_COLORS.diamond };
     }
-    if (points >= 2500) {
+    if (points >= 3000) {
         return { key: 'gold', name: 'Gold Member', colors: TIER_COLORS.gold };
     }
-    if (points >= 500) {
+    if (points >= 1000) {
         return { key: 'silver', name: 'Silver Member', colors: TIER_COLORS.silver };
     }
     return { key: 'bronze', name: 'Bronze Member', colors: TIER_COLORS.bronze };

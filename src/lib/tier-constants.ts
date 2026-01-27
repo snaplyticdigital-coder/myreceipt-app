@@ -12,13 +12,13 @@ export const TIERS = [
         name: 'Silver Member',
         icon: '🥈',
         color: 'bg-gradient-to-r from-[#94A3B8] to-[#64748B]', // Cool Silver/Grey
-        minPoints: 500
+        minPoints: 1000
     },
     {
         name: 'Gold Member',
         icon: '🥇',
         color: 'bg-gradient-to-r from-[#EAB308] to-[#CA8A04]', // Rich Yellow-Gold
-        minPoints: 2500
+        minPoints: 3000
     },
     {
         name: 'Diamond Member',
