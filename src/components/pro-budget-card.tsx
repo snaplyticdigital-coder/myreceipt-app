@@ -1,6 +1,6 @@
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
-import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, Wallet, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface ProBudgetCardProps {
@@ -15,6 +15,34 @@ export function ProBudgetCard({ isPrivacyMode = false }: ProBudgetCardProps) {
     const total = budget.total;
     const percent = total > 0 ? (spent / total) * 100 : 0;
     const clampedPercent = Math.min(percent, 100);
+
+    // EMPTY STATE: Show CTA when budget is not set (unified with Free tier)
+    if (total === 0) {
+        return (
+            <Link
+                to="/budget"
+                className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-5 shadow-sm border border-blue-100 flex items-center gap-5 relative overflow-hidden group transition-all active:scale-[0.98]"
+            >
+                {/* Decorative blur */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-200/40 rounded-full blur-3xl -mr-12 -mt-12" />
+
+                {/* Icon */}
+                <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-200 flex-shrink-0">
+                    <Wallet size={28} className="text-white" strokeWidth={2} />
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Monthly Budget</p>
+                    <p className="text-base font-bold text-gray-800 mb-1">Set Up Your Budget</p>
+                    <p className="text-xs text-gray-500">Track spending & hit your goals</p>
+                </div>
+
+                {/* Arrow */}
+                <ChevronRight size={20} className="text-purple-500 group-hover:translate-x-1 transition-transform relative z-10" strokeWidth={2.5} />
+            </Link>
+        );
+    }
 
     // Color Logic
     let color = 'text-blue-600';
