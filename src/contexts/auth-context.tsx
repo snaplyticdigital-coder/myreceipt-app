@@ -126,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         let unsubscribe: (() => void) | undefined;
         let isMounted = true;
+        let authTimeout: ReturnType<typeof setTimeout>;
 
         const initAuth = async () => {
             // Import store dynamically to avoid circular dependency
@@ -144,32 +145,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            unsubscribe = onAuthChange((fbUser) => {
-                if (!isMounted) return;
-
-                setFirebaseUser(fbUser);
-
-                if (fbUser) {
-                    // IMMEDIATELY set user from Firebase data - don't wait for Firestore
-                    const mappedUser = firebaseUserToUser(fbUser);
-                    setUser(mappedUser);
-
-                    // Initialize user-specific data in the store
-                    initializeUser(fbUser.uid, fbUser.email || '', fbUser.displayName);
+            // Timeout fallback: If Firebase doesn't respond in 5 seconds, stop loading
+            // This prevents infinite loading on network issues or Firebase errors
+            authTimeout = setTimeout(() => {
+                if (isMounted && loading) {
+                    console.warn('Auth timeout - Firebase did not respond in time');
                     setLoading(false);
-                } else {
-                    setUser(null);
-                    setLoading(false);
-                    // Clear user data from store on logout
-                    clearUserData();
                 }
-            });
+            }, 5000);
+
+            try {
+                unsubscribe = onAuthChange((fbUser) => {
+                    if (!isMounted) return;
+
+                    // Clear timeout since we got a response
+                    clearTimeout(authTimeout);
+
+                    setFirebaseUser(fbUser);
+
+                    if (fbUser) {
+                        // IMMEDIATELY set user from Firebase data - don't wait for Firestore
+                        const mappedUser = firebaseUserToUser(fbUser);
+                        setUser(mappedUser);
+
+                        // Initialize user-specific data in the store
+                        initializeUser(fbUser.uid, fbUser.email || '', fbUser.displayName);
+                        setLoading(false);
+                    } else {
+                        setUser(null);
+                        setLoading(false);
+                        // Clear user data from store on logout
+                        clearUserData();
+                    }
+                });
+            } catch (e) {
+                console.error('Firebase auth error:', e);
+                clearTimeout(authTimeout);
+                setLoading(false);
+            }
         };
 
         initAuth();
 
         return () => {
             isMounted = false;
+            clearTimeout(authTimeout);
             if (unsubscribe) unsubscribe();
         };
     }, []);
