@@ -14,7 +14,7 @@ interface BottomNavProps {
  * Size: 24dp (matching lucide-react icons)
  * Unselected: Gray-400 (#9CA3AF) via CSS filter
  * Selected: Purple-600 (#7c3aed) via CSS filter
- * Animation: 200ms ease-in transition
+ * Animation: 200ms ease-in transition with 1.1x scale pulse on selection
  */
 const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
     const isActive = color === NAV_COLORS.active;
@@ -27,7 +27,7 @@ const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { s
 
     return (
         <img
-            src="/duitrack-logo-white.png"
+            src="/duitrack-logo.png"
             alt="Duitrack"
             className={`${className} ${isActive ? 'nav-logo-active' : ''}`}
             style={{
@@ -35,6 +35,7 @@ const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { s
                 height: size,
                 objectFit: 'contain',
                 filter: isActive ? purpleFilter : grayFilter,
+                transform: isActive ? 'scale(1.1)' : 'scale(1)',
                 transition: 'filter 200ms ease-in, transform 200ms ease-in',
             }}
         />

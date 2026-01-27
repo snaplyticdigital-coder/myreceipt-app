@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Crown } from 'lucide-react';
 import { useStore } from '../lib/store';
+import { PaywallModal } from './modals/paywall-modal';
 
 
 interface ProLockOverlayProps {
@@ -20,12 +22,15 @@ export function ProLockOverlay({
     variant = 'analytics'
 }: ProLockOverlayProps) {
     const { user } = useStore();
+    const [showPaywall, setShowPaywall] = useState(false);
 
     if (user.tier === 'PRO') {
         return <>{children}</>;
     }
 
     return (
+        <>
+        <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
         <div className="relative overflow-hidden rounded-2xl" id="pro-paywall-snap">
             {/* Blurred Content */}
             <div className={`filter blur-${blurAmount} select-none pointer-events-none opacity-50`}>
@@ -93,12 +98,16 @@ export function ProLockOverlay({
                 )}
 
                 <button
-                    onClick={() => useStore.getState().upgradeToPro()}
-                    className="w-full max-w-[280px] bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-full font-bold text-sm shadow-lg shadow-purple-200 active:scale-95 transition-all"
+                    onClick={() => setShowPaywall(true)}
+                    className="w-full max-w-[280px] bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-full font-bold shadow-lg shadow-purple-200 active:scale-95 transition-all flex flex-col items-center justify-center"
                 >
-                    {variant === 'tax' ? 'Unlock My Tax Savings — RM 12.90' : 'Unlock My Financial Freedom — RM 12.90'}
+                    <span className="text-sm">
+                        {variant === 'tax' ? 'Unlock My Tax Savings' : 'Unlock My Financial Freedom'}
+                    </span>
+                    <span className="text-xs opacity-90">RM 12.90/month</span>
                 </button>
             </div>
         </div>
+        </>
     );
 }
