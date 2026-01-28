@@ -26,19 +26,20 @@ function calculateSpendingByBudgetCategory(
 ): Record<string, number> {
     const spending: Record<string, number> = {};
 
-    // Map spending categories to budget categories
+    // Map SpendingCategory to budget category IDs
+    // Budget IDs: dining-food, groceries, transportation, utilities, shopping, healthcare, entertainment, education, others
     const categoryMapping: Record<string, string> = {
-        'Dining & Food': 'food-beverage',
-        'Groceries': 'food-beverage',
-        'Transportation': 'fuel',
-        'Utilities': 'bills',
-        'Healthcare': 'bills',
-        'Entertainment': 'food-beverage',
-        'Shopping': 'food-beverage',
-        'Education': 'bills',
-        'Sports': 'food-beverage',
-        'Lifestyle': 'food-beverage',
-        'Others': 'food-beverage',
+        'Dining & Food': 'dining-food',
+        'Groceries': 'groceries',
+        'Transportation': 'transportation',
+        'Utilities': 'utilities',
+        'Healthcare': 'healthcare',
+        'Entertainment': 'entertainment',
+        'Shopping': 'shopping',
+        'Education': 'education',
+        'Sports': 'entertainment',      // Map sports to entertainment
+        'Lifestyle': 'shopping',        // Map lifestyle to shopping
+        'Others': 'others',
     };
 
     receipts
@@ -47,7 +48,7 @@ function calculateSpendingByBudgetCategory(
             return date >= startDate && date <= endDate;
         })
         .forEach(r => {
-            const budgetCategoryId = categoryMapping[r.spendingCategory] || 'food-beverage';
+            const budgetCategoryId = categoryMapping[r.spendingCategory] || 'others';
             spending[budgetCategoryId] = (spending[budgetCategoryId] || 0) + r.amount;
         });
 
