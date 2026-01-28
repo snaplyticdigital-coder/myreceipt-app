@@ -9,6 +9,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
 import { Mail, Lock, Eye, EyeOff, Loader2, User } from 'lucide-react';
 
+// Import logo directly for proper Vite bundling
+import duitrackLogo from '/duitrack-logo.png';
+
 export function LoginPage() {
     const { user, loading, error, signIn, signInEmail, loginAsGuest, clearError } = useAuth();
     const navigate = useNavigate();
@@ -135,7 +138,7 @@ export function LoginPage() {
                     aria-label="Duitrack Logo"
                 >
                     <img
-                        src="./duitrack-logo.png"
+                        src={duitrackLogo}
                         alt="Duitrack"
                         className="w-full h-full object-cover"
                     />
