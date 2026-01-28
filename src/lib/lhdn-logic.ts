@@ -1,12 +1,22 @@
 import type { Receipt, LineItem, LhdnTag } from '../types';
 
 /**
- * LHDN Tax Relief Categories 2025 (Year Assessment)
+ * LHDN Tax Relief Categories YA 2025/2026
  * Based on official HASIL Malaysia guidelines
  * Reference: https://www.hasil.gov.my
+ *
+ * IMPORTANT COMPLIANCE NOTES:
+ * - Medical (RM 10,000): ONLY for health treatments, vaccines, checkups, mental health
+ * - Lifestyle (RM 2,500): Laptops, phones, tablets, books, internet, courses
+ * - Sports (RM 1,000): Equipment, gym, facility rental, competition fees
+ * - Childcare (RM 3,000): TASKA/TADIKA only, child 6 years and below
+ *
+ * NEVER mix categories:
+ * - Laptops/phones/books are NEVER Medical
+ * - Health treatments are NEVER Lifestyle
  */
 
-// Tax Relief Limits for 2025
+// Tax Relief Limits for YA 2025/2026
 export const LHDN_LIMITS_2025 = {
     // INDIVIDUAL
     individualAndDependentRelatives: 9000,
@@ -15,7 +25,7 @@ export const LHDN_LIMITS_2025 = {
     disabledHusbandWife: 6000,
 
     // EDUCATION
-    educationFees: 7000, // Tertiary level
+    educationFees: 7000, // Tertiary level (Diploma & above)
     skillsEnhancementCourses: 2000, // Sub-limit under education
 
     // HOUSING
@@ -23,18 +33,18 @@ export const LHDN_LIMITS_2025 = {
     housingLoanInterest500kTo750k: 5000,
 
     // MEDICAL & SPECIAL NEEDS
-    medicalSelfSpouseChild: 10000,
+    medicalSelfSpouseChild: 10000, // Serious illness, fertility, vaccination, mental health, medical devices
     vaccinationSubLimit: 1000, // Sub-limit under medical
-    dentalSubLimit: 1000, // Sub-limit under medical
+    dentalSubLimit: 1000, // Sub-limit under medical (excluding cosmetic)
     medicalExaminationSubLimit: 1000, // Sub-limit under medical
     childLearningDisabilities: 6000, // Sub-limit under medical
-    medicalParentsGrandparents: 8000,
+    medicalParentsGrandparents: 8000, // Medical treatment, carer expenses, dental (excluding cosmetic)
     parentsVaccinationSubLimit: 1000, // Sub-limit under parents medical
     disabledSupportEquipment: 6000,
 
-    // LIFESTYLE
-    lifestyle: 2500, // Books, gadgets, internet, self-development courses
-    sportsAdditional: 1000, // Equipment, gym, facilities, competition fees
+    // LIFESTYLE (RM 2,500 TOTAL - includes books, gadgets, internet, courses)
+    lifestyle: 2500, // Reading materials, computers, smartphones, tablets, internet, skills courses
+    sportsAdditional: 1000, // Equipment, facility rental, registration fees, training
     evChargingEquipment: 2500, // EV charging & food waste composting machine
 
     // INSURANCE & CONTRIBUTIONS
@@ -50,73 +60,107 @@ export const LHDN_LIMITS_2025 = {
     childAbove18ALevel: 2000,
     unmarriedChildWithDisabilities: 8000,
     additionalDisabledChildRelief: 8000,
-    childcareTaskaFees: 3000, // Child aged 6 and below
+    childcareTaskaFees: 3000, // TASKA/TADIKA fees, child aged 6 and below
     breastfeedingEquipment: 1000, // Female taxpayer, child aged 2 and below
 } as const;
 
 /**
- * Categories that qualify for tax relief based on LHDN 2025 guidelines
+ * Categories that qualify for tax relief based on LHDN YA 2025/2026 guidelines
+ *
+ * CRITICAL COMPLIANCE RULES:
+ * 1. Medical (RM 10,000) = HEALTH ONLY: checkups, vaccines, treatments, mental health
+ * 2. Lifestyle (RM 2,500) = TECH & LEARNING: laptops, phones, tablets, books, internet, courses
+ * 3. Sports (RM 1,000) = FITNESS: equipment, gym, facility rental, competition fees
+ * 4. Childcare (RM 3,000) = REGISTERED ONLY: TASKA/TADIKA for child 6 and below
+ *
+ * NEVER categorize laptops, phones, or books under Medical!
  */
 export const LHDN_ELIGIBLE_ITEMS = {
     // MEDICAL - RM10,000 (Self/Spouse/Child)
+    // For: Serious illness, fertility, vaccination, mental health, medical devices
+    // NOT FOR: Laptops, phones, books, courses, internet
     Medical: {
         limit: 10000,
         eligible: [
             'Serious illness treatment',
-            'Fertility treatment',
-            'Vaccination', // RM1,000 sub-limit
-            'Dental examination and treatment', // RM1,000 sub-limit
-            'Full medical check-up', // RM1,000 sub-limit
+            'Fertility treatment (IVF, etc)',
+            'Vaccination (RM1,000 sub-limit)',
+            'Dental examination and treatment (RM1,000 sub-limit, excluding cosmetic)',
+            'Full medical check-up (RM1,000 sub-limit)',
             'Disease screening tests',
             'Mental health screening/consultation',
-            'Self-health monitoring equipment',
+            'Self-health monitoring equipment (glucose meter, BP monitor)',
             'Self-testing kits (COVID, etc)',
-            'Learning disability diagnosis/rehabilitation (child 18 & below)', // RM6,000 sub-limit
+            'Learning disability diagnosis/rehabilitation (child 18 & below, RM6,000 sub-limit)',
         ],
         notEligible: [
             'Vitamins and supplements',
             'General health products',
             'Personal care products',
-            'Skincare',
-            'Cosmetics',
+            'Skincare and cosmetics',
+            'Laptops and computers', // LIFESTYLE, not Medical
+            'Phones and tablets', // LIFESTYLE, not Medical
+            'Books and reading materials', // LIFESTYLE, not Medical
+            'Internet subscriptions', // LIFESTYLE, not Medical
+            'Courses and training', // LIFESTYLE/Education, not Medical
         ],
     },
 
-    // LIFESTYLE - RM2,500
+    // MEDICAL (Parents/Grandparents) - RM8,000
+    MedicalParents: {
+        limit: 8000,
+        eligible: [
+            'Medical treatment for parents/grandparents',
+            'Carer expenses for parents',
+            'Dental treatment (excluding cosmetic)',
+            'Vaccination for parents (RM1,000 sub-limit)',
+        ],
+        notEligible: [
+            'Cosmetic dental procedures',
+            'General supplements',
+        ],
+    },
+
+    // LIFESTYLE - RM2,500 (includes Books)
+    // For: Reading materials, computers, smartphones, tablets, internet, skills courses
+    // This is where laptops, phones, and books belong!
     Lifestyle: {
         limit: 2500,
         eligible: [
             'Books and reading materials',
-            'Magazines and newspapers',
+            'Magazines and newspapers (including e-newspapers)',
             'Personal computer/laptop',
             'Smartphone',
-            'Tablet',
-            'Internet subscription',
+            'Tablet/iPad',
+            'Internet subscription (Unifi, Maxis, Time, etc)',
             'Skills enhancement courses',
             'Self-development courses',
         ],
         notEligible: [
-            'Gaming consoles',
+            'Gaming consoles (PlayStation, Xbox, Nintendo)',
             'Smart TV',
-            'Audio equipment',
+            'Audio equipment (speakers, headphones)',
             'Cameras',
+            'Phone cases and accessories',
+            'Chargers and cables',
         ],
     },
 
     // SPORTS - RM1,000 (Additional Relief)
+    // Separate from Lifestyle limit
     Sports: {
         limit: 1000,
         eligible: [
-            'Sports equipment for sports activities',
+            'Sports equipment (rackets, balls, weights)',
             'Rental/entrance fees to sports facilities',
             'Sports competition registration fees',
             'Gym membership fees',
             'Sports training fees',
         ],
         notEligible: [
-            'Sports apparel/clothing',
+            'Sports apparel/clothing (jerseys, shoes)',
             'Sports accessories (bags, bottles)',
-            'Smartwatches (unless for sports tracking)',
+            'Smartwatches (unless purely for sports)',
         ],
     },
 
@@ -124,12 +168,12 @@ export const LHDN_ELIGIBLE_ITEMS = {
     Education: {
         limit: 7000,
         eligible: [
-            'Tertiary education fees (other than Masters/PhD)',
+            'Tertiary education fees (Diploma & above in Malaysia)',
             'Masters degree fees',
             'Doctor of Philosophy (PhD) fees',
-            'Professional certifications',
+            'Professional certifications (ACCA, CPA, CFA)',
         ],
-        skillsEnhancementLimit: 2000, // Sub-limit for courses
+        skillsEnhancementLimit: 2000, // Sub-limit for upskilling courses
         notEligible: [
             'Primary/secondary school fees',
             'Tuition fees (non-tertiary)',
@@ -137,16 +181,18 @@ export const LHDN_ELIGIBLE_ITEMS = {
     },
 
     // CHILDCARE - RM3,000
+    // Only for registered TASKA/TADIKA, child 6 years and below
     Childcare: {
         limit: 3000,
         eligible: [
             'Registered childcare centre (TASKA) fees',
             'Kindergarten (TADIKA) fees',
         ],
-        eligibleCondition: 'Child aged 6 years and below',
+        eligibleCondition: 'Child aged 6 years and below only',
         notEligible: [
             'Babysitter fees (unregistered)',
             'Nanny fees',
+            'Au pair services',
         ],
     },
 
@@ -154,7 +200,7 @@ export const LHDN_ELIGIBLE_ITEMS = {
     Breastfeeding: {
         limit: 1000,
         eligible: [
-            'Breastfeeding equipment',
+            'Breastfeeding equipment (pump, storage)',
         ],
         eligibleCondition: 'Female taxpayer only, child aged 2 years and below, once every 2 years',
     },
@@ -619,8 +665,11 @@ export interface TaxInsight {
 
 /**
  * Category-specific suggestion templates (Manglish)
- * IMPORTANT: Medical is ONLY for health-related items (checkups, vaccines, treatments)
- * Laptops, books, gadgets belong to Lifestyle category
+ *
+ * COMPLIANCE CRITICAL:
+ * - Medical suggestions: ONLY health items (checkups, vaccines, treatments, mental health)
+ * - Lifestyle suggestions: Laptops, phones, tablets, books, internet, courses
+ * - NEVER suggest laptops/books for Medical relief!
  */
 const TAX_SUGGESTION_TEMPLATES: Record<LhdnTag, {
     highRemaining: string[];  // >70% remaining
@@ -628,85 +677,91 @@ const TAX_SUGGESTION_TEMPLATES: Record<LhdnTag, {
     lowRemaining: string[];    // <30% remaining
     emoji: string;
 }> = {
+    // MEDICAL - Health treatments, checkups, vaccines ONLY
     Medical: {
         highRemaining: [
             "Eh boss, you still have RM {amount} for health! Better do that full medical check-up or vaccination now k?",
-            "Banyak lagi Medical relief boss! RM {amount} available. Time for dental check or health screening!",
-            "Your RM {amount} Medical balance untouched! Go get that annual checkup or vaccine before year end!",
+            "Banyak lagi Medical relief boss! RM {amount} available. Time for dental check, health screening, or mental health consultation!",
+            "Your RM {amount} Medical balance untouched! Go get that annual checkup, vaccine, or physiotherapy before year end!",
         ],
         mediumRemaining: [
-            "Medical relief half used. Still got RM {amount} for checkups, vaccines or mental health consultation!",
-            "RM {amount} left for Medical. Consider fertility treatment, physiotherapy or health screening!",
+            "Medical relief half used. Still got RM {amount} for checkups, vaccines, dental, or mental health consultation!",
+            "RM {amount} left for Medical. Consider health screening, fertility treatment, or physiotherapy!",
         ],
         lowRemaining: [
-            "Medical relief almost maxed! Only RM {amount} left. Use wisely for remaining health needs!",
+            "Medical relief almost maxed! Only RM {amount} left for remaining health treatments or checkups!",
         ],
         emoji: "🏥",
     },
+    // LIFESTYLE - Laptops, phones, tablets, books, internet, courses
     Lifestyle: {
         highRemaining: [
-            "Boss, Lifestyle relief still ada RM {amount}! Perfect for that new laptop, phone or online course!",
-            "Got RM {amount} Lifestyle balance! Buy computer, smartphone, or upskill with courses - all claimable!",
-            "Internet, gadgets, books - RM {amount} waiting! Time to upgrade your tech or skills!",
+            "Boss, Lifestyle relief still ada RM {amount}! Perfect for that new laptop, phone, tablet, or online course!",
+            "Got RM {amount} Lifestyle balance! Buy computer, smartphone, books, or upskill with courses - all claimable!",
+            "Internet, gadgets, books - RM {amount} waiting! Time to upgrade your tech, read more, or learn new skills!",
         ],
         mediumRemaining: [
-            "Lifestyle relief halfway there. RM {amount} left for phones, laptops, books or courses!",
-            "RM {amount} Lifestyle balance. Get that tablet, internet subscription, or skill workshop!",
+            "Lifestyle relief halfway there. RM {amount} left for phones, laptops, books, internet, or courses!",
+            "RM {amount} Lifestyle balance. Get that tablet, internet subscription, books, or skill workshop!",
         ],
         lowRemaining: [
-            "Lifestyle relief almost habis! Only RM {amount}. Choose wisely - book, course or gadget?",
+            "Lifestyle relief almost habis! Only RM {amount}. Choose wisely - book, course, or gadget?",
         ],
         emoji: "💻",
     },
+    // BOOKS - Part of Lifestyle RM2,500 limit (reading materials)
     Books: {
         highRemaining: [
-            "Bookworm alert! RM {amount} available for reading materials. Time to stock up!",
-            "Books, magazines, ebooks - RM {amount} claimable. Feed your mind, boss!",
+            "Bookworm alert! RM {amount} available for reading materials under Lifestyle relief. Time to stock up!",
+            "Books, magazines, ebooks - RM {amount} claimable under Lifestyle. Feed your mind, boss!",
         ],
         mediumRemaining: [
-            "Half your Books relief used. Still got RM {amount} for more reading materials!",
+            "Still got RM {amount} for more reading materials under Lifestyle relief!",
         ],
         lowRemaining: [
-            "Books relief running low - RM {amount} left. Choose your next read wisely!",
+            "Lifestyle relief running low - RM {amount} left. Choose your next read wisely!",
         ],
         emoji: "📚",
     },
+    // SPORTS - Separate RM1,000 relief
     Sports: {
         highRemaining: [
-            "Get fit and claim tax! RM {amount} for gym, sports equipment or fitness classes!",
-            "Sports relief RM {amount} available! Gym membership, badminton racket, or swimming lessons?",
+            "Get fit and claim tax! RM {amount} for gym membership, sports equipment, or fitness facility fees!",
+            "Sports relief RM {amount} available! Gym, badminton racket, swimming lessons, or competition registration?",
         ],
         mediumRemaining: [
-            "RM {amount} Sports relief left. Time for new equipment or renew that gym membership!",
+            "RM {amount} Sports relief left. Time for new equipment, gym renewal, or sports facility fees!",
         ],
         lowRemaining: [
             "Sports relief almost done - RM {amount}. One more gym month or equipment purchase?",
         ],
         emoji: "🏃",
     },
+    // EDUCATION - RM7,000 for tertiary/professional
     Education: {
         highRemaining: [
-            "Education relief loaded with RM {amount}! Perfect for courses, certifications or degree fees!",
-            "Got RM {amount} for Education. Masters degree, professional cert, or upskilling - all claimable!",
+            "Education relief loaded with RM {amount}! Perfect for degree fees, professional certs (ACCA, CPA), or upskilling!",
+            "Got RM {amount} for Education. Masters degree, PhD, professional certification - all claimable!",
         ],
         mediumRemaining: [
-            "Education halfway used. RM {amount} left for courses or certifications!",
+            "Education halfway used. RM {amount} left for degree fees or professional certifications!",
         ],
         lowRemaining: [
             "Education relief almost maxed! RM {amount} remaining for final course payments.",
         ],
         emoji: "🎓",
     },
+    // CHILDCARE - RM3,000 for TASKA/TADIKA only
     Childcare: {
         highRemaining: [
-            "TASKA/TADIKA fees are claimable! RM {amount} available for registered childcare!",
-            "Got kids 6 and below? RM {amount} Childcare relief waiting - for registered centers only!",
+            "TASKA/TADIKA fees are claimable! RM {amount} available for registered childcare (child 6 & below)!",
+            "Got kids 6 and below? RM {amount} Childcare relief waiting - for registered TASKA/TADIKA only!",
         ],
         mediumRemaining: [
             "Childcare relief half used. RM {amount} left for TASKA/TADIKA fees!",
         ],
         lowRemaining: [
-            "Childcare relief almost full! Only RM {amount} for remaining nursery fees.",
+            "Childcare relief almost full! Only RM {amount} for remaining registered nursery fees.",
         ],
         emoji: "👶",
     },
