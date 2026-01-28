@@ -16,11 +16,21 @@ npm run preview      # Preview production build locally
 npx tsc --noEmit     # Type-check without emitting
 ```
 
-### Android Development
+### Mobile Development (Capacitor)
 ```bash
+# Build and sync to platforms
+npm run build && npx cap sync ios && npx cap sync android
+
+# iOS
+npx cap sync ios       # Sync web build to iOS project
+npx cap open ios       # Open in Xcode
+
+# Android
 npx cap sync android   # Sync web build to Android project
 npx cap open android   # Open in Android Studio
 ```
+
+**Important**: Vite is configured with `base: './'` in `vite.config.ts` for Capacitor compatibility. This converts absolute paths to relative paths required by Capacitor's `file://` protocol.
 
 ### Firebase Functions (in functions/ directory)
 ```bash
@@ -36,7 +46,7 @@ cd functions && npm run deploy-gen2    # Deploy Gen 2 functions
 - **Frontend**: React 19 + TypeScript 5.9 (strict mode) + Vite 7
 - **State**: Zustand 5 with localStorage persistence (keyed by userId)
 - **Styling**: Tailwind CSS 3.4 with custom design tokens
-- **Mobile**: Capacitor 8 (appId: `com.myreceipt.app`, appName: "Duitrack")
+- **Mobile**: Capacitor 8 (appId: `com.myreceipt.app`, appName: "Duitrack") - iOS + Android
 - **Backend**: Firebase 12 (Auth, Firestore, Storage) + Google Cloud Document AI
 - **Charts**: Recharts for analytics visualizations
 
@@ -52,6 +62,8 @@ src/
 
 functions/         # Firebase Cloud Functions (Node.js 20, Gen 2)
 android/           # Capacitor Android project
+ios/               # Capacitor iOS project
+public/            # Static assets (logos, icons)
 ```
 
 ### Routes (src/App.tsx)
@@ -151,6 +163,26 @@ Validates 5-digit Malaysian postcodes against `postcodes.json`. Returns state/ci
 **User**: tier (FREE/PRO), scanCount, scansRemaining, nextResetDate, referralCode, profile fields
 
 **LineItem**: name, qty, unit, claimable, tag (LhdnTag), autoAssigned
+
+## Capacitor Asset Handling
+
+For images/assets to work on iOS/Android, use Vite imports instead of string paths:
+```typescript
+// Correct - works on Capacitor
+import logo from '/logo.png';
+<img src={logo} />
+
+// Wrong - breaks on iOS file:// protocol
+<img src="/logo.png" />
+<img src="./logo.png" />
+```
+
+## Budget System
+
+Budget categories in `src/lib/mock-data.ts` with IDs:
+- `dining-food`, `groceries`, `transportation`, `utilities`, `shopping`, `healthcare`, `entertainment`, `education`, `others`
+
+SpendingCategory from receipts maps to budget IDs in `src/pages/budget.tsx` for transaction-aware progress bars.
 
 ## Environment Variables
 Required in `.env`:
