@@ -21,8 +21,8 @@ export function ReferralPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
-            {/* Header */}
-            <div className="bg-white p-4 flex items-center gap-3 sticky top-0 z-50 shadow-sm">
+            {/* Header - Non-sticky with SafeArea padding */}
+            <div className="bg-white p-4 pt-[max(1rem,env(safe-area-inset-top))] flex items-center gap-3 shadow-sm">
                 <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full">
                     <ChevronLeft size={24} className="text-gray-600" />
                 </button>

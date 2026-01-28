@@ -37,8 +37,8 @@ export function AchievementsPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
-            {/* Header */}
-            <div className="sticky top-0 z-50 bg-white px-4 py-3 flex items-center justify-between border-b border-gray-100">
+            {/* Header - Non-sticky with SafeArea padding */}
+            <div className="bg-white px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] flex items-center justify-between border-b border-gray-100">
                 <h1 className="text-xl font-bold text-gray-900">Achievements</h1>
                 <div className="flex items-center gap-3">
                     <button className="text-gray-600"><Search size={24} /></button>

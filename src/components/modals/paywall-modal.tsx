@@ -1,6 +1,6 @@
-import { X, Crown, PlayCircle, Check, Shield, Zap, Upload, Sparkles, BarChart3, FileText } from 'lucide-react';
+import { X, Crown, Check, Shield, Zap, Upload, Sparkles, BarChart3, FileText } from 'lucide-react';
 import { useStore } from '../../lib/store';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface PaywallModalProps {
     isOpen: boolean;
@@ -46,53 +46,10 @@ const PRICING = {
 };
 
 export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
-    const { user, watchAd, upgradeToPro } = useStore();
-    const [isWatching, setIsWatching] = useState(false);
+    const { upgradeToPro } = useStore();
     const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('annual');
-    const [timeLeft, setTimeLeft] = useState('');
-    const [canWatchAd, setCanWatchAd] = useState(true);
-
-    // Check cooldown logic
-    useEffect(() => {
-        const checkCooldown = () => {
-            if (!user.lastAdWatch) {
-                setCanWatchAd(true);
-                return;
-            }
-
-            const lastWatch = new Date(user.lastAdWatch).getTime();
-            const now = new Date().getTime();
-            const hoursPassed = (now - lastWatch) / (1000 * 60 * 60);
-
-            if (hoursPassed < 48) {
-                setCanWatchAd(false);
-                const msLeft = (48 * 60 * 60 * 1000) - (now - lastWatch);
-
-                const h = Math.floor(msLeft / (1000 * 60 * 60));
-                const m = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-                setTimeLeft(`${h}h ${m}m`);
-            } else {
-                setCanWatchAd(true);
-            }
-        };
-
-        checkCooldown();
-        const interval = setInterval(checkCooldown, 60000);
-        return () => clearInterval(interval);
-    }, [user.lastAdWatch, isOpen]);
 
     if (!isOpen) return null;
-
-    const handleWatchAd = () => {
-        setIsWatching(true);
-        setTimeout(() => {
-            watchAd();
-            useStore.getState().openRewardModal(3);
-            setIsWatching(false);
-            onClose();
-        }, 3000);
-    };
 
     const handleUpgrade = () => {
         upgradeToPro(selectedPlan);
@@ -109,7 +66,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         : `RM ${PRICING.monthly.toFixed(2)}/month`;
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
             {/* Backdrop with 20px blur */}
             <div
                 className="absolute inset-0 bg-black/60"
@@ -117,7 +74,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                 onClick={onClose}
             />
 
-            <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="relative w-full max-w-md max-h-[calc(100vh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-2rem)] bg-white rounded-3xl shadow-2xl overflow-hidden overflow-y-auto animate-in zoom-in-95 duration-300">
 
                 {/* Hero Section */}
                 <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-6 text-center overflow-hidden">
@@ -238,47 +195,17 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                         ))}
                     </div>
 
-                    {/* CTA Buttons */}
-                    <div className="space-y-3">
-                        {/* Primary CTA - Dynamic based on selection */}
-                        <button
-                            onClick={handleUpgrade}
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-2xl font-black shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex flex-col items-center justify-center gap-0.5"
-                        >
-                            <span className="flex items-center gap-2 text-base">
-                                <Crown size={18} />
-                                {ctaText}
-                            </span>
-                            <span className="text-xs text-white/80 font-medium">{ctaPrice}</span>
-                        </button>
-
-                        {/* Secondary - Watch Ad */}
-                        <button
-                            onClick={handleWatchAd}
-                            disabled={!canWatchAd || isWatching}
-                            className={`w-full py-2.5 text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 ${
-                                !canWatchAd
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200'
-                            }`}
-                        >
-                            {isWatching ? (
-                                <>
-                                    <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
-                                    Playing Ad...
-                                </>
-                            ) : !canWatchAd ? (
-                                <span className="font-mono text-xs">
-                                    Next ad in {timeLeft}
-                                </span>
-                            ) : (
-                                <>
-                                    <PlayCircle size={16} />
-                                    Watch Ad for +3 Scans (Free)
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    {/* CTA Button */}
+                    <button
+                        onClick={handleUpgrade}
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-2xl font-black shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex flex-col items-center justify-center gap-0.5"
+                    >
+                        <span className="flex items-center gap-2 text-base">
+                            <Crown size={18} />
+                            {ctaText}
+                        </span>
+                        <span className="text-xs text-white/80 font-medium">{ctaPrice}</span>
+                    </button>
 
                     {/* Trust Signals */}
                     <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-400 font-medium">

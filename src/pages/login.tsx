@@ -1,9 +1,10 @@
 /**
  * Login Page
  * Email/Password and Google Sign-In authentication
+ * Hidden Developer Mode: Triple-tap logo to reveal Guest login
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
 import { Mail, Lock, Eye, EyeOff, Loader2, User } from 'lucide-react';
@@ -16,6 +17,26 @@ export function LoginPage() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Developer Mode: Triple-tap to reveal Guest button
+    const [showGuestButton, setShowGuestButton] = useState(false);
+    const tapCountRef = useRef(0);
+    const lastTapTimeRef = useRef(0);
+
+    const handleLogoTap = () => {
+        const now = Date.now();
+        // Reset if more than 500ms between taps
+        if (now - lastTapTimeRef.current > 500) {
+            tapCountRef.current = 0;
+        }
+        lastTapTimeRef.current = now;
+        tapCountRef.current += 1;
+
+        if (tapCountRef.current >= 3) {
+            setShowGuestButton(prev => !prev);
+            tapCountRef.current = 0;
+        }
+    };
 
     // Redirect to home immediately when user is available
     useEffect(() => {
@@ -107,19 +128,18 @@ export function LoginPage() {
 
             {/* Logo Section */}
             <div className="flex-1 flex flex-col items-center justify-center px-6 pt-12 pb-6">
-                {/* Receipt Icon */}
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl shadow-xl shadow-purple-200 mb-6 transform rotate-3">
-                    <div className="text-white opacity-90">
-                        {/* Use a filled-ish look or just the icon */}
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                            <rect width="10" height="8" x="7" y="8" rx="1" />
-                        </svg>
-                    </div>
-                </div>
+                {/* Duitrack Logo - Triple tap for developer mode */}
+                <button
+                    onClick={handleLogoTap}
+                    className="w-24 h-24 mb-6 rounded-3xl shadow-xl shadow-purple-200 overflow-hidden transform rotate-3 active:scale-95 transition-transform focus:outline-none"
+                    aria-label="Duitrack Logo"
+                >
+                    <img
+                        src="./duitrack-logo.png"
+                        alt="Duitrack"
+                        className="w-full h-full object-cover"
+                    />
+                </button>
 
                 <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">Duitrack</h1>
                 <p className="text-lg text-gray-500 max-w-[260px] mx-auto leading-relaxed text-center">
@@ -207,15 +227,18 @@ export function LoginPage() {
                     <span className="text-sm font-medium text-gray-700">Continue with Google</span>
                 </button>
 
-                {/* Guest Login */}
-                <button
-                    onClick={handleGuestLogin}
-                    disabled={isSubmitting}
-                    className="w-full mt-3 bg-gray-50 border border-gray-200 rounded-xl py-3.5 flex items-center justify-center gap-3 active:bg-gray-100 disabled:opacity-50 transition-colors"
-                >
-                    <User size={20} className="text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Continue as Guest</span>
-                </button>
+                {/* Guest Login - Hidden Developer Mode (Triple-tap logo to reveal) */}
+                {showGuestButton && (
+                    <button
+                        onClick={handleGuestLogin}
+                        disabled={isSubmitting}
+                        className="w-full mt-3 bg-gray-50 border border-gray-200 rounded-xl py-3.5 flex items-center justify-center gap-3 active:bg-gray-100 disabled:opacity-50 transition-colors animate-in fade-in slide-in-from-bottom-2 duration-300"
+                    >
+                        <User size={20} className="text-gray-500" />
+                        <span className="text-sm font-medium text-gray-700">Continue as Guest</span>
+                        <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold">DEV</span>
+                    </button>
+                )}
 
                 {/* OR Divider */}
                 <div className="flex items-center gap-4 my-6">
