@@ -76,10 +76,17 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                 </Link>
             ) : (
                 // Normal State: Budget Progress
-                <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden">
+                // Normal State: Budget Progress
+                <Link
+                    to="/budget"
+                    className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative overflow-hidden group transition-all active:scale-[0.98]"
+                >
                     <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200/30 rounded-full blur-2xl -mr-8 -mt-8" />
                     <div className="relative z-10">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
+                        <div className="flex items-center justify-between">
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Monthly Budget</p>
+                            <ChevronRight size={16} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" />
+                        </div>
                         <p className="text-xl font-extrabold text-gray-900 mt-1 tracking-tight">
                             {mask(formatCurrency(currentSpend))}
                         </p>
@@ -94,7 +101,7 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                             style={{ width: `${budgetPercentage}%` }}
                         />
                     </div>
-                </div>
+                </Link>
             )}
 
             {/* Widget 2: Free Scans - FINAL LOCKED LAYOUT */}
@@ -115,8 +122,8 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                     </p>
                 </div>
 
-                {/* MIDDLE: Progress Pill - 8dp below metric (mt-2) */}
-                <div className="flex gap-1 w-full relative z-10">
+                {/* MIDDLE: Progress Pill - 16dp safety margin to button */}
+                <div className="flex gap-1 w-full relative z-10 mb-4">
                     {Array.from({ length: 10 }).map((_, i) => {
                         const isUsed = i < usage;
                         return (
@@ -131,24 +138,24 @@ export function MonthlyStatusSection({ isPrivacyMode = false }: MonthlyStatusSec
                     })}
                 </div>
 
-                {/* BOTTOM: CTA Button - 24dp below pill (justify-between handles spacing) */}
+                {/* BOTTOM: CTA Button - Fixed height (48dp) for stable layout across states */}
                 <button
                     onClick={() => !isAdCooldownActive && useStore.getState().watchAd()}
                     disabled={isAdCooldownActive}
-                    className={`relative z-10 flex flex-col items-center justify-center w-full py-2 rounded-xl text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive
+                    className={`relative z-10 flex flex-col items-center justify-center w-full h-12 rounded-3xl text-white shadow-md active:scale-95 transition-all ${isAdCooldownActive
                         ? 'bg-gray-300 cursor-not-allowed'
                         : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-purple-200'
                         }`}
                 >
                     <div className="flex items-center gap-1.5">
-                        <PlayCircle size={14} strokeWidth={2.5} className="text-white" />
-                        <span className="text-xs font-bold uppercase tracking-wide">
+                        <PlayCircle size={14} strokeWidth={2.5} className={isAdCooldownActive ? 'text-gray-500' : 'text-white'} />
+                        <span className={`text-xs font-bold uppercase tracking-wide ${isAdCooldownActive ? 'text-gray-600' : ''}`}>
                             {isAdCooldownActive ? 'Cooldown' : 'Watch Ad (+3)'}
                         </span>
                     </div>
                     {isAdCooldownActive && (
-                        <span className="text-[10px] font-semibold opacity-90 leading-none mt-0.5">
-                            Refills {remainingDays}d {displayHours}h
+                        <span className="text-[11px] font-normal text-gray-500 leading-none mt-0.5">
+                            Refills in {remainingDays}d {displayHours}h
                         </span>
                     )}
                 </button>
