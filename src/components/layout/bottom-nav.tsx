@@ -1,49 +1,14 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Search, PieChart, FileText, Camera, Upload, PenLine } from 'lucide-react';
+import { Search, PieChart, FileText, Camera, Upload, PenLine, Home } from 'lucide-react';
 import { NAV_COLORS } from '../../lib/design-tokens';
 
 interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
 }
 
-/**
- * DUITRACK LOGO NAV ICON
- * Standardized to match Analytics, Tax, and Search icons exactly
- *
- * Size: 24dp (matching lucide-react icons)
- * Unselected: Gray-400 (#9CA3AF) via CSS filter
- * Selected: Purple-600 (#7c3aed) via CSS filter
- * Animation: 200ms ease-in transition with 1.1x scale pulse on selection
- */
-const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: { size?: number, strokeWidth?: number, color?: string, className?: string }) => {
-    const isActive = color === NAV_COLORS.active;
-
-    // Single filter approach - switches between gray and purple
-    // Gray-400 (#9CA3AF) filter - muted gray for inactive state
-    const grayFilter = 'brightness(0) saturate(100%) invert(70%) sepia(5%) saturate(400%) hue-rotate(180deg) brightness(95%) contrast(90%)';
-    // Purple-600 (#7c3aed) filter - vibrant purple for active state
-    const purpleFilter = 'brightness(0) saturate(100%) invert(29%) sepia(98%) saturate(2000%) hue-rotate(250deg) brightness(95%) contrast(100%)';
-
-    return (
-        <img
-            src="/duitrack-logo.png?v=3"
-            alt="Duitrack"
-            className={`${className} ${isActive ? 'nav-logo-active' : ''}`}
-            style={{
-                width: size,
-                height: size,
-                objectFit: 'contain',
-                filter: isActive ? purpleFilter : grayFilter,
-                transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                transition: 'filter 200ms ease-in, transform 200ms ease-in',
-            }}
-        />
-    );
-};
-
 const NAV_ITEMS = [
-    { label: 'Duitrack', icon: DuitrackIcon, to: '/' },
+    { label: 'Duitrack', icon: Home, to: '/' },
     { label: 'Analytics', icon: PieChart, to: '/analytics' },
     { label: 'Tax', icon: FileText, to: '/tax-relief' },
     { label: 'Search', icon: Search, to: '/search' },
