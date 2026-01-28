@@ -228,7 +228,7 @@ export function CoPilotSection() {
         });
 
         // Find biggest shift category
-        let topCategory = 'Dining';
+        let categoryName = 'Dining';
         let savedAmount = 0;
         let overspentAmount = 0;
         let percentChange = 0;
@@ -236,7 +236,7 @@ export function CoPilotSection() {
         Object.entries(categorySpending).forEach(([cat, data]) => {
             const diff = data.last - data.current;
             if (diff > savedAmount) {
-                topCategory = cat;
+                categoryName = cat;
                 savedAmount = diff;
                 percentChange = data.last > 0 ? Math.round((diff / data.last) * 100) : 0;
             }
@@ -261,7 +261,7 @@ export function CoPilotSection() {
             // Spending Shift context
             savedAmount: Math.abs(savedAmount),
             overspentAmount,
-            topCategory,
+            categoryName,
             percentChange: Math.abs(percentChange),
             comparisonPeriod: 'month',
 

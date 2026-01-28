@@ -24,9 +24,9 @@ export interface LiveDataContext {
     // Spending Shift
     savedAmount?: number;
     overspentAmount?: number;
-    topCategory?: string;
     percentChange?: number;
     comparisonPeriod?: string;
+    categoryName?: string; // Active budget category for category-aware messages
 
     // Daily Runway
     dailyAllowance?: number;
@@ -82,7 +82,7 @@ export const EMPTY_STATE_MESSAGES: Record<CoPilotCardType, CoPilotMessage[]> = {
         { template: "Eh, why no receipt? How I check your budget?", emoji: "🤔" },
         { template: "Steady or not your spending? Need receipts to tell!", emoji: "⚖️" },
         { template: "Wallet healthy ke? Cannot diagnose without data!", emoji: "🏥" },
-        { template: "Shopee 11.11 coming, but I dunno your spending pattern!", emoji: "🛒" },
+        { template: "Sale season coming, but I dunno your spending pattern!", emoji: "🛒" },
         { template: "Lifestyle spending... unknown. Upload to reveal!", emoji: "🔍" },
         { template: "Boss, your spending story blank pages only!", emoji: "📖" },
         { template: "Jimat sikit-sikit? Or boros gila-gila? Show receipts!", emoji: "💸" },
@@ -184,73 +184,109 @@ export const LIVE_DATA_MESSAGES: Record<CoPilotCardType, CoPilotMessage[]> = {
     // ============ CATEGORY B: SPENDING SHIFT - LIVE DATA (30 sentences) ============
 
     spending_shift: [
-        { template: "Wah, saved RM{savedAmount} on {topCategory} this week. Gila jimat boss!", emoji: "💰" },
-        { template: "Aiyoo, spending on {topCategory} increased RM{overspentAmount}? Control sikit lah.", emoji: "😬" },
-        { template: "Mantap! You spent {percentChange}% less on {topCategory} this month. Beres!", emoji: "✅" },
-        { template: "Eh, why this week {topCategory} so much? Budget lari liao.", emoji: "📊" },
-        { template: "Steady boss, keep this savings rate and you can tapao more!", emoji: "🍱" },
-        { template: "Wallet looks healthy today, no weird spending on {topCategory}. Ngam!", emoji: "💚" },
-        { template: "Shopee 11.11 damage? {topCategory} up RM{overspentAmount}. Oops!", emoji: "🛒" },
-        { template: "Lifestyle spending down {percentChange}%? You are on fire!", emoji: "🔥" },
-        { template: "Boss, your {topCategory} claims looking good, keep it up!", emoji: "👍" },
-        { template: "Jimat sikit-sikit, lama-lama jadi bukit! RM{savedAmount} saved!", emoji: "⛰️" },
-        { template: "{topCategory} spending turun {percentChange}%. Syoknya!", emoji: "📉" },
-        { template: "Wah boss, RM{savedAmount} less on {topCategory}. Pro move!", emoji: "🎯" },
-        { template: "Eh, {topCategory} naik RM{overspentAmount}. Maybe reduce sikit?", emoji: "📈" },
-        { template: "Best week! {topCategory} down RM{savedAmount}. You're winning!", emoji: "🏆" },
-        { template: "Budget boss! {topCategory} slashed by {percentChange}%!", emoji: "🗡️" },
-        { template: "Smooth spending! {percentChange}% better on {topCategory}!", emoji: "😎" },
-        { template: "Heads up: {topCategory} RM{overspentAmount} above target.", emoji: "📢" },
-        { template: "Killing it! RM{savedAmount} saved in {topCategory} alone!", emoji: "💪" },
-        { template: "Category check: {topCategory} +RM{overspentAmount}. Watchlist!", emoji: "👁️" },
-        { template: "Alert: {topCategory} spending creeping up {percentChange}%.", emoji: "🚨" },
-        { template: "Champion move! RM{savedAmount} less on {topCategory}!", emoji: "🏅" },
-        { template: "Review needed: {topCategory} over by RM{overspentAmount}.", emoji: "📋" },
-        { template: "Smart spending! {topCategory} trimmed by {percentChange}%!", emoji: "🧠" },
-        { template: "Caution: {topCategory} RM{overspentAmount} above budget.", emoji: "⚠️" },
-        { template: "Great shift! {percentChange}% drop in {topCategory}!", emoji: "📉" },
-        { template: "Oops! {topCategory} jumped RM{overspentAmount} this week.", emoji: "😅" },
-        { template: "Victory! RM{savedAmount} saved vs last {comparisonPeriod}!", emoji: "🎖️" },
-        { template: "Minor slip: {topCategory} up {percentChange}%. Easy fix lah!", emoji: "🔧" },
-        { template: "Discipline paid off! RM{savedAmount} less on {topCategory}!", emoji: "💵" },
-        { template: "Flag: {topCategory} RM{overspentAmount} over. Adjust sikit!", emoji: "🚩" },
+        { template: "Wah, gila jimat! You spent RM{savedAmount} less on {categoryName} this week compared to last month.", emoji: "💰" },
+        { template: "Aiyoo, spending on {categoryName} increased RM{overspentAmount}? Control sikit lah.", emoji: "😬" },
+        { template: "Mantap! You spent {percentChange}% less on {categoryName} this month. Beres!", emoji: "✅" },
+        { template: "Eh, why this week {categoryName} so much? Budget lari liao.", emoji: "📊" },
+        { template: "Steady boss, keep this {categoryName} savings rate and you can tapao more!", emoji: "🍱" },
+        { template: "Wallet looks healthy today, no weird spending on {categoryName}. Ngam!", emoji: "💚" },
+        { template: "Online shopping damage? {categoryName} up RM{overspentAmount}. Oops!", emoji: "🛒" },
+        { template: "{categoryName} spending down {percentChange}%? You are on fire!", emoji: "🔥" },
+        { template: "Boss, your {categoryName} claims looking good, keep it up!", emoji: "👍" },
+        { template: "Jimat sikit-sikit, lama-lama jadi bukit! RM{savedAmount} saved on {categoryName}!", emoji: "⛰️" },
+        { template: "{categoryName} spending turun {percentChange}%. Syoknya!", emoji: "📉" },
+        { template: "Wah boss, RM{savedAmount} less on {categoryName}. Pro move!", emoji: "🎯" },
+        { template: "Eh, {categoryName} naik RM{overspentAmount}. Maybe reduce sikit?", emoji: "📈" },
+        { template: "Best week! {categoryName} down RM{savedAmount}. You're winning!", emoji: "🏆" },
+        { template: "Budget boss! {categoryName} slashed by {percentChange}%!", emoji: "🗡️" },
+        { template: "Smooth spending! {percentChange}% better on {categoryName}!", emoji: "😎" },
+        { template: "Heads up: {categoryName} RM{overspentAmount} above target.", emoji: "📢" },
+        { template: "Killing it! RM{savedAmount} saved in {categoryName} alone!", emoji: "💪" },
+        { template: "Category check: {categoryName} +RM{overspentAmount}. Watchlist!", emoji: "👁️" },
+        { template: "Alert: {categoryName} spending creeping up {percentChange}%.", emoji: "🚨" },
+        { template: "Champion move! RM{savedAmount} less on {categoryName}!", emoji: "🏅" },
+        { template: "Review needed: {categoryName} over by RM{overspentAmount}.", emoji: "📋" },
+        { template: "Smart spending! {categoryName} trimmed by {percentChange}%!", emoji: "🧠" },
+        { template: "Caution: {categoryName} RM{overspentAmount} above budget.", emoji: "⚠️" },
+        { template: "Great shift! {percentChange}% drop in {categoryName}!", emoji: "📉" },
+        { template: "Oops! {categoryName} jumped RM{overspentAmount} this week.", emoji: "😅" },
+        { template: "Victory! RM{savedAmount} saved on {categoryName} vs last {comparisonPeriod}!", emoji: "🎖️" },
+        { template: "Minor slip: {categoryName} up {percentChange}%. Easy fix lah!", emoji: "🔧" },
+        { template: "Discipline paid off! RM{savedAmount} less on {categoryName}!", emoji: "💵" },
+        { template: "Flag: {categoryName} RM{overspentAmount} over. Adjust sikit!", emoji: "🚩" },
     ],
 
-    // ============ CATEGORY C: DAILY RUNWAY - LIVE DATA (30 sentences) ============
-
-    daily_runway: [
-        { template: "Dining limit: RM{dailyAllowance}/day for the next {daysRemaining} days. Boleh?", emoji: "🍜" },
-        { template: "Budget check: You have RM{budgetRemaining} left until payday. Cukup bo?", emoji: "💰" },
-        { template: "Daily runway looking short... RM{dailyAllowance}/day. Ikat perut sikit lah.", emoji: "🥋" },
-        { template: "Boss, if you spend like this, end of month makan Maggi only!", emoji: "🍝" },
-        { template: "Pokai alert! RM{budgetRemaining} left. Better stop the spending spree now.", emoji: "🚨" },
-        { template: "Relax boss, RM{budgetRemaining} still got balance. Can chill a bit.", emoji: "😌" },
-        { template: "You sure want to buy that? RM{dailyAllowance}/day only remaining!", emoji: "🤔" },
-        { template: "RM{dailyAllowance} per day or you lose your Gold status. Steady?", emoji: "🥇" },
-        { template: "Runway safe for {daysRemaining} days. Don't go goyang kaki yet!", emoji: "🛋️" },
-        { template: "Manage your duit well! RM{budgetRemaining} for {daysRemaining} days.", emoji: "💵" },
-        { template: "Budget GPS: RM{dailyAllowance}/day to reach end of month!", emoji: "🧭" },
-        { template: "Cukup-cukup makan: RM{dailyAllowance} daily. Stay focused boss!", emoji: "🎯" },
-        { template: "Boleh tahan! RM{dailyAllowance}/day should last till gaji!", emoji: "💪" },
-        { template: "RM{dailyAllowance} per day x {daysRemaining} days = You're safe!", emoji: "✅" },
-        { template: "Stretching budget: RM{dailyAllowance} daily. Discipline mode!", emoji: "🧘" },
-        { template: "Sweet spot! RM{dailyAllowance}/day with RM{budgetRemaining} left!", emoji: "🎰" },
-        { template: "Runway extended! RM{dailyAllowance} daily for {daysRemaining} days!", emoji: "🛫" },
-        { template: "Money stretch: RM{budgetRemaining} / {daysRemaining} days = Doable!", emoji: "📐" },
-        { template: "Projected savings: RM{projectedSavings} if you maintain pace!", emoji: "💎" },
-        { template: "RM{dailyAllowance} a day keeps hutang away! {daysRemaining} days left!", emoji: "🏥" },
-        { template: "Budget breathing room: RM{dailyAllowance}/day. Manageable lah!", emoji: "🫁" },
-        { template: "Pace setter: RM{dailyAllowance} daily = Comfortable month!", emoji: "🏆" },
-        { template: "RM{budgetRemaining} in tank, {daysRemaining} days journey. Steady!", emoji: "⛽" },
-        { template: "Daily spend cap: RM{dailyAllowance}. You've got this boss!", emoji: "🎓" },
-        { template: "Survival mode: RM{dailyAllowance}/day for {daysRemaining} more days!", emoji: "🏕️" },
-        { template: "End of month forecast: RM{projectedSavings} surplus if careful!", emoji: "🌈" },
-        { template: "Runway solid! RM{dailyAllowance} daily budget secured!", emoji: "🔐" },
-        { template: "Budget navigator: RM{dailyAllowance}/day for {daysRemaining} days!", emoji: "🗺️" },
-        { template: "Comfortable pace: RM{dailyAllowance} daily. Keep it up boss!", emoji: "😊" },
-        { template: "Budget co-pilot says: RM{dailyAllowance}/day. Smooth flying!", emoji: "🧑‍✈️" },
-    ],
+    // ============ CATEGORY C: DAILY RUNWAY - LIVE DATA ============
+    // NOTE: This is a placeholder array. Actual messages are selected via threshold logic.
+    // See DAILY_RUNWAY_TIERED_MESSAGES below for the real message pools.
+    daily_runway: [],
 };
+
+// ============ DAILY RUNWAY TIERED MESSAGES (Discipline & Savings Buffer) ============
+// Smart Threshold Logic: Pivot from "Permission to Spend" to "Encouragement to Save"
+
+export type RunwayTier = 'high' | 'normal' | 'low';
+
+// HIGH ALLOWANCE (>RM 100/day): "Savings Buffer" - Reward surplus, encourage saving
+const DAILY_RUNWAY_HIGH: CoPilotMessage[] = [
+    { template: "Wah boss, you have a huge RM{dailyAllowance}/day buffer for {categoryName}! Keep this up and you'll have a massive surplus!", emoji: "💰" },
+    { template: "Rich vibes! RM{dailyAllowance}/day left for {categoryName}. Don't simply blow it, save for your next holiday!", emoji: "💰" },
+    { template: "Discipline king! You only need RM{dailyAllowance}/day for {categoryName}. The rest can masuk savings!", emoji: "💰" },
+    { template: "Boss level budgeting! RM{dailyAllowance}/day for {categoryName} = huge surplus incoming. Keep the momentum!", emoji: "💰" },
+    { template: "Gila jimat! RM{dailyAllowance}/day buffer for {categoryName}. This surplus boleh jadi emergency fund!", emoji: "💰" },
+    { template: "Financial boss mode! RM{dailyAllowance}/day for {categoryName}. Park the extra in ASB lah!", emoji: "💰" },
+    { template: "Wah, RM{dailyAllowance}/day for {categoryName}? You're basically printing money this month!", emoji: "💰" },
+    { template: "Surplus alert! RM{dailyAllowance}/day {categoryName} buffer. Future you will thank present you!", emoji: "💰" },
+    { template: "Legend status! RM{dailyAllowance}/day for {categoryName}. Save the surplus for raya shopping!", emoji: "💰" },
+    { template: "Boss, RM{dailyAllowance}/day for {categoryName} is huge! Channel excess to savings goal!", emoji: "💰" },
+];
+
+// NORMAL ALLOWANCE (RM 30-100/day): "Steady Pace" - Balanced messaging
+const DAILY_RUNWAY_NORMAL: CoPilotMessage[] = [
+    { template: "Steady pace! You've got RM{dailyAllowance}/day for {categoryName}. On track for a clean month.", emoji: "✅" },
+    { template: "Balanced vibes! RM{dailyAllowance}/day for {categoryName}. Not tight, not loose - just nice!", emoji: "⚖️" },
+    { template: "Comfortable zone! RM{dailyAllowance}/day for {categoryName}. Maintain this and you're golden!", emoji: "👍" },
+    { template: "On track boss! RM{dailyAllowance}/day for {categoryName}. Keep the discipline going!", emoji: "🎯" },
+    { template: "Manageable! RM{dailyAllowance}/day for {categoryName}. Stay mindful and you'll finish strong!", emoji: "💪" },
+    { template: "Budget GPS says: RM{dailyAllowance}/day for {categoryName}. Smooth sailing ahead!", emoji: "🧭" },
+    { template: "Looking good! RM{dailyAllowance}/day for {categoryName}. Small savings still add up!", emoji: "📈" },
+    { template: "Boleh tahan! RM{dailyAllowance}/day for {categoryName}. Room to breathe, room to save!", emoji: "🫁" },
+    { template: "Sweet spot! RM{dailyAllowance}/day for {categoryName}. Consistency is key, boss!", emoji: "🔑" },
+    { template: "Steady Eddie! RM{dailyAllowance}/day for {categoryName}. Keep this pace till month end!", emoji: "🏃" },
+];
+
+// LOW ALLOWANCE (<RM 30/day): "Ikat Perut" - Warning mode
+const DAILY_RUNWAY_LOW: CoPilotMessage[] = [
+    { template: "Careful boss! RM{dailyAllowance}/day only for {categoryName}. Ikat perut sikit this week.", emoji: "🚨" },
+    { template: "Warning: RM{dailyAllowance}/day for {categoryName}. Think twice before that purchase!", emoji: "⚠️" },
+    { template: "Tight runway! RM{dailyAllowance}/day for {categoryName}. Cook at home, save outside money!", emoji: "🍳" },
+    { template: "Budget alert! RM{dailyAllowance}/day for {categoryName}. Survival mode activated!", emoji: "🚨" },
+    { template: "Yikes! RM{dailyAllowance}/day for {categoryName}. Skip the Grab, take LRT this week!", emoji: "🚇" },
+    { template: "Danger zone! RM{dailyAllowance}/day for {categoryName}. Every ringgit counts now!", emoji: "🚨" },
+    { template: "Pokai incoming! RM{dailyAllowance}/day for {categoryName}. Time to channel inner jimat spirit!", emoji: "😰" },
+    { template: "Red alert! RM{dailyAllowance}/day for {categoryName}. Postpone non-essentials lah boss!", emoji: "🔴" },
+    { template: "Oops! RM{dailyAllowance}/day for {categoryName}. Maggi week incoming if not careful!", emoji: "🍜" },
+    { template: "SOS! RM{dailyAllowance}/day for {categoryName}. Discipline mode: Maximum level!", emoji: "🆘" },
+];
+
+export const DAILY_RUNWAY_TIERED_MESSAGES: Record<RunwayTier, CoPilotMessage[]> = {
+    high: DAILY_RUNWAY_HIGH,
+    normal: DAILY_RUNWAY_NORMAL,
+    low: DAILY_RUNWAY_LOW,
+};
+
+// Threshold constants
+const HIGH_ALLOWANCE_THRESHOLD = 100; // >RM 100/day = Savings Buffer
+const LOW_ALLOWANCE_THRESHOLD = 30;   // <RM 30/day = Ikat Perut
+
+/**
+ * Determine runway tier based on daily allowance
+ */
+export function getRunwayTier(dailyAllowance: number): RunwayTier {
+    if (dailyAllowance > HIGH_ALLOWANCE_THRESHOLD) return 'high';
+    if (dailyAllowance < LOW_ALLOWANCE_THRESHOLD) return 'low';
+    return 'normal';
+}
 
 // ============ RANDOMIZATION ENGINE ============
 
@@ -297,12 +333,27 @@ export function getEmptyStateMessage(cardType: CoPilotCardType): CoPilotMessage 
 
 /**
  * Get random live data message with variable interpolation
+ * For daily_runway, uses smart threshold logic to select appropriate message tier
  */
 export function getLiveDataMessage(
     cardType: CoPilotCardType,
     context: LiveDataContext
 ): CoPilotMessage {
-    const messages = LIVE_DATA_MESSAGES[cardType];
+    let messages: CoPilotMessage[];
+
+    // Smart threshold logic for Daily Runway
+    if (cardType === 'daily_runway' && context.dailyAllowance !== undefined) {
+        const tier = getRunwayTier(context.dailyAllowance);
+        messages = DAILY_RUNWAY_TIERED_MESSAGES[tier];
+    } else {
+        messages = LIVE_DATA_MESSAGES[cardType];
+    }
+
+    // Handle empty array case (shouldn't happen, but safety check)
+    if (messages.length === 0) {
+        messages = DAILY_RUNWAY_TIERED_MESSAGES['normal'];
+    }
+
     const index = getRandomIndex(cardType, messages.length);
     const message = messages[index];
 
@@ -313,7 +364,7 @@ export function getLiveDataMessage(
         if (value !== undefined) {
             const placeholder = `{${key}}`;
             const displayValue = typeof value === 'number'
-                ? (key.includes('Amount') || key.includes('Allowance') || key.includes('Remaining') || key.includes('Savings')
+                ? (key !== 'daysRemaining' && (key.includes('Amount') || key.includes('Allowance') || key.includes('Remaining') || key.includes('Savings'))
                     ? value.toFixed(2)
                     : value.toString())
                 : value.toString();

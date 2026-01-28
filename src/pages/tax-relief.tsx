@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { formatCurrency } from '../lib/format';
 import type { LhdnTag } from '../types';
-import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, List, Sparkles } from 'lucide-react';
+import { FileText, TrendingUp, AlertCircle, Users, ChevronLeft, ChevronRight, Shield, List } from 'lucide-react';
 import { ProLockOverlay } from '../components/pro-lock-overlay';
 import { SectionHeader } from '../components/ui/section-header';
+import { getTaxOptimizationMessage, resetTaxSessionIndices, type TaxCoPilotMessage } from '../lib/tax-copilot-randomization';
 
 export function TaxReliefPage() {
     const navigate = useNavigate();
@@ -79,6 +80,21 @@ export function TaxReliefPage() {
             remaining: (cat.limit || 0) - cat.amount
         }))
         .sort((a, b) => b.remaining - a.remaining)[0];
+
+    // Randomized tax optimization message state
+    const [taxMessage, setTaxMessage] = useState<TaxCoPilotMessage | null>(null);
+
+    // Generate randomized message on mount and when underutilized category changes
+    useEffect(() => {
+        resetTaxSessionIndices();
+        if (underutilized) {
+            const message = getTaxOptimizationMessage(underutilized.tag, {
+                remaining: underutilized.remaining,
+                categoryName: underutilized.tag,
+            });
+            setTaxMessage(message);
+        }
+    }, [underutilized?.tag, underutilized?.remaining]);
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
@@ -164,51 +180,29 @@ export function TaxReliefPage() {
                         </div>
                     )}
 
-                    {/* Optimization Card: Dynamic Underutilized Insight */}
-                    {underutilized && (
+                    {/* Optimization Card: Dynamic Underutilized Insight with Randomized Manglish */}
+                    {underutilized && taxMessage && (
                         <div className="relative group">
                             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
                             <div className="relative bg-white rounded-2xl p-5 border border-purple-100 shadow-sm overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full -mr-16 -mt-16" />
                                 <div className="flex items-start gap-4">
-                                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200/50 shrink-0 mt-1">
-                                        <Sparkles size={16} className="stroke-[1.5px]" />
+                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-purple-200/50 shrink-0">
+                                        <span className="text-lg">{taxMessage.emoji}</span>
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-gray-900 mb-2">Jimat Tax Sini (Opportunities)</h3>
-                                        <p className="text-sm text-gray-700 leading-relaxed italic font-medium">
-                                            {/* Category-specific suggestions - LHDN 2025 compliant */}
-                                            {underutilized.tag === 'Medical' && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Medical</span> relief. Better do that full medical check-up or vaccination now before year-end k?"
-                                                </>
-                                            )}
-                                            {underutilized.tag === 'Lifestyle' && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Lifestyle</span> relief. Better buy that laptop, phone, or book now before year-end k?"
-                                                </>
-                                            )}
-                                            {underutilized.tag === 'Sports' && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Sports</span> relief. Time for gym membership or sports equipment before year-end k?"
-                                                </>
-                                            )}
-                                            {underutilized.tag === 'Education' && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Education</span> relief. Better pay those course fees or get certified before year-end k?"
-                                                </>
-                                            )}
-                                            {underutilized.tag === 'Childcare' && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Childcare</span> relief. Make sure TASKA/TADIKA fees are paid before year-end k?"
-                                                </>
-                                            )}
-                                            {!['Medical', 'Lifestyle', 'Sports', 'Education', 'Childcare'].includes(underutilized.tag) && (
-                                                <>
-                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. Use it before year-end k?"
-                                                </>
-                                            )}
+                                        <h3 className="text-sm font-bold text-gray-900 mb-2">Jimat Tax Sini</h3>
+                                        <p className="text-sm text-gray-700 leading-relaxed font-medium">
+                                            {taxMessage.template}
                                         </p>
+                                        <div className="mt-3 flex items-center gap-2">
+                                            <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-lg">
+                                                {underutilized.tag}
+                                            </span>
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-lg">
+                                                {formatCurrency(underutilized.remaining)} left
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
