@@ -83,7 +83,7 @@ export function TaxReliefPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
             {/* Header */}
-            <div className="sticky top-0 z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-md border-b border-white/10">
+            <div className="z-50 bg-gradient-to-r from-purple-600/95 to-blue-600/95 backdrop-blur-[15px] px-5 pb-3 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-md border-b border-white/10">
                 <div className="flex justify-between items-start mb-2">
                     <div>
                         <h1 className="text-lg font-bold text-white">Tax Relief</h1>
@@ -177,7 +177,37 @@ export function TaxReliefPage() {
                                     <div className="flex-1">
                                         <h3 className="text-sm font-bold text-gray-900 mb-2">Jimat Tax Sini (Opportunities)</h3>
                                         <p className="text-sm text-gray-700 leading-relaxed italic font-medium">
-                                            "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. Better buy that laptop or book now before year-end k?"
+                                            {/* Category-specific suggestions - LHDN 2025 compliant */}
+                                            {underutilized.tag === 'Medical' && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Medical</span> relief. Better do that full medical check-up or vaccination now before year-end k?"
+                                                </>
+                                            )}
+                                            {underutilized.tag === 'Lifestyle' && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Lifestyle</span> relief. Better buy that laptop, phone, or book now before year-end k?"
+                                                </>
+                                            )}
+                                            {underutilized.tag === 'Sports' && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Sports</span> relief. Time for gym membership or sports equipment before year-end k?"
+                                                </>
+                                            )}
+                                            {underutilized.tag === 'Education' && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Education</span> relief. Better pay those course fees or get certified before year-end k?"
+                                                </>
+                                            )}
+                                            {underutilized.tag === 'Childcare' && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">Childcare</span> relief. Make sure TASKA/TADIKA fees are paid before year-end k?"
+                                                </>
+                                            )}
+                                            {!['Medical', 'Lifestyle', 'Sports', 'Education', 'Childcare'].includes(underutilized.tag) && (
+                                                <>
+                                                    "Eh boss, you still have <span className="text-purple-600 font-bold">{formatCurrency(underutilized.remaining)}</span> left for <span className="text-blue-600 font-bold">{underutilized.tag}</span> relief. Use it before year-end k?"
+                                                </>
+                                            )}
                                         </p>
                                     </div>
                                 </div>
