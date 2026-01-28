@@ -1,14 +1,52 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Search, PieChart, FileText, Camera, Upload, PenLine, Home } from 'lucide-react';
+import { Search, PieChart, FileText, Camera, Upload, PenLine } from 'lucide-react';
 import { NAV_COLORS } from '../../lib/design-tokens';
+
+// Import nav icon for proper Vite bundling
+import duitrackNavIcon from '/duitrack-nav-icon.png';
 
 interface BottomNavProps {
     onAddClick: (mode?: 'scan' | 'import' | 'manual') => void;
 }
 
+/**
+ * Custom Duitrack Icon Component
+ * Uses CSS filters to colorize the white icon for gray/purple states
+ * Supports the liquid fill animation effect
+ */
+const DuitrackIcon = ({ size = 24, color = "currentColor", className = "" }: {
+    size?: number;
+    strokeWidth?: number;
+    color?: string;
+    className?: string;
+}) => {
+    const isActive = color === NAV_COLORS.active;
+
+    // CSS filters to colorize white icon
+    // Gray-400 (#9CA3AF) for inactive
+    const grayFilter = 'brightness(0) saturate(100%) invert(70%) sepia(5%) saturate(400%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+    // Purple-600 (#7c3aed) for active
+    const purpleFilter = 'brightness(0) saturate(100%) invert(29%) sepia(98%) saturate(2000%) hue-rotate(250deg) brightness(95%) contrast(100%)';
+
+    return (
+        <img
+            src={duitrackNavIcon}
+            alt=""
+            className={className}
+            style={{
+                width: size,
+                height: size,
+                objectFit: 'contain',
+                filter: isActive ? purpleFilter : grayFilter,
+                transition: 'filter 350ms ease-out',
+            }}
+        />
+    );
+};
+
 const NAV_ITEMS = [
-    { label: 'Duitrack', icon: Home, to: '/' },
+    { label: 'Duitrack', icon: DuitrackIcon, to: '/' },
     { label: 'Analytics', icon: PieChart, to: '/analytics' },
     { label: 'Tax', icon: FileText, to: '/tax-relief' },
     { label: 'Search', icon: Search, to: '/search' },
